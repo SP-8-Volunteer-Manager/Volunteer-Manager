@@ -1,1 +1,2 @@
-src/.env
+# Ignore environment variables file
+Backend/src/.env
