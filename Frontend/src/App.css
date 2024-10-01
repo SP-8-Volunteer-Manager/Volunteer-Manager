@@ -1,10 +1,45 @@
+body{
+  background-color: black;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  padding-bottom: 0;
+  margin: 0;
+  background-color: white;
   text-align: center;
 }
+.picture{
+  width: 100%;
+}
 
+.rounded-15{
+  border-radius: 15px;
+}
+
+.top {
+  background-color: #bdd9f9;
+  border-radius: 15px;
+
+}
+
+.HBPR-logo {
+	  display: block;
+    border: 0 !important;
+    background-image: url(./assets/HBPR-logo-white-PinkGreen.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 222px;
+    
+}
+.nav-item {
+  font-family: 'Judson';
+  font-size: 1.5rem;
+  text-shadow: 1px 1px #dbdbdb;
+}
 .logo {
   height: 6em;
   padding: 1.5em;
