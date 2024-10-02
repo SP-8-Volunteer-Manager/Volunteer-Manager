@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios';
+import { BrowserRouter, Routes, Route} from 'react-router-dom';
 //import reactLogo from './assets/react.svg'
 //import viteLogo from '/vite.svg'
 import './App.css'
 import Navigation from './Navigation';
 import Home from './Home';
-import Footer from './Footer';
+
+import AboutUs from './AboutUs';
 
 
 function App() {
@@ -21,15 +23,24 @@ function App() {
   },[]);
 
   return (
-    <div>
-      <Navigation />
-      <Home />
-      <Footer />
-    </div>
+        
+    <BrowserRouter>
+      <Routes>
     
-
-
-
+        <Route path="/" element={<Navigation />}>
+          <Route index element={<Home />} />
+          <Route path="aboutUs" element={<AboutUs />} />
+        
+       
+ 
+        </Route>
+    
+      </Routes>
+    </BrowserRouter>
+      )
+    };
+    
+    export default App
    /* <>
       <div>
         <a href="https://vitejs.dev" target="_blank">
@@ -52,7 +63,4 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
     </>*/
-  )
-}
 
-export default App

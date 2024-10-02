@@ -1,5 +1,6 @@
 import dogImage from './assets/dog.jpg'
 import cat from './assets/cat.jpg'
+import Footer from './Footer';
 function Home() {
     return (
 
@@ -47,7 +48,7 @@ function Home() {
                     </button>
                 </div>
             </div>
-            <div className="container my-5" >
+            <div className="container mt-5" >
                 <div className="pt-5 text-center rounded-5" style={{backgroundColor: '#f0f6fd'}}>
                     <h2 className="text-body-emphasis">Already a volunteer?</h2>
                     <p className="lead">
@@ -58,6 +59,7 @@ function Home() {
                     </button>
                 </div>
             </div>
+            <Footer />
         </section>
         
     );
