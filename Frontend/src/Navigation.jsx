@@ -1,10 +1,11 @@
 import React from 'react';
+import { Outlet, Link } from "react-router-dom";
 
 
 
 function Navigation() {
     return (
-
+      <section>
         <div className="container-fluid top m-0">
             <header className="d-flex flex-wrap justify-content-between pt-5 mb-5 border-bottom">
                         
@@ -12,20 +13,27 @@ function Navigation() {
           
             <ul className="nav nav-tabs">
                 <li className="nav-item">
-                    <a className="nav-link active" aria-current="page" href="#">Home</a>
+                    <Link className="nav-link active" aria-current="page" to="/">Home</Link>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" href="#">About Us</a>
+                    <Link className="nav-link" to="/aboutUs">About Us</Link>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" href="#">My Portal</a>
+                    <Link className="nav-link" to="/aboutUs">My Portal</Link>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" href="#">Contact Us</a>
+                    <Link className="nav-link" to="/aboutUs">Contact Us</Link>
                 </li>
             </ul>
             </header>
+            
         </div>
+        <Outlet />
+      </section>
+    );
+  };
+          
+export default Navigation;
 
       /*  <div className="container">
       <header className="my-4">
@@ -55,7 +63,3 @@ function Navigation() {
       </footer>
     </div>
 */
-    );
-};
-
-export default Navigation;
