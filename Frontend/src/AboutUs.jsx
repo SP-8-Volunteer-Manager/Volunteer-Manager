@@ -1,14 +1,14 @@
-import Footer from './Footer';
+
 function AboutUs() {
     return (
 
                  
         <section>
-            <div class="px-4 py-5 my-5 text-left">
+            <div className="px-4 py-5 my-5 text-left">
     
-                <h2 class="display-5 fw-bold text-body-emphasis">About Us</h2>
-                <div class="col-xl-8 mx-auto">
-                    <p class="mb-4">
+                <h2 className="display-6 fw-bold text-body-emphasis text-center">About Us</h2>
+                <div className="col-xl-8 mx-auto">
+                    <p className="mb-4">
                         Homeward Bound Pet Rescue is a 501(c)(3), non-profit organization located in in Gilmer County, Georgia. 
                         The all volunteer staff is dedicated to the rescue and rehabilitation of homeless companion animals that have been abandoned, 
                         owner surrendered or rescued from local high-kill county shelters. 
@@ -23,8 +23,8 @@ function AboutUs() {
                         It's this endless variety of interests and expertise, put to use in a meaningful way, 
                         that assures a happy ending for the animals in our care.
                     </p>
-                    <h2 class="display-5 fw-bold text-body-emphasis">A Little Bit of History</h2>
-                    <p class="mb-4">
+                    <h2 className="display-6 fw-bold text-body-emphasis text-center mt-5">A Little Bit of History</h2>
+                    <p className="mb-4">
                         Homeward Bound Pet Rescue is a 501(c)(3), non-profit organization located in in Gilmer County, Georgia. 
                         The all volunteer staff is dedicated to the rescue and rehabilitation of homeless companion animals that have been abandoned, 
                         owner surrendered or rescued from local high-kill county shelters. 
@@ -56,8 +56,6 @@ function AboutUs() {
                 </div>
             </div>
             
-            
-            <Footer />
         </section>
            
     );

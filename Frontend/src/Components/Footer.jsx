@@ -2,7 +2,7 @@
 
 function Footer(){
     return (
-        <div className="container-fluid mt-5 py-3 mb-0" style={{backgroundColor: '#bdd9f9'}}>
+        <div className="container-fluid py-3 mb-0" style={{backgroundColor: '#bdd9f9'}}>
             <footer className="py-0">
                 <p className="text-center">Homeward Bound Pet Rescue  </p>
                 
