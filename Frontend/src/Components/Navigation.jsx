@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, Link } from "react-router-dom";
+import { NavLink , Outlet } from "react-router-dom";
 
 
 
@@ -13,16 +13,16 @@ function Navigation() {
           
             <ul className="nav nav-tabs">
                 <li className="nav-item">
-                    <Link className="nav-link active" aria-current="page" to="/">Home</Link>
+                    <NavLink  className="nav-link" aria-current="page" to="/">Home</NavLink >
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" to="/aboutUs">About Us</Link>
+                    <NavLink  className="nav-link" to="/aboutUs">About Us</NavLink >
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" to="/aboutUs">My Portal</Link>
+                    <NavLink  className="nav-link" to="myPortal">My Portal</NavLink >
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" to="/aboutUs">Contact Us</Link>
+                    <NavLink  className="nav-link" to="contactUs">Contact Us</NavLink >
                 </li>
             </ul>
             </header>
