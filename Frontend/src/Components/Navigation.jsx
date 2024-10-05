@@ -7,11 +7,12 @@ function Navigation() {
     return (
       <section>
         <div className="container-fluid top m-0">
-            <header className="d-flex flex-wrap justify-content-between pt-5 mb-5 border-bottom">
-                        
+            <header className="d-flex flex-wrap justify-content-between mb-5 border-bottom">
+                       
                 <div className="HBPR-logo"></div>
           
-            <ul className="nav nav-tabs">
+          
+            <ul className="nav nav-tabs mt-0 mt-sm-3 mt-md-4 mt-lg-5 ">
                 <li className="nav-item">
                     <NavLink  className="nav-link" aria-current="page" to="/">Home</NavLink >
                 </li>

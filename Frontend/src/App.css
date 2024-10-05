@@ -30,11 +30,12 @@ body{
 .HBPR-logo {
 	  display: block;
     border: 0 !important;
-    background-image: url(./assets/HBPR-logo-white-PinkGreen.png);
+    background-image: url(./assets/logo.png);
     background-repeat: no-repeat;
     background-size: contain;
-    width: 222px;
-    
+    width: 7em;
+    margin-left: 1em;
+   
 }
 .nav-item {
   font-family: 'Judson';
