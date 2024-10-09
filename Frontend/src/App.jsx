@@ -12,6 +12,7 @@ import ErrorPage from './ErrorPage'
 import ContactUs from './ContactUs'
 import MyPortal from './MyPortal'
 import Login from './Components/LogIn'
+import SignUpPage from './SignUpPage';
 
 
 
@@ -28,54 +29,32 @@ function App() {
   },[]);
 
   return (
+    <>
+      <BrowserRouter>
+        <div className="d-flex flex-column min-vh-100">
+          <Routes>
+            
+            <Route path="/" element={<Navigation />}>
+              <Route index element={<Home />} />
+              <Route path="aboutUs" element={<AboutUs />} />
+              <Route path="myPortal" element={<MyPortal />} />
+              <Route path="contactUs" element={<ContactUs />} />
+              <Route path="/signUp" element={<SignUpPage />} />
+              <Route path="*" element={<ErrorPage />} />
+            </Route>
+            <Route path="/login" element={<Login />} /> 
+            
         
-    <BrowserRouter>
-      <div className="d-flex flex-column min-vh-100">
-        <Routes>
-          
-          <Route path="/" element={<Navigation />}>
-            <Route index element={<Home />} />
-            <Route path="aboutUs" element={<AboutUs />} />
-            <Route path="myPortal" element={<MyPortal />} />
-            <Route path="contactUs" element={<ContactUs />} />
-
-            <Route path="*" element={<ErrorPage />} />
-          </Route>
-          <Route path="/login" element={<Login />} /> 
-      
-        </Routes>
-        <div className="mt-auto">
-          <Footer />
-        </div>
-      </div>
-      
-      
-    </BrowserRouter>
-    
+          </Routes>
+          <div className="mt-auto">
+            <Footer />
+          </div>
+        </div>      
+      </BrowserRouter>
+    </>
       )
     };
     
     export default App
-   /* <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is K {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>*/
+  
 
