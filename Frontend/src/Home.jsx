@@ -2,14 +2,22 @@ import dogImage from './assets/dog.jpg'
 import cat from './assets/cat.png'
 import React, { useState } from 'react'
 import Login from './Components/LogIn'
+import { useNavigate } from 'react-router-dom';
+
 
 
 function Home() {
     const [showModal, setShowModal] = useState(false);
 
-  const handleShow = () => setShowModal(true);
-  const handleClose = () => setShowModal(false);
+    const handleShow = () => setShowModal(true);
+    const handleClose = () => setShowModal(false);
     
+    const navigate = useNavigate();
+
+    const handleSignUpClick = () => {
+        navigate('/signUp');
+    }; 
+
     return (
         
         <>    
@@ -51,7 +59,7 @@ function Home() {
                             <br /><br />
                             We need more volunteers who love dogs and cats! Join us! Fill the sign up form below.                    
                         </p>
-                        <button className="btn btn-primary px-5 mb-5 rounded-pill" type="button">
+                        <button className="btn btn-primary px-5 mb-5 rounded-pill" type="button" onClick={handleSignUpClick}>
                             Sign up
                         </button>
                     </div>
