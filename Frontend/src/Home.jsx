@@ -3,10 +3,11 @@ import cat from './assets/cat.png'
 import React, { useState } from 'react'
 import Login from './Components/LogIn'
 import { useNavigate } from 'react-router-dom';
+import Logo from './assets/HBPR-logo.png'
 
 
 
-function Home() {
+function Home({ setIsLoggedIn }) {
     const [showModal, setShowModal] = useState(false);
 
     const handleShow = () => setShowModal(true);
@@ -22,13 +23,13 @@ function Home() {
         
         <>    
             <section className="info mb-5">
-                <div className="picture overflow-hidden container-fluid px-5" style={{maxHeight: '75vh'}}>
+                <div className="picture overflow-hidden container-fluid px-3 px-md-5" style={{maxHeight: '75vh'}}>
                     <img src={cat} className="img-fluid shadow-lg mb-3 w-100" alt="cat" loading="lazy"/>
                 </div>
                 <div className="container px-4 pt-3">
                     <div className="row flex-lg-row-reverse align-items-center g-5 pt-5">
-                        <div className="col-10 col-sm-8 col-lg-6">
-                            <img src={dogImage} className="d-block mx-lg-auto img-fluid rounded-15" alt="dog" loading="lazy"/>
+                        <div className="col-12 col-sm-8 col-lg-6">
+                            <img src={dogImage} className="d-block mx-lg-auto img-fluid rounded-15 " alt="dog" loading="lazy"/>
                         </div>
                         <div className="col-lg-6">
                             <h1 className="display-5 fw-bold text-body-emphasis lh-1 mb-3">Volunteer</h1>
@@ -82,13 +83,16 @@ function Home() {
             <div className={`modal fade ${showModal ? 'show d-block' : ''}`} tabIndex="-1" style={{ display: showModal ? 'block' : 'none' }} role="dialog">
                 <div className="modal-dialog modal-dialog-centered" role="document">
                     <div className="modal-content rounded-4 shadow">
+                    <img src={Logo} className="img-fluid w-100 h-100  rounded-top-4 " alt="HBPR-logo" loading="lazy" />
                         <div className="modal-header p-5 pb-4 border-bottom-0">
+                            
                             <h2 className="fw-bold">Log in</h2>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"  onClick={handleClose}></button>
                         
                         </div>
                         <div className="modal-body p-5 pt-0 mb-4">
-                            <Login />
+                             {/* Pass closeModal and setIsLoggedIn to the Login component */}
+                            <Login setIsLoggedIn={setIsLoggedIn} closeModal={handleClose}/>
                         </div>
                         
                         
