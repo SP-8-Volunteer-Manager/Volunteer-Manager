@@ -21,7 +21,7 @@ body{
   border-radius: 15px;
 }
 
-.top {
+.navigation {
   background-color: #bdd9f9;
   border-radius: 15px;
 
@@ -54,6 +54,7 @@ body{
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
+
 
 @keyframes logo-spin {
   from {

@@ -1,7 +1,21 @@
 
-function LogIn() {
+
+function LogIn({ setIsLoggedIn, closeModal }) {
+   
+    const handleLogin = () => {
+        console.log("Login button pressed");
+        // Perform your login logic here
+        // After successful login, set the login state to true
+        setIsLoggedIn(true);
+       
+        closeModal();
+        window.scrollTo(0, 0);
+        
+      }
+
     return (
        
+           <>
            
                 <form>
                     
@@ -13,7 +27,7 @@ function LogIn() {
                         <input type="password" className="form-control rounded-3" id="floatingPassword" placeholder="Password" />
                         <label htmlFor="floatingPassword">Password</label>
                     </div>
-                    <button className="w-100 my-2 btn btn-lg btn-primary" type="button">Log in</button>
+                    <button className="w-100 my-2 btn btn-lg btn-primary" type="button" onClick={handleLogin}>Log in</button>
                     
                
                     
@@ -29,7 +43,7 @@ function LogIn() {
                     */}    
                  
                 </form>
-      
+      </>
           
     
     );

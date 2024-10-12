@@ -6,7 +6,7 @@ import { NavLink , Outlet } from "react-router-dom";
 function Navigation() {
     return (
       <section>
-        <div className="container-fluid top m-0">
+        <div className="container-fluid navigation m-0">
             <header className="d-flex flex-wrap justify-content-between mb-5 border-bottom">
                        
                 <div className="HBPR-logo"></div>

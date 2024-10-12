@@ -1,6 +1,7 @@
 import dogImage from './assets/woman-with-dog.jpg'
 import LogIn from './Components/LogIn'
 
+
 function LoginPage() {
     return (
         <div className="container col-xl-10 col-xxl-8 px-1">

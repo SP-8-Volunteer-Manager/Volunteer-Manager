@@ -13,17 +13,22 @@ import ContactUs from './ContactUs'
 import MyPortal from './MyPortal'
 import Login from './Components/LogIn'
 import SignUpPage from './SignUpPage';
+import ScrollToTop from './Components/ScrollToTop';
+import LoggedInNavigation from './Components/LoggedInNavigation';
 
 
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  
+  const [isLoggedIn, setIsLoggedIn] = useState(false)  // Track login state
   const fetchAPI = async () =>{
     const response = await axios.get("http://localhost:8080/api");
     console.log(response.data.f);
   };
-
+  useEffect(() => {
+    // Check login status after pressing login
+    console.log("User is logged in:", isLoggedIn);
+  }, [isLoggedIn]);
   useEffect(() => {
     fetchAPI();
   },[]);
@@ -32,19 +37,33 @@ function App() {
     <>
       <BrowserRouter>
         <div className="d-flex flex-column min-vh-100">
+          <ScrollToTop />
           <Routes>
-            
+            {isLoggedIn ? (
+            // Routes for logged-in users
+            <>
+              <Route path="/" element={<LoggedInNavigation />}>
+                <Route path="/" element={<Home setIsLoggedIn={setIsLoggedIn} />} />
+                
+                <Route path="/aboutUs" element={<AboutUs />} />
+                <Route path="/contactUs" element={<ContactUs />} />
+                <Route path="*" element={<ErrorPage />} />
+              </Route>
+            </>
+          ) : (
+            // Routes for guests (not logged in)
+            <>
             <Route path="/" element={<Navigation />}>
-              <Route index element={<Home />} />
-              <Route path="aboutUs" element={<AboutUs />} />
-              <Route path="myPortal" element={<MyPortal />} />
-              <Route path="contactUs" element={<ContactUs />} />
-              <Route path="/signUp" element={<SignUpPage />} />
-              <Route path="*" element={<ErrorPage />} />
-            </Route>
-            <Route path="/login" element={<Login />} /> 
-            
-        
+                <Route index element={<Home setIsLoggedIn={setIsLoggedIn} />} />
+                <Route path="aboutUs" element={<AboutUs />} />
+                <Route path="myPortal" element={<MyPortal />} />
+                <Route path="contactUs" element={<ContactUs />} />
+                <Route path="/signUp" element={<SignUpPage />} />
+                <Route path="*" element={<ErrorPage />} />
+              </Route>
+              <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} /> 
+            </>
+            )}
           </Routes>
           <div className="mt-auto">
             <Footer />
