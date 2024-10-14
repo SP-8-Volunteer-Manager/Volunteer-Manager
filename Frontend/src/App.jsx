@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios';
 import { BrowserRouter, Routes, Route} from 'react-router-dom'
-//import reactLogo from './assets/react.svg'
-//import viteLogo from '/vite.svg'
 import './App.css'
 import Navigation from './Components/Navigation'
 import Home from './Home'
@@ -15,6 +13,7 @@ import Login from './Components/LogIn'
 import SignUpPage from './SignUpPage';
 import ScrollToTop from './Components/ScrollToTop';
 import LoggedInNavigation from './Components/LoggedInNavigation';
+import AdminDashboard from './AdminDashboard';
 
 
 
@@ -36,14 +35,15 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <div className="d-flex flex-column min-vh-100">
+        <div className="container-fluid px-0">
           <ScrollToTop />
           <Routes>
             {isLoggedIn ? (
             // Routes for logged-in users
             <>
+            
               <Route path="/" element={<LoggedInNavigation />}>
-                <Route path="/" element={<Home setIsLoggedIn={setIsLoggedIn} />} />
+                <Route index element={<AdminDashboard />} />
                 
                 <Route path="/aboutUs" element={<AboutUs />} />
                 <Route path="/contactUs" element={<ContactUs />} />
