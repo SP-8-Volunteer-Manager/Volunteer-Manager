@@ -1,17 +1,21 @@
 // src/index.js
 
 const express = require("express");
+require('dotenv').config();
 const cors = require("cors");
 const supabase = require('./config/supabaseClient'); // Import the Supabase client
-
 const app = express();
+const authRoutes = require('./routes/authRoutes');
 
 const corsOption = {
     origin: ["http://localhost:5173"],
 };
 
+
 app.use(cors(corsOption));
 app.use(express.json());
+app.use('/api/auth', authRoutes);
+
 
 app.get("/api", (req, res) => {
     res.json({ f: ["a", 'b'] });
@@ -23,22 +27,6 @@ app.get('/', (req, res) => {
 });
 
 // API Route to Get Todos from Supabase
-app.get('/todos', async (req, res) => {
-    try {
-        const { data: todos, error } = await supabase.from('todos').select();
-
-        if (error) {
-            console.error('Error fetching todos:', error);
-            return res.status(500).json({ error: 'Failed to fetch todos' });
-        }
-
-        res.json(todos);
-    } catch (err) {
-        console.error('Server error:', err);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
 app.listen(8080, () => {
     console.log("Server is running on port 8080");
 });
