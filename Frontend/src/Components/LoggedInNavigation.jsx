@@ -3,7 +3,7 @@ import { NavLink , Outlet } from "react-router-dom";
 import Logo from '../assets/logo.png'
 
 
-function LoggedInNavigation() {
+function LoggedInNavigation({ onLogout }) {
     return (
         <section className="container-fluid p-0">
             <div className="row">
@@ -22,13 +22,13 @@ function LoggedInNavigation() {
                                 <NavLink  className="nav-link" to="/aboutUs">My Profile</NavLink >
                             </li>
                             <li className="nav-item">
-                                <NavLink  className="nav-link" to="myPortal">Volunteers List</NavLink >
+                                <NavLink  className="nav-link" to="dminEventList">Volunteers List</NavLink >
                             </li>
                             <li className="nav-item">
-                                <NavLink  className="nav-link" to="contactUs">Events</NavLink >
+                                <NavLink  className="nav-link" to="adminEventList">Events</NavLink >
                             </li>
                             <li className="nav-item">
-                                <NavLink  className="nav-link" to="LogOut">Log out</NavLink >
+                                <button className="nav-link btn btn-link text-start" onClick={onLogout}>Log out</button>
                             </li>
                         </ul>
                     

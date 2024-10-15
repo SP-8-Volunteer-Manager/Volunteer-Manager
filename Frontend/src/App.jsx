@@ -14,6 +14,8 @@ import SignUpPage from './SignUpPage';
 import ScrollToTop from './Components/ScrollToTop';
 import LoggedInNavigation from './Components/LoggedInNavigation';
 import AdminDashboard from './AdminDashboard';
+import VolunteerList from './VolunteerList';
+import AdminEventList from './AdminEventList';
 
 
 
@@ -24,10 +26,13 @@ function App() {
     const response = await axios.get("http://localhost:8080/api");
     console.log(response.data.f);
   };
-  useEffect(() => {
-    // Check login status after pressing login
-    console.log("User is logged in:", isLoggedIn);
-  }, [isLoggedIn]);
+  const handleLogout = () => {
+    const confirmLogout = window.confirm("Are you sure you want to log out?");
+    if (confirmLogout) {
+      setIsLoggedIn(false); // Perform logout
+    }
+  };
+  
   useEffect(() => {
     fetchAPI();
   },[]);
@@ -42,11 +47,12 @@ function App() {
             // Routes for logged-in users
             <>
             
-              <Route path="/" element={<LoggedInNavigation />}>
+              <Route path="/" element={<LoggedInNavigation onLogout={handleLogout} />}>
                 <Route index element={<AdminDashboard />} />
                 
-                <Route path="/aboutUs" element={<AboutUs />} />
-                <Route path="/contactUs" element={<ContactUs />} />
+                <Route path="/volunteerList" element={<VolunteerList />} />
+                <Route path="/adminEventList" element={<AdminEventList />} />
+                
                 <Route path="*" element={<ErrorPage />} />
               </Route>
             </>

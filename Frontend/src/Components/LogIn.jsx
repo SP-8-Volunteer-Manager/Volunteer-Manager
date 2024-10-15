@@ -4,8 +4,7 @@ function LogIn({ setIsLoggedIn, closeModal }) {
    
     const handleLogin = () => {
         console.log("Login button pressed");
-        // Perform your login logic here
-        // After successful login, set the login state to true
+
         setIsLoggedIn(true);
        
         closeModal();
