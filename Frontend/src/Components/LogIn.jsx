@@ -1,14 +1,16 @@
-
+import { useNavigate } from 'react-router-dom';
 
 function LogIn({ setIsLoggedIn, closeModal }) {
+
+    const navigate = useNavigate();
    
     const handleLogin = () => {
-        console.log("Login button pressed");
-
+        
         setIsLoggedIn(true);
        
         closeModal();
         window.scrollTo(0, 0);
+        navigate('/');
         
       }
 

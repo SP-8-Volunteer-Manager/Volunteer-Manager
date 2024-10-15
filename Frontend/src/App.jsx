@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios';
-import { BrowserRouter, Routes, Route} from 'react-router-dom'
+import { Routes, Route} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 import './App.css'
 import Navigation from './Components/Navigation'
 import Home from './Home'
@@ -22,14 +23,18 @@ import AdminEventList from './AdminEventList';
 function App() {
   
   const [isLoggedIn, setIsLoggedIn] = useState(false)  // Track login state
+  const navigate = useNavigate(); // Initialize useNavigate
   const fetchAPI = async () =>{
     const response = await axios.get("http://localhost:8080/api");
     console.log(response.data.f);
   };
+
   const handleLogout = () => {
     const confirmLogout = window.confirm("Are you sure you want to log out?");
     if (confirmLogout) {
       setIsLoggedIn(false); // Perform logout
+      navigate('/'); // Redirect to home page after logging out
+
     }
   };
   
@@ -39,9 +44,10 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
-        <div className="container-fluid px-0">
+      
+        <div className="d-flex flex-column min-vh-100">
           <ScrollToTop />
+          <div className="d-flex flex-grow-1"> {/* Ensure content area can grow */}
           <Routes>
             {isLoggedIn ? (
             // Routes for logged-in users
@@ -62,7 +68,7 @@ function App() {
             <Route path="/" element={<Navigation />}>
                 <Route index element={<Home setIsLoggedIn={setIsLoggedIn} />} />
                 <Route path="aboutUs" element={<AboutUs />} />
-                <Route path="myPortal" element={<MyPortal />} />
+                <Route path="myPortal"  element={<MyPortal setIsLoggedIn={setIsLoggedIn} />}  />
                 <Route path="contactUs" element={<ContactUs />} />
                 <Route path="/signUp" element={<SignUpPage />} />
                 <Route path="*" element={<ErrorPage />} />
@@ -71,11 +77,12 @@ function App() {
             </>
             )}
           </Routes>
+          </div>
           <div className="mt-auto">
             <Footer />
           </div>
         </div>      
-      </BrowserRouter>
+     
     </>
       )
     };

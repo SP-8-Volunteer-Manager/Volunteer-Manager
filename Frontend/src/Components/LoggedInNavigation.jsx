@@ -5,10 +5,10 @@ import Logo from '../assets/logo.png'
 
 function LoggedInNavigation({ onLogout }) {
     return (
-        <section className="container-fluid p-0">
-            <div className="row">
-                <div className="col-12 col-md-3 col-lg-2 p-0 bg-light" id="sidebar">
-                    <div className="d-flex flex-column flex-shrink-0 navigation rounded-0" style={{height: '100vh'}}>
+        <section className="container-fluid p-0 d-flex flex-column flex-grow-1">
+            <div className="row flex-grow-1">
+                <div className="col-12 col-md-3 col-lg-2 p-0 ">
+                    <div className="d-flex flex-column flex-shrink-0 navigation rounded-0 mx-1" style={{minHeight: '100%' }}>
                         <div className='text-center py-3'>
                             <img src={Logo} style={{width: '70%'}} alt="logo" ></img>
                         </div>
@@ -16,16 +16,16 @@ function LoggedInNavigation({ onLogout }) {
                         <hr />
                         <ul className="nav nav-pills flex-column mb-auto">
                             <li className="nav-item">
-                                <NavLink  className="nav-link" aria-current="page" to="/">Dashboard</NavLink >
+                                <NavLink  className="nav-link rounded-0" aria-current="page" to="/">Dashboard</NavLink >
                             </li>
                             <li className="nav-item">
-                                <NavLink  className="nav-link" to="/aboutUs">My Profile</NavLink >
+                                <NavLink  className="nav-link rounded-0" to="/aboutUs">My Profile</NavLink >
                             </li>
                             <li className="nav-item">
-                                <NavLink  className="nav-link" to="dminEventList">Volunteers List</NavLink >
+                                <NavLink  className="nav-link rounded-0" to="volunteerList">Volunteers List</NavLink >
                             </li>
                             <li className="nav-item">
-                                <NavLink  className="nav-link" to="adminEventList">Events</NavLink >
+                                <NavLink  className="nav-link rounded-0" to="adminEventList">Events</NavLink >
                             </li>
                             <li className="nav-item">
                                 <button className="btn btn-link nav-link text-start" onClick={onLogout}>Log out</button>
@@ -35,7 +35,7 @@ function LoggedInNavigation({ onLogout }) {
                     </div>  
                 </div> 
             
-                <div className="col-12 col-md-8 col-lg-10 p-3" id="content">
+                <div className="col-12 col-md-8 col-lg-10 p-3 d-flex flex-column">
                     <Outlet />
                 </div>
             </div>
