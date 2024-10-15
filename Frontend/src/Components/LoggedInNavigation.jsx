@@ -28,7 +28,7 @@ function LoggedInNavigation({ onLogout }) {
                                 <NavLink  className="nav-link" to="adminEventList">Events</NavLink >
                             </li>
                             <li className="nav-item">
-                                <button className="nav-link btn btn-link text-start" onClick={onLogout}>Log out</button>
+                                <button className="btn btn-link nav-link text-start" onClick={onLogout}>Log out</button>
                             </li>
                         </ul>
                     
