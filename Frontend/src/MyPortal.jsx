@@ -2,13 +2,13 @@ import dogImage from './assets/woman-with-dog.jpg'
 import LogIn from './Components/LogIn'
 
 
-function LoginPage() {
+function MyPortal({ setIsLoggedIn }) {
     return (
         <div className="container col-xl-10 col-xxl-8 px-1">
             <div className="row align-items-center g-lg-5 py-0">
                 <div className="col-lg-6 text-center text-lg-start px-lg-5">
                     <h1 className="h3 mb-3 fw-normal">Please log in</h1>
-                        <LogIn />
+                        <LogIn setIsLoggedIn={setIsLoggedIn} closeModal={() => {}} />
                 
                 </div>
 
@@ -23,4 +23,4 @@ function LoginPage() {
 };
 
 
-export default LoginPage;
+export default MyPortal;
