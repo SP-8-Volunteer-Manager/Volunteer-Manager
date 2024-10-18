@@ -6,6 +6,7 @@ const cors = require("cors");
 const supabase = require('./config/supabaseClient'); // Import the Supabase client
 const app = express();
 const authRoutes = require('./routes/authRoutes');
+const VolunteerRoutes = require('./routes/volunteerRoutes');
 
 const corsOption = {
     origin: ["http://localhost:5173"],
@@ -16,10 +17,8 @@ app.use(cors(corsOption));
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 
+app.use('/api', VolunteerRoutes);
 
-app.get("/api", (req, res) => {
-    res.json({ f: ["a", 'b'] });
-});
 
 // Simple route to check if the server is running
 app.get('/', (req, res) => {
