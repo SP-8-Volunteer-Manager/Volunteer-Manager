@@ -47,7 +47,7 @@ function App() {
       
         <div className="d-flex flex-column min-vh-100">
           <ScrollToTop />
-          <div className="d-flex flex-grow-1"> {/* Ensure content area can grow */}
+         {/*} <div className="d-flex flex-grow-1"> {/* Ensure content area can grow */}
           <Routes>
             {isLoggedIn ? (
             // Routes for logged-in users
@@ -81,7 +81,7 @@ function App() {
           <div className="mt-auto">
             <Footer />
           </div>
-        </div>      
+       {/* </div>  */  }  
      
     </>
       )
