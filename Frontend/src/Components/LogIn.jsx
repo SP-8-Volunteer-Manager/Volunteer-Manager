@@ -25,7 +25,6 @@ function LogIn({ setIsLoggedIn, closeModal }) {
                     }
                     return;
                 }
-                const data= await response.json();
                 //Setting user
                 setIsLoggedIn(true);      
                 closeModal();
@@ -48,7 +47,7 @@ function LogIn({ setIsLoggedIn, closeModal }) {
                 <form>
                     
                     <div className="form-floating mb-3">
-                        <input type="email" className="form-control rounded-3" id="floatingInput" 
+                        <input type="text" className="form-control rounded-3" id="floatingInput" 
                         placeholder="Your username" 
                         //value={username}
                         onChange={(e) => setUsername(e.target.value)}
@@ -62,8 +61,10 @@ function LogIn({ setIsLoggedIn, closeModal }) {
                         onChange={(e) => setPassword(e.target.value)}/>
                         <label htmlFor="floatingPassword">Password</label>
                     </div>
+                    {/* Show the error message */}
+                {error }
                     {/*<button className="w-100 my-2 btn btn-lg btn-primary" type="button" onClick={handleLogin}>Log in</button>*/}
-                    <button className="w-100 my-2 btn btn-lg btn-primary" type="submit" onClick={handleLogin}>Log in</button>
+                    <button className="w-100 my-2 btn btn-lg btn-primary" type="button" onClick={handleLogin}>Log in</button>
                     
                
                     
