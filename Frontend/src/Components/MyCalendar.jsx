@@ -26,11 +26,7 @@ function MyCalendar() {
         start: new Date(2024, 10, 21, 12, 0),
         end: new Date(2024, 10, 21, 13, 0),
     },
-    {
-      title: 'Dog Feeding',
-      start: new Date(2024, 10, 21, 11, 0), // Year, Month (0-indexed), Day, Hour, Minute
-      end: new Date(2024, 10, 21, 12, 0),
-  },
+    
     {
         title: 'Cage Cleaning',
         start: new Date(2024, 10, 22, 14, 0),

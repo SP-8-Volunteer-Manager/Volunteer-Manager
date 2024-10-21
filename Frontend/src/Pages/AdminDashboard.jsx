@@ -22,7 +22,7 @@ function AdminDashboard() {
            
         </div>
         <div>
-            <h2>Upcoming events</h2>
+            <h2>Upcoming events for the week</h2>
             <table className="table">
                 <thead>
                     <tr>
