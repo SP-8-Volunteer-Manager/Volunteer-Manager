@@ -4,6 +4,7 @@ const VolunteerList=() => {
 
     //Fetch the volunteer data from the backend
     useEffect(() => {
+        console.log('failed')
         const fetchVolunteers = async () => {
             try{
                 const response = await fetch('http://localhost:8080/api/admin/volunteers/details');
@@ -14,6 +15,7 @@ const VolunteerList=() => {
                 console.log(data);
                 setVolunteers(data);
             } catch (error) {
+      
                 console.error(`Error: ${error}`);
             }
         };
@@ -75,27 +77,9 @@ const VolunteerList=() => {
                     </tr>
                 </thead>
                 <tbody>
-                    {/*Remove the empty rows
-                    <tr>
-                    <th scope="row"></th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td><button type="button" class="btn btn-primary">Edit</button></td>
-                    </tr>
-                    <tr>
-                    <th scope="row"></th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td><button type="button" class="btn btn-primary">Edit</button></td>
-                    </tr>
-                */}
                 {volunteers.length ==0 ? (
                     <tr>
-                        <td colSpan="5">No new volunteer founds</td>
+                        <td colSpan="5">No new volunteer is found</td>
                     </tr>
                 ) : (
                     volunteers.map((volunteer) => (

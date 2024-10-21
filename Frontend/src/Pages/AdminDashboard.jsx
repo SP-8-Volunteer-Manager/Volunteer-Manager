@@ -1,5 +1,4 @@
-
-import MyCalendar from "./Components/MyCalendar";
+import MyCalendar from "../Components/MyCalendar";
 
 
 function AdminDashboard() {
@@ -24,7 +23,7 @@ function AdminDashboard() {
         </div>
         <div>
             <h2>Upcoming events</h2>
-            <table class="table">
+            <table className="table">
                 <thead>
                     <tr>
                     <th scope="col">Task/Event</th>

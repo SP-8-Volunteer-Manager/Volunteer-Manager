@@ -33,14 +33,16 @@ function AdminEventList() {
                 <h2>Event Information</h2> 
                 <button type="button" className="btn btn-primary">New event</button>
             </div>
-            <table class="table">
+            <table className="table">
                 <thead>
                     <tr>
-                    <th scope="col">Task</th>
+                
+                    <th scope="col">Task Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Task Type</th>
+                    <th scope="col">Location</th>
                     <th scope="col">Date</th>
                     <th scope="col">Time</th>
-                    <th scope="col">Location</th>
-                    <th scope="col">Status</th>
                     <th scope="col">Action</th>
                     </tr>
                 </thead>
@@ -57,6 +59,8 @@ function AdminEventList() {
                         <td>{event.description}</td>
                         <td>{event.task_type_id}</td>
                         <td>{event.location}</td>
+                        <td>{event.start_date}</td>
+                        <td>{event.start_time}</td>
                         <td><button type="button" className="btn btn-primary">Edit</button></td>
                         </tr>
                     ))
