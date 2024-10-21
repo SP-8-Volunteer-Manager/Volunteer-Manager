@@ -25,8 +25,8 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)  // Track login state
   const navigate = useNavigate(); // Initialize useNavigate
   const fetchAPI = async () =>{
-    const response = await axios.get("http://localhost:8080/api");
-    console.log(response.data.f);
+    //const response = await axios.get("http://localhost:8080/api");
+    //console.log(response.data.f);
   };
 
   const handleLogout = () => {
