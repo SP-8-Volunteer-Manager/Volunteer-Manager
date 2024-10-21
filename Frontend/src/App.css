@@ -43,6 +43,21 @@ body{
   font-size: 1.5rem;
   text-shadow: 1px 1px #dbdbdb;
 }
+
+.event-dot-container {
+  display: flex;
+  justify-content: center; /* Center the dots */
+  margin-top: 4px; /* space above the dots */
+}
+
+.event-dot {
+  width: 8px; /* Size of the dot in the calendar */
+  height: 8px;
+  border-radius: 50%;
+  background-color: greenyellow;
+  margin: 0 2px; /*  margin between dots */
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

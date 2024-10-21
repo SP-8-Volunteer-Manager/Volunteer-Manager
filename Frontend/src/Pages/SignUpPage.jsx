@@ -60,7 +60,7 @@ function SignUpPage() {
                         </div>
                         <div className="col-md-6">
                             <label htmlFor="PhoneCarrier" className="form-label">Choose Your Phone Carrier</label>
-                            <select class="form-select" aria-label="Choose phone carrier">
+                            <select className="form-select" aria-label="Choose phone carrier">
                                 <option selected>Choose phone carrier</option>
                                 <option value="AT&T">AT&T</option>
                                 <option value="T-Mobile">T-Mobile</option>

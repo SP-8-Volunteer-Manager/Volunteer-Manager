@@ -1,10 +1,11 @@
-import dogImage from './assets/dog.jpg'
-import cat from './assets/cat.png'
 import React, { useState } from 'react'
-import Login from './Components/LogIn'
 import { useNavigate } from 'react-router-dom';
-import Logo from './assets/HBPR-logo.png'
 
+import Login from '../Components/LogIn'
+
+import Logo from '../assets/HBPR-logo.png'
+import dogImage from '../assets/dog.jpg'
+import cat from '../assets/cat.png'
 
 
 function Home({ setIsLoggedIn }) {

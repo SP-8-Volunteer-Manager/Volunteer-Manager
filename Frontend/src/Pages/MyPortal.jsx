@@ -1,5 +1,5 @@
-import dogImage from './assets/woman-with-dog.jpg'
-import LogIn from './Components/LogIn'
+import dogImage from '../assets/woman-with-dog.jpg'
+import LogIn from '../Components/LogIn'
 
 
 function MyPortal({ setIsLoggedIn }) {

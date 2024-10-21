@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+
 function LogIn({ setIsLoggedIn, closeModal }) {
 //add const for email and password
     const[username, setUsername] = useState('');
     const[password, setPassword] = useState('');
     const[error, setError] = useState('');
     const navigate = useNavigate();
+    const [email, setEmail] = useState('');
    
     const handleLogin = async () => {
         if(username && password){
@@ -40,6 +42,11 @@ function LogIn({ setIsLoggedIn, closeModal }) {
         
       };
 
+
+      const handleForgotPassword = () => {
+        navigate('/forgot-password'); // Navigates to the "Forgot Password" page
+    };
+
     return (
        
            <>
@@ -52,7 +59,7 @@ function LogIn({ setIsLoggedIn, closeModal }) {
                         //value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         />
-                        <label htmlFor="floatingInput">Email address</label>
+                        <label htmlFor="floatingInput">Username</label>
                     </div>
                     <div className="form-floating mb-3">
                         <input type="password" className="form-control rounded-3" id="floatingPassword" 
@@ -60,13 +67,21 @@ function LogIn({ setIsLoggedIn, closeModal }) {
                         //value={password}
                         onChange={(e) => setPassword(e.target.value)}/>
                         <label htmlFor="floatingPassword">Password</label>
+                        
                     </div>
+                    
                     {/* Show the error message */}
                 {error }
                     {/*<button className="w-100 my-2 btn btn-lg btn-primary" type="button" onClick={handleLogin}>Log in</button>*/}
                     <button className="w-100 my-2 btn btn-lg btn-primary" type="button" onClick={handleLogin}>Log in</button>
                     
-               
+                    {/* Forgot Password Link */}
+                    <div className="text-center mt-3">
+                        <button type="button" className="btn btn-link" onClick={handleForgotPassword}>
+                            Forgot Password?
+                        </button>
+                    </div>
+                
                     
                        
                     {/*
