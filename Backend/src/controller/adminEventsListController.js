@@ -1,9 +1,9 @@
 const pool = require('../config/supabaseClient');
 
-const getVolunteers = async (req, res) => {
+const getEventLists = async (req, res) => {
     try {
         const { data, error } = await pool
-            .from('volunteerdetails')
+            .from('task')
             .select('*');
 
         if (error) {
@@ -15,4 +15,4 @@ const getVolunteers = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-module.exports = { getVolunteers };
+module.exports = { getEventLists };
