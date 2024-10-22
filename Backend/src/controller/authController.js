@@ -2,9 +2,14 @@ const supabase = require('../config/supabaseClient');
 const bcrypt = require('bcrypt');
 
 //Validate Password Function
-function ValidatePass(password){
+function validatePass(password){
   const minLength=8;
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+  if(password.length === 0)
+  {
+    return "Password is empty";
+  }
 
   if(password.length < minLength){
       return "Password must be longer than 8 characters";
@@ -17,47 +22,53 @@ function ValidatePass(password){
 
 //Signup Function
 const signup = async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, email } = req.body;
+    console.log(req.body);
 
     //Validate Username using regex
-    const usernameError = validateUsername(username);
-    const passwordError = validatePassword(password);
+    // //const usernameError = validateUsername(username);
+    // const passwordError = validatePass(password);
   
-    if (usernameError) {
-      return res.status(400).json({ message: usernameError });
-    }
+    // // if (usernameError) {
+    // //   return res.status(400).json({ message: usernameError });
+    // // }
     
-    if (passwordError) {
-      return res.status(400).json({ message: passwordError });
-    }
+    // if (passwordError) {
+    //   return res.status(400).json({ message: passwordError });
+    // }
 
-    try {
-      // Check if user already exists
-      const { data: existingUser } = await supabase
-        .from('User')
-        .select('username') // Only select the username
-        .eq('username', username)
-        .single();
+     try {
+       // Check if user already exists
+       const { data: existingUser } = await supabase
+         .from('User')
+         .select('username') // Only select the username
+         .eq('username', username)
+         .single();
+         console.log('after db call');
+        console.log(existingUser);
+       if (existingUser) {
+         return res.status(400).json({ message: 'Username already in use' });
+       }
   
-      if (existingUser) {
-        return res.status(400).json({ message: 'Username already in use' });
-      }
-  
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 10);
-  
+       // Hash the password
+       //console.log(bcrypt);
+     // const hashedPassword = await bcrypt.hash(password, 10).then(console.log(hashedPassword));
+      // const salt = await bcrypt.genSalt();
+      // const hashedPassword = await bcrypt.hash(password, salt).then(console.log(hashedPassword));
+      //  res.status(201).json({ message: 'User created successfully', user: data });
       // Add user to the database
      
       const { data, error } = await supabase
         .from('User')
-        .insert([{ username, password_hash: hashedPassword }]);
+        .insert([{ username, password_hash: password, email, role: "volunteer" }]);
   
       if (error) {
-        throw error;
+        res.status(500).json({ message: 'Error adding user', error: error.message });
       }
   
-      res.status(201).json({ message: 'User created successfully', user: data });
+       res.status(201).json({ message: 'User created successfully', user: data });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ message: 'Error creating user', error: error.message });
     }
   };

@@ -7,11 +7,11 @@ function LogIn({ setIsLoggedIn, closeModal }) {
     const[password, setPassword] = useState('');
     const[error, setError] = useState('');
     const navigate = useNavigate();
-    const [email, setEmail] = useState('');
+    
    
     const handleLogin = async () => {
         if(username && password){
-            try{
+            try {
                 const response = await fetch('http://localhost:8080/api/auth/login', {
                     method: 'POST',
                     headers: {
@@ -35,11 +35,10 @@ function LogIn({ setIsLoggedIn, closeModal }) {
             } catch(error){
                 setError(error.message);
             }
-        }else{
-            setError('Please enter username and password');
         }
-            
-        
+        else{
+            setError('Please enter username and password');
+        }        
       };
 
 
@@ -71,7 +70,7 @@ function LogIn({ setIsLoggedIn, closeModal }) {
                     </div>
                     
                     {/* Show the error message */}
-                {error }
+                    {error }
                     {/*<button className="w-100 my-2 btn btn-lg btn-primary" type="button" onClick={handleLogin}>Log in</button>*/}
                     <button className="w-100 my-2 btn btn-lg btn-primary" type="button" onClick={handleLogin}>Log in</button>
                     
