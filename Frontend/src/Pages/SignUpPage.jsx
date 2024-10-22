@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import StateDropdown from '../Components/StateDropdown';
+import CarrierDropdown from "../Components/CarrierDropdown";
+
 
 function SignUpPage() {
 
@@ -8,6 +10,84 @@ function SignUpPage() {
     const[error, setError] = useState('');
     const[email, setEmail] = useState('');
 
+    const intialValues = { username: "", password: "", confirmPassword: "", email: "", firstName: "", lastName: "", inputName: "", address: ""};
+    const [formValues, setFormValues] = useState(intialValues);
+    const [formErrors, setFormErrors] = useState({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const submit = () => {
+        console.log(formValues);
+      };
+    
+      //input change handler
+      const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormValues({ ...formValues, [name]: value });
+      };
+    
+      //form submission handler
+      const handleSubmit = (e) => {
+        console.log(formValues);
+        e.preventDefault();
+        setFormErrors(validate(formValues));
+        setIsSubmitting(true);
+      };
+    
+      //form validation handler
+      const validate = (values) => {
+        let errors = {};
+
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+    
+        if (!values.email) {
+          errors.email = "Cannot be blank";
+        } else if (!regex.test(values.email)) {
+          errors.email = "Invalid email format";
+        }
+        if (!values.username) {
+            errors.username = "Username cannot be blank";
+          }
+
+          if (!values.firstName) {
+            errors.firstName = "First Name cannot be blank";
+          }
+
+          if (!values.lastName) {
+            errors.lastName = "Last Name cannot be blank";
+          }
+
+          if (!values.inputName) {
+            errors.inputName = "Please sign your name!";
+          }
+
+        if (!values.password) {
+          errors.password = "Password cannot be blank";
+        } else if (values.password.length < 8) {
+          errors.password = "Password must be 8 characters or more";
+        }
+        
+
+          if(!values.confirmPassword)
+            errors.confirmPassword = "Confirm Password cannot be blank";
+          else if (values.confirmPassword.length < 8) {
+            errors.confirmPassword = "Confirm Password must be 8 characters or more";
+          }
+
+            if (values.password && values.confirmPassword)
+            {
+                if(values.password != values.confirmPassword)
+                    errors.confirmPassword = "Confirm password mismatch";
+            }
+
+        return errors;
+      };
+    
+      useEffect(() => {
+        if (Object.keys(formErrors).length === 0 && isSubmitting) {
+          submit();
+        }
+      }, [formErrors]);
+    
     const handleSignup = async () => {
         //if(username && password){
             try{
@@ -53,20 +133,42 @@ function SignUpPage() {
                     Applicants must be 18 years or older.</p>
                 </div>
                 <div className="p-5 rounded-5 " style={{backgroundColor: '#f0f6fd'}}>
-                    <form >
+                    <form onSubmit={handleSubmit} noValidate>
                         <div className="row gx-5 gy-3 mb-3">
                         <div className="col-md-6">
                             <label htmlFor="inputFirstName" className="form-label">First Name *</label>
-                            <input type="text" className="form-control" id="inputFirstName" required/>
+                            <input type="text"
+                                    name="firstName"
+                                    value={formValues.firstName} 
+                                    className="form-control"
+                                    id="inputFirstName" 
+                                    onChange={handleChange} />
+                            {formErrors.firstName && (
+                            <span className="error">{formErrors.firstName}</span>
+                            )}
                         </div>
                         <div className="col-md-6">
                             <label htmlFor="inputLastName" className="form-label">Last Name *</label>
-                            <input type="text" className="form-control" id="inputLastName" required/>
+                            <input type="text"
+                                    name="lastName"
+                                    value={formValues.lastName} 
+                                    className="form-control"
+                                    id="inputLastName" 
+                                    onChange={handleChange} />
+                            {formErrors.lastName && (
+                            <span className="error">{formErrors.lastName}</span>
+                            )}
                         </div>
                         
                         <div className="col-12">
                             <label htmlFor="inputAddress" className="form-label">Address</label>
-                            <input type="text" className="form-control" id="inputAddress" placeholder="1234 Main St" />
+                            <input type="text"
+                                    name="address"
+                                    value={formValues.address} 
+                                    className="form-control"
+                                    id="inputAddress" 
+                                    placeholder="1234 Main St"
+                                    onChange={handleChange} />
                         </div>
                         <div className="col-md-6">
                             <label htmlFor="inputCity" className="form-label">City</label>
@@ -86,23 +188,54 @@ function SignUpPage() {
                         </div>
                         <div className="col-md-6">
                             <label htmlFor="inputEmail4" className="form-label">Email *</label>
-                            <input type="email" className="form-control" id="inputEmail4" onChange={(e) => setEmail(e.target.value)} required/>
+                            <input type="email"
+                                    name="email"
+                                    value={formValues.email} 
+                                    className="form-control"
+                                    id="inputEmail" 
+                                    onChange={handleChange} />
+                            {formErrors.email && (
+                            <span className="error">{formErrors.email}</span>
+                            )}
                         </div>
                        
                         <hr className="mt-5"/>
 
                         <div className="col-md-6">
                             <label htmlFor="inputUsername" className="form-label">Username *</label>
-                            <input type="text" className="form-control" id="inputUsername" onChange={(e) => setUsername(e.target.value)} required/>
+                            <input type="text"
+                                    name="username"
+                                    value={formValues.username} 
+                                    className="form-control"
+                                    id="inputUsername" 
+                                    onChange={handleChange} />
+                            {formErrors.username && (
+                            <span className="error">{formErrors.username}</span>
+                            )}
                         </div>
-                        
                         <div className="col-md-6">
-                            <label htmlFor="inputPassword4" className="form-label">Password *</label>
-                            <input type="password" className="form-control" id="inputPassword4" onChange={(e) => setPassword(e.target.value)} required/>
+                        <label htmlFor="inputPassword" className="form-label">Password *</label>
+                            <input type="password"
+                                    name="password"
+                                    value={formValues.password} 
+                                    className="form-control"
+                                    id="inputPassword" 
+                                    onChange={handleChange} />
+                            {formErrors.password && (
+                            <span className="error">{formErrors.password}</span>
+                            )}
                         </div>
                         <div className="col-md-6">
                             <label htmlFor="inputConfirmPassword" className="form-label">Confirm Password *</label>
-                            <input type="password" className="form-control" id="inputConfirmPassword" required/>
+                            <input type="password"
+                                    name="confirmPassword"
+                                    value={formValues.confirmPassword} 
+                                    className="form-control"
+                                    id="inputconfirmPassword" 
+                                    onChange={handleChange} />
+                            {formErrors.confirmPassword && (
+                            <span className="error">{formErrors.confirmPassword}</span>
+                            )}
                         </div>
 
                         <hr className="mt-5"/>
@@ -134,15 +267,7 @@ function SignUpPage() {
 
                         <div className="col-md-6" >
                             <label htmlFor="PhoneCarrier" className="form-label">Choose Your Phone Carrier</label>
-                            <select className="form-select" aria-label="Choose phone carrier" defaultValue={"defaulted"}>
-                                <option value="defaulted">Choose phone carrier</option>
-                                <option value="AT&T">AT&T</option>
-                                <option value="T-Mobile">T-Mobile</option>
-                                <option value="Verizon">Verizon</option>
-                                <option value="Mint-Mobile">Mint Mobile</option>
-                                <option value="Sprint">Sprint</option>
-                               
-                            </select>
+                            <CarrierDropdown></CarrierDropdown>
                         </div>
                     
                         </div>
@@ -245,12 +370,20 @@ function SignUpPage() {
                                     <label htmlFor="signForm" className="col-form-label">Please enter your name and submit the application: *</label>
                                 </div>
                                 <div className="col-auto">
-                                    <input type="text" id="inputName" className="form-control" required/>
+                                    <input type="text"
+                                    name="inputName"
+                                    value={formValues.inputName} 
+                                    className="form-control"
+                                    id="inputName" 
+                                    onChange={handleChange} />
+                            {formErrors.inputName && (
+                            <span className="error">{formErrors.inputName}</span>
+                            )}
                                 </div>
                             </div>
                             {error}
                             <div className="col-12 my-3">
-                                <button type="button" className="btn btn-primary" onClick={handleSignup}>Sign Up</button>
+                                <button type="submit" className="btn btn-primary">Sign Up</button>
                             </div>
                         </div> 
                     </form>
@@ -261,6 +394,5 @@ function SignUpPage() {
            
     );
 };
-
 
 export default SignUpPage;
