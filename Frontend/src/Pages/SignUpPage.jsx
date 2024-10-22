@@ -1,5 +1,47 @@
+import { useState } from 'react';
+import StateDropdown from '../Components/StateDropdown';
 
 function SignUpPage() {
+
+    const[username, setUsername] = useState('');
+    const[password, setPassword] = useState('');
+    const[error, setError] = useState('');
+    const[email, setEmail] = useState('');
+
+    const handleSignup = async () => {
+        //if(username && password){
+            try{
+                console.log(JSON.stringify({username, password, email}));
+                const response = await fetch('http://localhost:8080/api/auth/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({username, password, email}),
+                });
+                
+                console.log('-----response-----');
+                console.log(response);
+                setError(response.status)
+                if (!response.ok) {
+                    if(response.status === 401){
+                        setError('Invalid username or password');
+                    }
+                    if (response.status === 400)
+                    {
+                        setError("This username already exists");
+                    }
+                    return;
+                }
+                setError("User Created")
+            } catch(error){
+                setError(error.message);
+            }
+        //}else{
+            //setError('Please enter username and password');
+        //}
+    };
+
     return (
 
                  
@@ -32,10 +74,7 @@ function SignUpPage() {
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="inputState" className="form-label">State</label>
-                            <select id="inputState" className="form-select">
-                            <option selected>Choose...</option>
-                            <option>...</option>
-                            </select>
+                            <StateDropdown></StateDropdown>
                         </div>
                         <div className="col-md-2">
                             <label htmlFor="inputZip" className="form-label">Zip</label>
@@ -45,20 +84,21 @@ function SignUpPage() {
                             <label htmlFor="inputPhoneNumber" className="form-label">Phone Number</label>
                             <input type="tel" className="form-control" id="inputPhoneNumber" placeholder="(000) 000-0000" />
                         </div>
-                        <div className="col-md-6">
-                            <label htmlFor="inputEmail4" className="form-label">Email *</label>
-                            <input type="email" className="form-control" id="inputEmail4" required/>
-                        </div>
+                        
                        
                         <hr className="mt-5"/>
 
                         <div className="col-md-6">
                             <label htmlFor="inputUsername" className="form-label">Username *</label>
-                            <input type="text" className="form-control" id="inputUsername" required/>
+                            <input type="text" className="form-control" id="inputUsername" onChange={(e) => setUsername(e.target.value)} required/>
+                        </div>
+                        <div className="col-md-6">
+                            <label htmlFor="inputEmail4" className="form-label">Email *</label>
+                            <input type="email" className="form-control" id="inputEmail4" onChange={(e) => setEmail(e.target.value)} required/>
                         </div>
                         <div className="col-md-6">
                             <label htmlFor="inputPassword4" className="form-label">Password *</label>
-                            <input type="password" className="form-control" id="inputPassword4" required/>
+                            <input type="password" className="form-control" id="inputPassword4" onChange={(e) => setPassword(e.target.value)} required/>
                         </div>
                         <div className="col-md-6">
                             <label htmlFor="inputConfirmPassword" className="form-label">Confirm Password *</label>
@@ -94,8 +134,8 @@ function SignUpPage() {
 
                         <div className="col-md-6">
                             <label htmlFor="PhoneCarrier" className="form-label">Choose Your Phone Carrier</label>
-                            <select className="form-select" aria-label="Choose phone carrier">
-                                <option selected>Choose phone carrier</option>
+                            <select className="form-select" aria-label="Choose phone carrier" defaultValue={"defaulted"}>
+                                <option value="defaulted">Choose phone carrier</option>
                                 <option value="AT&T">AT&T</option>
                                 <option value="T-Mobile">T-Mobile</option>
                                 <option value="Verizon">Verizon</option>
@@ -208,9 +248,9 @@ function SignUpPage() {
                                     <input type="text" id="inputName" className="form-control" required/>
                                 </div>
                             </div>
-                            
+                            {error}
                             <div className="col-12 my-3">
-                                <button type="submit" className="btn btn-primary">Submit</button>
+                                <button type="button" className="btn btn-primary" onClick={handleSignup}>Sign Up</button>
                             </div>
                         </div> 
                     </form>
