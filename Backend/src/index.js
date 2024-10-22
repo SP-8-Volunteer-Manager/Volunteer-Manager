@@ -23,7 +23,8 @@ app.use('/api/auth', authRoutes);
 
 app.use('/api/admin', adminEventsListRoutes);
 app.use('/api/admin', VolunteerRoutes);
-app.use('/api', contactRoutes);
+app.use('/api/contact', contactRoutes);
+
 
 // Simple route to check if the server is running
 app.get('/', (req, res) => {

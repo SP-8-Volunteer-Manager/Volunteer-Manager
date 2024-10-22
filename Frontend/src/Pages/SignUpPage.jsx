@@ -74,7 +74,7 @@ function SignUpPage() {
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="inputState" className="form-label">State</label>
-                            <StateDropdown></StateDropdown>
+                            <StateDropdown />
                         </div>
                         <div className="col-md-2">
                             <label htmlFor="inputZip" className="form-label">Zip</label>
@@ -84,7 +84,10 @@ function SignUpPage() {
                             <label htmlFor="inputPhoneNumber" className="form-label">Phone Number</label>
                             <input type="tel" className="form-control" id="inputPhoneNumber" placeholder="(000) 000-0000" />
                         </div>
-                        
+                        <div className="col-md-6">
+                            <label htmlFor="inputEmail4" className="form-label">Email *</label>
+                            <input type="email" className="form-control" id="inputEmail4" onChange={(e) => setEmail(e.target.value)} required/>
+                        </div>
                        
                         <hr className="mt-5"/>
 
@@ -92,10 +95,7 @@ function SignUpPage() {
                             <label htmlFor="inputUsername" className="form-label">Username *</label>
                             <input type="text" className="form-control" id="inputUsername" onChange={(e) => setUsername(e.target.value)} required/>
                         </div>
-                        <div className="col-md-6">
-                            <label htmlFor="inputEmail4" className="form-label">Email *</label>
-                            <input type="email" className="form-control" id="inputEmail4" onChange={(e) => setEmail(e.target.value)} required/>
-                        </div>
+                        
                         <div className="col-md-6">
                             <label htmlFor="inputPassword4" className="form-label">Password *</label>
                             <input type="password" className="form-control" id="inputPassword4" onChange={(e) => setPassword(e.target.value)} required/>
@@ -122,17 +122,17 @@ function SignUpPage() {
 
                         <div className="col-md-6">
                             <div className="form-check">
-                            <p className="fw-bold mb-1"> Opt in to SMS messages</p>
-                            <input className="form-check-input" type="checkbox" id="gridCheck" />
-                            <label className="form-check-label" htmlFor="gridCheck">
-                                
-                                By opting in you agree to receive notifications about news, updates, volunteer activities.
-                            </label>
+                                <p className="fw-bold mb-1"> Opt in to SMS messages</p>
+                                <input className="form-check-input" type="checkbox" id="gridCheck"/>
+                                <label className="form-check-label" htmlFor="gridCheck">
+                                    
+                                    By opting in you agree to receive notifications about news, updates, volunteer activities.
+                                </label>
                             </div>
                         </div>
 
 
-                        <div className="col-md-6">
+                        <div className="col-md-6" >
                             <label htmlFor="PhoneCarrier" className="form-label">Choose Your Phone Carrier</label>
                             <select className="form-select" aria-label="Choose phone carrier" defaultValue={"defaulted"}>
                                 <option value="defaulted">Choose phone carrier</option>

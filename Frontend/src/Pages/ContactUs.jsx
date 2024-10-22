@@ -52,14 +52,28 @@ function ContactUs() {
             phone,
             message,
         };
+        
         try {
-            const response = await axios.post('http://localhost:8080/api/sendMessage', formData);
-            if (response.status === 200) {
-                alert('Message sent successfully!');
+            const response = await fetch('http://localhost:8080/api/contact/sendMessage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // Set the content type to JSON
+                },
+                body: JSON.stringify(formData), // Convert formData to JSON string, 
+            });
+    
+            if (!response.ok) {
+                throw new Error('Network error');
             }
+    
+            const responseData = await response.json();
+            console.log('Message sent successfully:', responseData);
+            alert('Message sent successfully!');
         } catch (error) {
+            console.error('Error sending message:', error);
             alert('There was an error sending the message.');
         }
+        
 
         // Clear form after submission
         setName('');
