@@ -14,7 +14,7 @@ import SignUpPage from './Pages/SignUpPage';
 import AdminDashboard from './Pages/AdminDashboard';
 import VolunteerList from './Pages/VolunteerList';
 import AdminEventList from './Pages/AdminEventList';
-import ForgotPassword from './Pages/ForgotPassword';
+
 
 import Navigation from './Components/Navigation'
 import Login from './Components/LogIn'
@@ -77,7 +77,7 @@ function App() {
                 <Route path="myPortal"  element={<MyPortal setIsLoggedIn={setIsLoggedIn} />}  />
                 <Route path="contactUs" element={<ContactUs />} />
                 <Route path="/signUp" element={<SignUpPage />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
+               
                 <Route path="*" element={<ErrorPage />} />
                 
               </Route>

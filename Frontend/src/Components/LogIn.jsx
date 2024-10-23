@@ -1,5 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import ForgotPassword from './ForgotPassword';
+import Modal from 'react-modal';
+
+import Logo from '../assets/HBPR-logo.png'
+
+Modal.setAppElement('#root');
 
 function LogIn({ setIsLoggedIn, closeModal }) {
 //add const for email and password
@@ -7,7 +13,11 @@ function LogIn({ setIsLoggedIn, closeModal }) {
     const[password, setPassword] = useState('');
     const[error, setError] = useState('');
     const navigate = useNavigate();
-    
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+
+
+    const handleClose = () => setShowModal(false);
    
     const handleLogin = async () => {
         if(username && password){
@@ -42,8 +52,13 @@ function LogIn({ setIsLoggedIn, closeModal }) {
       };
 
 
-      const handleForgotPassword = () => {
-        navigate('/forgot-password'); // Navigates to the "Forgot Password" page
+    const handleForgotPassword = () => {
+        
+        setModalIsOpen(true);// Open the "Forgot Password" modal
+    };
+    
+    const closeForgotPasswordModal = () => {
+        setModalIsOpen(false);
     };
 
     return (
@@ -80,7 +95,8 @@ function LogIn({ setIsLoggedIn, closeModal }) {
                             Forgot Password?
                         </button>
                     </div>
-                
+
+                    
                     
                        
                     {/*
@@ -94,6 +110,28 @@ function LogIn({ setIsLoggedIn, closeModal }) {
                     */}    
                  
                 </form>
+                {/* Forgot password Modal */}
+                <div className={`modal fade ${modalIsOpen ? 'show d-block' : ''}`} tabIndex="-1" style={{ display: modalIsOpen ? 'block' : 'none' }} role="dialog">
+                    <div className="modal-dialog modal-dialog-centered" role="document">
+                        <div className="modal-content rounded-4 shadow">
+                        <img src={Logo} className="img-fluid w-100 h-100  rounded-top-4 " alt="HBPR-logo" loading="lazy" />
+                            <div className="modal-header p-5 pb-4 border-bottom-0">
+                                
+                                <h2 className="fw-bold">Forgot password</h2>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"  onClick={closeForgotPasswordModal}></button>
+                            
+                            </div>
+                            <div className="modal-body p-5 pt-0 mb-4">
+                                {/* Pass closeModal and setIsLoggedIn to the Login component */}
+                                <ForgotPassword />
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+                {showModal && <div className="modal-backdrop fade show"></div>}
       </>
           
     
