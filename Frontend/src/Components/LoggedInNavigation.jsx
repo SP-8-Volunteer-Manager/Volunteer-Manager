@@ -18,9 +18,7 @@ function LoggedInNavigation({ onLogout }) {
                             <li className="nav-item">
                                 <NavLink  className="nav-link rounded-0" aria-current="page" to="/">Dashboard</NavLink >
                             </li>
-                            <li className="nav-item">
-                                <NavLink  className="nav-link rounded-0" to="/aboutUs">My Profile</NavLink >
-                            </li>
+                          
                             <li className="nav-item">
                                 <NavLink  className="nav-link rounded-0" to="volunteerList">Volunteers List</NavLink >
                             </li>
