@@ -123,10 +123,10 @@ function SignUpPage() {
                         <div className="col-md-6">
                             <div className="form-check">
                                 <p className="fw-bold mb-1"> Opt in to SMS messages</p>
-                                <input className="form-check-input" type="checkbox" id="gridCheck"/>
-                                <label className="form-check-label" htmlFor="gridCheck">
+                                <input className="form-check-input" type="checkbox" id="SMScheck"/>
+                                <label className="form-check-label" htmlFor="SMScheck">
                                     
-                                    By opting in you agree to receive notifications about news, updates, volunteer activities.
+                                    By opting in you agree to receive SMS notifications about news, updates, volunteer activities.
                                 </label>
                             </div>
                         </div>
@@ -143,6 +143,17 @@ function SignUpPage() {
                                 <option value="Sprint">Sprint</option>
                                
                             </select>
+                        </div>
+
+                        <div className="col-md-6">
+                            <div className="form-check">
+                                <p className="fw-bold mb-1"> Opt in to email notifications</p>
+                                <input className="form-check-input" type="checkbox" id="emailCheck"/>
+                                <label className="form-check-label" htmlFor="emailCheck">
+                                    
+                                    By opting in you agree to receive email notifications about news, updates, volunteer activities.
+                                </label>
+                            </div>
                         </div>
                     
                         </div>

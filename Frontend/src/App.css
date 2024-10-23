@@ -54,7 +54,7 @@ body{
   width: 8px; /* Size of the dot in the calendar */
   height: 8px;
   border-radius: 50%;
-  background-color: greenyellow;
+  background-color: #7ae884;
   margin: 0 2px; /*  margin between dots */
 }
 
