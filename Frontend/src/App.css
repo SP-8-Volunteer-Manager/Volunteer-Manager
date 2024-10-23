@@ -94,3 +94,13 @@ body{
 .read-the-docs {
   color: #888;
 }
+
+.error {
+  color: red;
+  font-size: 1rem;
+  margin-top: 0.3rem;
+}
+
+.input-error {
+  border-color: red;
+}
