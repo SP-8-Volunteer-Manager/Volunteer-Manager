@@ -10,9 +10,14 @@ import cat from '../assets/cat.png'
 
 function Home({ setIsLoggedIn }) {
     const [showModal, setShowModal] = useState(false);
+    const [resetForm, setResetForm] = useState(false);
 
     const handleShow = () => setShowModal(true);
-    const handleClose = () => setShowModal(false);
+    const handleClose = () => {
+        setShowModal(false);
+        setResetForm(true);
+    }
+    
     
     const navigate = useNavigate();
 
@@ -93,7 +98,7 @@ function Home({ setIsLoggedIn }) {
                         </div>
                         <div className="modal-body p-5 pt-0 mb-4">
                              {/* Pass closeModal and setIsLoggedIn to the Login component */}
-                            <Login setIsLoggedIn={setIsLoggedIn} closeModal={handleClose}/>
+                            <Login setIsLoggedIn={setIsLoggedIn} closeModal={handleClose} reset={resetForm} onResetDone={() => setResetForm(false)}/>
                         </div>
                         
                         
