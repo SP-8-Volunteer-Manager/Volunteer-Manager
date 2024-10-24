@@ -25,7 +25,10 @@ const getUpcomingEvents = async (req, res) => {
         next7Days.setDate(today.getDate() + 7);
         const { data, error } = await pool
             .from("task") 
-            .select('*')
+            .select(`
+                *,
+                assignment(volunteer(first_name, last_name))
+            `)
             .gte('start_date', today.toISOString())
             .lte('start_date', next7Days.toISOString());  
 
