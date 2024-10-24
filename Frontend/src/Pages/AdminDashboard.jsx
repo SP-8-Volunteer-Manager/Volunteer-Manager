@@ -61,7 +61,7 @@ function AdminDashboard() {
                     ) : (
                         UpcomingEvents.map((event) => (
                         <tr key={event.id}>
-                            <td>{event.name}</td>
+                            <td>{event.task_event}</td>
                             <td>{event.description}</td>
                             <td>{event.date}</td>
                             <td>{event.time}</td>

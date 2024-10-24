@@ -20,7 +20,7 @@ const getEventLists = async (req, res) => {
 const getUpcomingEvents = async (req, res) => {
     try {
         const { data, error } = await pool
-            .from("UpComingEvents") 
+            .from("upcomingevents") 
             .select('*');
 
         if (error) {
