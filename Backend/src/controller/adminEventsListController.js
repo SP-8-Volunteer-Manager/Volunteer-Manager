@@ -19,9 +19,15 @@ const getEventLists = async (req, res) => {
 
 const getUpcomingEvents = async (req, res) => {
     try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); 
+        const next7Days = new Date();
+        next7Days.setDate(today.getDate() + 7);
         const { data, error } = await pool
-            .from("upcomingevents") 
-            .select('*');
+            .from("task") 
+            .select('*')
+            .gte('start_date', today.toISOString())
+            .lte('start_date', next7Days.toISOString());  
 
         if (error) {
             throw error;
