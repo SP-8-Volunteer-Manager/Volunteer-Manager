@@ -19,6 +19,7 @@ function AdminDashboard() {
             }
         };
         fetchEvents();
+        console.log(UpcomingEvents);
     }
     , []); // empty dependency array to run only once
             
@@ -53,21 +54,33 @@ function AdminDashboard() {
                     </tr>
                 </thead>
                 <tbody>
+                    
                     {/* Display the event list */}
                     {UpcomingEvents.length ==0 ? (
                         <tr>
                             <td colSpan="5">No upcoming events</td>
                         </tr>
                     ) : (
-                        UpcomingEvents.map((event) => (
-                        <tr key={event.id}>
-                            <td>{event.task_event}</td>
-                            <td>{event.description}</td>
-                            <td>{event.date}</td>
-                            <td>{event.time}</td>
-                            <td>{event.volunteer}</td>
-                        </tr>
-                    ))
+                        UpcomingEvents.map((event) => {
+                            // Determine if the volunteer is assigned
+                            const volunteerAssigned = event.assignment && event.assignment.length > 0;
+                            return(
+                            <tr key={event.id} >
+                                <td>{event.name}</td>
+                                <td>{event.description}</td>
+                                <td>{event.start_date}</td>
+                                <td>{event.start_time}</td>
+                                <td>
+                                    {volunteerAssigned
+                                    ? `${event.assignment[0].volunteer.first_name} ${event.assignment[0].volunteer.last_name}`
+                                    :   <span style={{ color: 'red', fontWeight: 'bold' }}>
+                                        No volunteer assigned
+                                        </span>
+                                    }
+                                </td>
+                            </tr>
+                        );
+                    })
                 )}
                     
                     
