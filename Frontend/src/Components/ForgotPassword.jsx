@@ -19,22 +19,37 @@ function ForgotPassword({modalIsOpen, closeForgotPasswordModal}) {
         }
     }, [modalIsOpen]);
 
-    const handlePasswordReset = () => {
-        if(email){
-            //simulation of triggering an API call to send a password reset email
-            
-            resetForm();
-            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-            if (forgotPasswordForm) {
-                forgotPasswordForm.style.display = 'none'; // Hide input field
+   
+
+    const handlePasswordReset = async () => {
+        if (email) {
+            try {
+                // Triggering Supabase API call to send a password reset email
+                const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+    
+                if (error) {
+                    setError('Failed to send reset email. Please try again.');
+                    setMessage(''); // Clear the success message if there's an error
+                } else {
+                    // Reset form and hide the input field
+                    resetForm();
+                    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+                    if (forgotPasswordForm) {
+                        forgotPasswordForm.style.display = 'none'; // Hide input field
+                    }
+                    setMessage('If the email is registered, a password reset link has been sent.');
+                    setError(''); // Clear any previous errors
+                }
+            } catch (error) {
+                console.error('Error sending password reset email:', error);
+                setError('An unexpected error occurred.');
+                setMessage(''); // Clear the success message if there's an error
             }
-            setMessage('If the email is registered, a password reset link has been sent.');
         } else {
             setError('Please enter an email');
             setMessage(''); // Clear the success message if there's an error
         }
     };
-
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
         setError('');
