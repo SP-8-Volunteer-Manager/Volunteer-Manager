@@ -1,8 +1,27 @@
 import MyCalendar from "../Components/MyCalendar";
-
+import React, {useEffect, useState} from 'react';
 
 function AdminDashboard() {
+    const [UpcomingEvents, setUpEvents] = useState([]);
     
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try{
+                const response = await fetch('http://localhost:8080/api/admin/upcomingevents');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log(data);
+                setUpEvents(data);
+            } catch (error) {
+                console.error(`Error: ${error}`);
+            }
+        };
+        fetchEvents();
+    }
+    , []); // empty dependency array to run only once
+            
 
 
     return (
@@ -34,20 +53,23 @@ function AdminDashboard() {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                    <th scope="row"></th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    </tr>
-                    <tr>
-                    <th scope="row"></th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    </tr>
+                    {/* Display the event list */}
+                    {UpcomingEvents.length ==0 ? (
+                        <tr>
+                            <td colSpan="5">No upcoming events</td>
+                        </tr>
+                    ) : (
+                        UpcomingEvents.map((event) => (
+                        <tr key={event.id}>
+                            <td>{event.name}</td>
+                            <td>{event.description}</td>
+                            <td>{event.date}</td>
+                            <td>{event.time}</td>
+                            <td>{event.volunteer}</td>
+                        </tr>
+                    ))
+                )}
+                    
                     
                 </tbody>
                 </table>
