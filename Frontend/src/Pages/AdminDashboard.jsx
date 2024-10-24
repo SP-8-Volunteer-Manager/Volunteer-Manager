@@ -63,8 +63,8 @@ function AdminDashboard() {
                         <tr key={event.id}>
                             <td>{event.task_event}</td>
                             <td>{event.description}</td>
-                            <td>{event.date}</td>
-                            <td>{event.time}</td>
+                            <td>{event.start_date}</td>
+                            <td>{event.start_time}</td>
                             <td>{event.volunteer}</td>
                         </tr>
                     ))
