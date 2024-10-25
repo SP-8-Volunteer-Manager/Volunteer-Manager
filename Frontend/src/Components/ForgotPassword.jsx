@@ -25,10 +25,18 @@ function ForgotPassword({modalIsOpen, closeForgotPasswordModal}) {
         if (email) {
             try {
                 // Triggering Supabase API call to send a password reset email
-                const { data, error } = await supabase.auth.resetPasswordForEmail(email);
+                const response = await fetch('http://localhost:8080/api/auth/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+
+                const result = await response.json();
     
-                if (error) {
-                    setError('Failed to send reset email. Please try again.');
+                if (!response.ok) {
+                    setError('Failed to send reset email. Please try again.', result.error);
                     setMessage(''); // Clear the success message if there's an error
                 } else {
                     // Reset form and hide the input field
@@ -37,7 +45,7 @@ function ForgotPassword({modalIsOpen, closeForgotPasswordModal}) {
                     if (forgotPasswordForm) {
                         forgotPasswordForm.style.display = 'none'; // Hide input field
                     }
-                    setMessage('If the email is registered, a password reset link has been sent.');
+                    setMessage('If the email is registered, a password reset link has been sent.', result.message);
                     setError(''); // Clear any previous errors
                 }
             } catch (error) {

@@ -9,8 +9,8 @@ const app = express();
 const authRoutes = require('./routes/authRoutes');
 const VolunteerRoutes = require('./routes/volunteerRoutes');
 const contactRoutes = require('./routes/contactRoutes');
-
 const adminEventsListRoutes = require('./routes/adminEventsListRoutes'); 
+
 const corsOption = {
     origin: ["http://localhost:5173"],
 };
@@ -18,12 +18,12 @@ const corsOption = {
 
 app.use(cors(corsOption));
 app.use(express.json());
+
 app.use('/api/auth', authRoutes);
-
-
 app.use('/api/admin', adminEventsListRoutes);
 app.use('/api/admin', VolunteerRoutes);
 app.use('/api/contact', contactRoutes);
+
 
 
 // Simple route to check if the server is running
