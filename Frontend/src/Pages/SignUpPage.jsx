@@ -1,22 +1,42 @@
 import React, { useState, useEffect } from "react";
 import StateDropdown from '../Components/StateDropdown';
 import CarrierDropdown from "../Components/CarrierDropdown";
+import ShiftCheckbox from "../Components/ShiftCheckbox";
+//import { checkuserexists } from "../../../Backend/src/controller/authController";
 
 
 function SignUpPage() {
 
-    const[username, setUsername] = useState('');
+    const[usercheckerror, setUserCheckError] = useState('');
     const[password, setPassword] = useState('');
-    const[error, setError] = useState('');
+    const[usermsg, setUserMsg] = useState('');
     const[email, setEmail] = useState('');
 
-    const intialValues = { username: "", password: "", confirmPassword: "", email: "", firstName: "", lastName: "", inputName: "", address: ""};
+    const intialValues = { username: "", password: "", confirmPassword: "", email: "", firstName: "", lastName: "", inputName: "", address: "", city: "", state: "", zip: "",
+         phoneNumber: "", carrier: "", receivesms: false, receiveemail: false, smalldog: false, bigdog: false, cat: false, onetimeevent: false,
+         MondayAM : false, 
+         TuesdayAM : false,  
+         WednesdayAM : false,  
+         ThursdayAM : false,  
+         FridayAM : false,  
+         SaturdayAM : false,  
+         SundayAM : false,  
+         MondayPM : false,  
+         TuesdayPM : false,  
+         WednesdayPM : false,  
+         ThursdayPM : false,  
+         FridayPM : false,  
+         SaturdayPM : false,  
+         SundayPM : false
+    };
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const submit = () => {
-        console.log(formValues);
+        //console.log(formValues);
+        setUserMsg("");
+        handleSignup();
       };
     
       //input change handler
@@ -24,10 +44,36 @@ function SignUpPage() {
         const { name, value } = e.target;
         setFormValues({ ...formValues, [name]: value });
       };
+      const handleUserBlur = (e) => {
+        const { name, value } = e.target;
+       console.log("blur:" + value)
+       if (value != "")
+       {
+        handleUserCheck();
+       }
+      };
+
+      const handlePhone = (e) => {
+        const { name, value } = e.target;
+        let tempVal = value.replace(/[^0-9]/g, '');
+        setFormValues({ ...formValues, [name]: tempVal });
+      };
+
+      const dropdownChange = (e) => {
+        //console.log("Handle Change");
+        const { name, value } = e.target;
+        //console.log(name + " " +  value);
+        setFormValues({ ...formValues, [name]: value });
+      };
+
+      const checkboxChange = (e) => {
+        const { name, checked } = e.target;
+        setFormValues({ ...formValues, [name]: checked });
+        //console.log(name + " " +  checked);
+      };
     
       //form submission handler
       const handleSubmit = (e) => {
-        console.log(formValues);
         e.preventDefault();
         setFormErrors(validate(formValues));
         setIsSubmitting(true);
@@ -40,14 +86,24 @@ function SignUpPage() {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
     
         if (!values.email) {
-          errors.email = "Cannot be blank";
+          errors.email = "Email cannot be blank";
         } else if (!regex.test(values.email)) {
           errors.email = "Invalid email format";
         }
         if (!values.username) {
             errors.username = "Username cannot be blank";
-          }
+        }
+        if (usercheckerror != "")
+        {
+            errors.username = usercheckerror;
+        }
 
+        // if (values.username) {
+        //     console.log('user check')
+        //    const p =  checkUserExists(values.username)
+        //    p.then()
+        //    console.log(dta);
+        // }
           if (!values.firstName) {
             errors.firstName = "First Name cannot be blank";
           }
@@ -60,18 +116,44 @@ function SignUpPage() {
             errors.inputName = "Please sign your name!";
           }
 
+        //   console.log(values.phoneNumber.length);
+        //   console.log(values.phoneNumber);
+          if(values.phoneNumber) // phone exists
+          {
+            if(values.phoneNumber.length != 10)
+            {
+                errors.phoneNumber = "Must be exactly 10 digits"
+            }
+          }  // no phone number
+          else if (values.receivesms === true)
+            {
+                errors.phoneNumber = "Phone number required for sms notifications";
+            }
+
+        if (values.receivesms === true)
+        {
+        console.log(values.carrier);
+            if (!values.carrier)
+            {
+                errors.carrier = "Please choose a phone carrier";
+            }
+        }
+
+
         if (!values.password) {
           errors.password = "Password cannot be blank";
-        } else if (values.password.length < 8) {
-          errors.password = "Password must be 8 characters or more";
-        }
+        } 
+        // else if (values.password.length < 8) {
+        //   errors.password = "Password must be 8 characters or more";
+        // }
         
+
 
           if(!values.confirmPassword)
             errors.confirmPassword = "Confirm Password cannot be blank";
-          else if (values.confirmPassword.length < 8) {
-            errors.confirmPassword = "Confirm Password must be 8 characters or more";
-          }
+        //   else if (values.confirmPassword.length < 8) {
+        //     errors.confirmPassword = "Confirm Password must be 8 characters or more";
+        //   }
 
             if (values.password && values.confirmPassword)
             {
@@ -79,48 +161,162 @@ function SignUpPage() {
                     errors.confirmPassword = "Confirm password mismatch";
             }
 
+            if(values.receivesms === false && values.receiveemail === false)
+            {
+                errors.receiveemail = "Choose at least one of email or sms";
+                errors.receivesms = "Choose at least one of email or sms";
+            }
+
+            if (values.smalldog === false && values.bigdog === false && values.cat === false && values.onetimeevent === false)
+            {
+                errors.onetimeevent = "Task preference is required";
+            }
+
+            //zip must be numeric and 5
+            if (values.zip)
+            {
+                if(values.zip.length != 5)
+                {
+                    errors.zip = "Zip code must be 5 digits";
+                }
+            }
+
+            if ( // am shift
+                values.MondayAM === false && 
+                values.TuesdayAM === false && 
+                values.WednesdayAM === false && 
+                values.ThursdayAM === false && 
+                values.FridayAM === false && 
+                values.SaturdayAM === false && 
+                values.SundayAM === false && 
+                // pm shift
+                values.MondayPM === false && 
+                values.TuesdayPM === false && 
+                values.WednesdayPM === false && 
+                values.ThursdayPM === false && 
+                values.FridayPM === false && 
+                values.SaturdayPM === false && 
+                values.SundayPM === false
+                ) {
+                    errors.SundayPM = "Shift preference is required";
+            }
+            
+            if(errors)
+            {
+                setUserMsg("Please fix errors and resubmit");
+            }
+
         return errors;
       };
     
       useEffect(() => {
         if (Object.keys(formErrors).length === 0 && isSubmitting) {
+            console.log("use effect submit")
           submit();
         }
       }, [formErrors]);
-    
+    function makeFormData() {
+        var shiftData =[]
+        if (formValues.MondayAM == true) shiftData.push({day:'Monday', time:'AM'});
+        if (formValues.TuesdayAM == true) shiftData.push({day:'Tuesday', time:'AM'});
+        if (formValues.WednesdayAM == true) shiftData.push({day:'Wednesday', time:'AM'});
+        if (formValues.ThursdayAM == true) shiftData.push({day:'Thursday', time:'AM'});
+        if (formValues.FridayAM == true) shiftData.push({day:'Friday', time:'AM'});
+        if (formValues.SaturdayAM == true) shiftData.push({day:'Saturday', time:'AM'});
+        if (formValues.SundayAM == true) shiftData.push({day:'Sunday', time:'AM'});
+
+        if (formValues.MondayPM == true) shiftData.push({day:'Monday', time:'PM'});
+        if (formValues.TuesdayPM == true) shiftData.push({day:'Tuesday', time:'PM'});
+        if (formValues.WednesdayPM == true) shiftData.push({day:'Wednesday', time:'PM'});
+        if (formValues.ThursdayPM == true) shiftData.push({day:'Thursday', time:'PM'});
+        if (formValues.FridayPM == true) shiftData.push({day:'Friday', time:'PM'});
+        if (formValues.SaturdayPM == true) shiftData.push({day:'Saturday', time:'PM'});
+        if (formValues.SundayPM == true) shiftData.push({day:'Sunday', time:'PM'});
+       
+       // console.log(shiftData);
+       var signupData = {
+            username:formValues.username,
+            password:formValues.password,
+            email:formValues.email,
+            firstName:formValues.firstName,
+            lastName:formValues.lastName,
+            address:formValues.address,
+            city:formValues.city,
+            state:formValues.state,
+            zip:formValues.zip,
+            phoneNumber:formValues.phoneNumber,
+            carrier:formValues.carrier,
+            receivesms:formValues.receivesms,
+            receiveemail:formValues.receiveemail,
+            smalldog:formValues.smalldog,
+            bigdog:formValues.bigdog,
+            cat:formValues.cat,
+            onetimeevent:formValues.onetimeevent,
+            shiftpref:shiftData};
+           // console.log(signupData)
+        return signupData;
+    }
+       // username: "", password: "", confirmPassword: "", email: "", firstName: "", lastName: "", inputName: "", address: "", city: "", state: "", zip: "",
+       //  phoneNumber: "", carrier: "", receivesms: false, receiveemail: false, smalldog: false, bigdog: false, cat: false, onetimeevent: false,
     const handleSignup = async () => {
-        //if(username && password){
             try{
-                console.log(JSON.stringify({username, password, email}));
+                const signupData = makeFormData();
+                console.log(JSON.stringify(signupData));
+                //console.log(JSON.stringify(formValues));
                 const response = await fetch('http://localhost:8080/api/auth/signup', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({username, password, email}),
+                    body: JSON.stringify(signupData),
                 });
-                
-                console.log('-----response-----');
-                console.log(response);
-                setError(response.status)
-                if (!response.ok) {
-                    if(response.status === 401){
-                        setError('Invalid username or password');
-                    }
-                    if (response.status === 400)
+                const result = await response.json();
+
+                if (response.ok) {
+                    if (result.error == "Y")
                     {
-                        setError("This username already exists");
+                        console.log(result.message);
+                        setUserMsg(result.message);
                     }
-                    return;
+
+                    if (result.error == "N")
+                        {
+                            console.log(result.message);
+                            setUserMsg(result.message);
+                        }
                 }
-                setError("User Created")
-            } catch(error){
-                setError(error.message);
             }
-        //}else{
-            //setError('Please enter username and password');
-        //}
+             catch(error){
+                throw error;
+            }
     };
+
+    const handleUserCheck = async () => {
+        console.log("Entering handle user check")
+        try{
+            setUserCheckError('');
+            const response = await fetch('http://localhost:8080/api/auth/checkuserexists', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({username: formValues.username}),
+            });
+            const result = await response.json();
+            console.log(result);
+            if (response.ok) {
+                if (result.error == "Y")
+                {
+                    console.log(result.message);
+                    setUserCheckError(result.message)
+                    console.log("Error Set Hook: " + usercheckerror);
+                }
+            }
+        }
+         catch(error){
+            setUserCheckError("Unexpected error user check");
+        }
+};
 
     return (
 
@@ -172,20 +368,27 @@ function SignUpPage() {
                         </div>
                         <div className="col-md-6">
                             <label htmlFor="inputCity" className="form-label">City</label>
-                            <input type="text" className="form-control" id="inputCity" />
+                            <input type="text" name="city" className="form-control" id="inputCity" onChange={handleChange}/>
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="inputState" className="form-label">State</label>
-                            <StateDropdown />
+                            <StateDropdown dropdownChange={dropdownChange}/>
                         </div>
                         <div className="col-md-2">
                             <label htmlFor="inputZip" className="form-label">Zip</label>
-                            <input type="text" className="form-control" id="inputZip" />
+                            <input type="text" name="zip" className="form-control" id="inputZip" onChange={handleChange}/>
+                            {formErrors.zip && (
+                            <span className="error">{formErrors.zip}</span>
+                            )}
                         </div>
                         <div className="col-md-6">
                             <label htmlFor="inputPhoneNumber" className="form-label">Phone Number</label>
-                            <input type="tel" className="form-control" id="inputPhoneNumber" placeholder="(000) 000-0000" />
+                            <input type="tel" name="phoneNumber" className="form-control" id="inputPhoneNumber" placeholder="Enter 10 digit phone number" onChange={handlePhone}/>
+                            {formErrors.phoneNumber && (
+                            <span className="error">{formErrors.phoneNumber}</span>
+                            )}
                         </div>
+                        
                         <div className="col-md-6">
                             <label htmlFor="inputEmail4" className="form-label">Email *</label>
                             <input type="email"
@@ -208,9 +411,10 @@ function SignUpPage() {
                                     value={formValues.username} 
                                     className="form-control"
                                     id="inputUsername" 
+                                    onBlur={handleUserBlur}
                                     onChange={handleChange} />
-                            {formErrors.username && (
-                            <span className="error">{formErrors.username}</span>
+                            {usercheckerror !='' && (
+                            <span className="error">{usercheckerror}</span>
                             )}
                         </div>
                         <div className="col-md-6">
@@ -240,133 +444,120 @@ function SignUpPage() {
 
                         <hr className="mt-5"/>
                         
-                        <div className="col-md-12 mb-4">
+                        {/* 1. Why do we need these below
+                        2. There's no place to store it */}
+
+                        {/* <div className="col-md-12 mb-4">
                             
                             <p className="fw-bold mb-1"> Prefered communication method</p>
                             <div className="form-check">
-                                <input className="form-check-input" type="checkbox" id="checkSMS" />
+                                <input className="form-check-input" type="checkbox" id="checkSMS"/>
                                 <label className="form-check-label" htmlFor="checkSMS">SMS notifications</label>
                             </div>
                             <div className="form-check">
-                                <input className="form-check-input" type="checkbox" id="checkEmail" />
+                                <input className="form-check-input" type="checkbox" id="checkEmail" 
+                                name="receiveemail"
+                                value={formValues.receiveemail}
+                                onChange={checkboxChange}/>
                                 <label className="form-check-label" htmlFor="checkEmail">Email notifications</label>
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="col-md-6">
                             <div className="form-check">
                                 <p className="fw-bold mb-1"> Opt in to SMS messages</p>
-                                <input className="form-check-input" type="checkbox" id="SMScheck"/>
+                                <input className="form-check-input" type="checkbox" id="SMScheck" 
+                                name="receivesms" 
+                                value={formValues.receivesms} 
+                                onChange={checkboxChange}/>
                                 <label className="form-check-label" htmlFor="SMScheck">
-                                    
                                     By opting in you agree to receive SMS notifications about news, updates, volunteer activities.
                                 </label>
+                                {formErrors.receivesms && (
+                            <span className="error">{formErrors.receivesms}</span>
+                            )}
                             </div>
                         </div>
 
 
                         <div className="col-md-6" >
                             <label htmlFor="PhoneCarrier" className="form-label">Choose Your Phone Carrier</label>
-                            <CarrierDropdown></CarrierDropdown>
+                            <CarrierDropdown dropdownChange={dropdownChange}/>
+                            {formErrors.carrier && (
+                            <span className="error">{formErrors.carrier}</span>
+                            )}
                         </div>
 
                         <div className="col-md-6">
                             <div className="form-check">
                                 <p className="fw-bold mb-1"> Opt in to email notifications</p>
-                                <input className="form-check-input" type="checkbox" id="emailCheck"/>
+                                <input className="form-check-input" type="checkbox" id="emailCheck"
+                                name="receiveemail"
+                                value={formValues.receiveemail}
+                                onChange={checkboxChange}/>
                                 <label className="form-check-label" htmlFor="emailCheck">
-                                    
                                     By opting in you agree to receive email notifications about news, updates, volunteer activities.
                                 </label>
+                                {formErrors.receiveemail && (
+                            <span className="error">{formErrors.receiveemail}</span>
+                            )}
                             </div>
                         </div>
                     
                         </div>
-                    
                         <hr className="mt-5"/>
+
 
                         <p className="fw-bold my-3">Date/Time Preference:</p>
                         <p className="fw-bold my-3">Morning</p>
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="MondayAM" value="MondayAM" />
-                            <label className="form-check-label" htmlFor="MondayAM">Monday</label>
-                        </div>
-                            <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="TuesdayAM" value="TuesdayAM" />
-                            <label className="form-check-label" htmlFor="TuesdayAM">Tuesday</label>
-                        </div>
-                            <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="WednesdayAM" value="WednesdayAM" />
-                            <label className="form-check-label" htmlFor="WednesdayAM">Wednesday</label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="ThursdayAM" value="ThursdayAM" />
-                            <label className="form-check-label" htmlFor="ThursdayAM">Thursday</label>
-                        </div>
-                            <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="FridayAM" value="FridayAM" />
-                            <label className="form-check-label" htmlFor="FridayAM">Friday</label>
-                        </div>
-                            <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="SaturdayAM" value="SaturdayAM" />
-                            <label className="form-check-label" htmlFor="SaturdayAM">Saturday</label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="inlineCheckbox7" value="SundayAM" />
-                            <label className="form-check-label" htmlFor="SundayAM">Sunday</label>
-                        </div>
+                        <ShiftCheckbox day="Monday" time="AM" checkboxChange={checkboxChange}/>
+                        <ShiftCheckbox day="Tuesday" time="AM" checkboxChange={checkboxChange}/>
+                        <ShiftCheckbox day="Wednesday" time="AM" checkboxChange={checkboxChange}/>
+                        <ShiftCheckbox day="Thursday" time="AM" checkboxChange={checkboxChange}/>
+                        <ShiftCheckbox day="Friday" time="AM" checkboxChange={checkboxChange}/>
+                        <ShiftCheckbox day="Saturday" time="AM" checkboxChange={checkboxChange}/>
+                        <ShiftCheckbox day="Sunday" time="AM" checkboxChange={checkboxChange}/>
+                        
                             
                         <p className="fw-bold my-3">Afternoon</p>
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="MondayPM" value="MondayPM" />
-                            <label className="form-check-label" htmlFor="MondayPM">Monday</label>
-                        </div>
-                            <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="TuesdayPM" value="TuesdayPM" />
-                            <label className="form-check-label" htmlFor="TuesdayPM">Tuesday</label>
-                        </div>
-                            <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="WednesdayPM" value="WednesdayPM" />
-                            <label className="form-check-label" htmlFor="WednesdayPM">Wednesday</label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="ThursdayPM" value="ThursdayPM" />
-                            <label className="form-check-label" htmlFor="ThursdayPM">Thursday</label>
-                        </div>
-                            <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="FridayPM" value="FridayPM" />
-                            <label className="form-check-label" htmlFor="FridayPM">Friday</label>
-                        </div>
-                            <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="SaturdayPM" value="SaturdayPM" />
-                            <label className="form-check-label" htmlFor="SaturdayPM">Saturday</label>
-                        </div>  
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="inlineCheckbox14" value="SundayPM" />
-                            <label className="form-check-label" htmlFor="SundayPM">Sunday</label>
-                        </div>
+                        <ShiftCheckbox day="Monday" time="PM" checkboxChange={checkboxChange}/>
+                        <ShiftCheckbox day="Tuesday" time="PM" checkboxChange={checkboxChange}/>
+                        <ShiftCheckbox day="Wednesday" time="PM" checkboxChange={checkboxChange}/>
+                        <ShiftCheckbox day="Thursday" time="PM" checkboxChange={checkboxChange}/>
+                        <ShiftCheckbox day="Friday" time="PM" checkboxChange={checkboxChange}/>
+                        <ShiftCheckbox day="Saturday" time="PM" checkboxChange={checkboxChange}/>
+                        <ShiftCheckbox day="Sunday" time="PM" checkboxChange={checkboxChange}/>
+                        {formErrors.SundayPM && (
+                            <span className="error">{formErrors.SundayPM}</span>
+                            )}
 
                         <hr className="mt-5"/>
 
                         <p className="fw-bold my-3">Task Preference:</p>
                     
                         <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="smallDog" value="smallDog" />
+                            <input className="form-check-input" type="checkbox" id="smallDog" name="smalldog" value={formValues.smalldog} 
+                                onChange={checkboxChange}/>
                             <label className="form-check-label" htmlFor="smallDog">Small Dogs</label>
                         </div>
                             <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="bigDog" value="bigDog" />
+                            <input className="form-check-input" type="checkbox" id="bigDog" name="bigdog" value={formValues.bigdog} 
+                                onChange={checkboxChange}/>
                             <label className="form-check-label" htmlFor="bigDog">Big Dogs</label>
                         </div>
                             <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="cat" value="cat" />
+                            <input className="form-check-input" type="checkbox" id="cat" name="cat" value={formValues.cat} 
+                                onChange={checkboxChange}/>
                             <label className="form-check-label" htmlFor="cat">Cats</label>
                         </div>
                         <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="oneTimeEvent" value="oneTimeEvent" />
+                            <input className="form-check-input" type="checkbox" id="oneTimeEvent" name="onetimeevent" value={formValues.onetimeevent} 
+                                onChange={checkboxChange}/>
                             <label className="form-check-label" htmlFor="oneTimeEvent">One-time events</label>
                         </div>
-
+                        {formErrors.onetimeevent && (
+                            <span className="error">{formErrors.onetimeevent}</span>
+                            )}
                         <hr className="mt-5"/>
 
                         <div>
@@ -392,10 +583,10 @@ function SignUpPage() {
                             )}
                                 </div>
                             </div>
-                            {error}
                             <div className="col-12 my-3">
                                 <button type="submit" className="btn btn-primary">Sign Up</button>
                             </div>
+                            <span className="error">{usermsg}</span>
                         </div> 
                     </form>
                 </div>
