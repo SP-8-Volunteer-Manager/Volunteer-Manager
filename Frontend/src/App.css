@@ -71,6 +71,9 @@ body{
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+.not-assigned {
+  background-color: red !important;
+}
 
 @keyframes logo-spin {
   from {

@@ -19,6 +19,7 @@ function AdminDashboard() {
             }
         };
         fetchEvents();
+        console.log(UpcomingEvents);
     }
     , []); // empty dependency array to run only once
             
@@ -53,6 +54,7 @@ function AdminDashboard() {
                     </tr>
                 </thead>
                 <tbody>
+                    
                     {/* Display the event list */}
                     {UpcomingEvents.length ==0 ? (
                         <tr>
