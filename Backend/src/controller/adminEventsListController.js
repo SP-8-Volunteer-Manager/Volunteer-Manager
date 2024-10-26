@@ -5,7 +5,10 @@ const getEventLists = async (req, res) => {
     try {
         const { data, error } = await pool
             .from('task')
-            .select('*');
+            .select(`*,
+                assignment(volunteer(first_name, last_name)),
+                task_type(type_name)
+                `);
 
         if (error) {
             throw error;
