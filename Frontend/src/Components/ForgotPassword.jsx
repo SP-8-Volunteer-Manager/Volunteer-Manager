@@ -19,7 +19,12 @@ function ForgotPassword({modalIsOpen, closeForgotPasswordModal}) {
         }
     }, [modalIsOpen]);
 
-   
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
+        setError('');
+        
+    };
+
 
     const handlePasswordReset = async () => {
         if (email) {
@@ -34,19 +39,22 @@ function ForgotPassword({modalIsOpen, closeForgotPasswordModal}) {
                 });
 
                 const result = await response.json();
-    
-                if (!response.ok) {
-                    setError('Failed to send reset email. Please try again.', result.error);
+                console.log(response); // For debugging
+
+                if (!response.ok || result.error) {
+                    setError(result.error || 'Failed to send reset email. Please try again.');
                     setMessage(''); // Clear the success message if there's an error
                 } else {
                     // Reset form and hide the input field
-                    resetForm();
+                    
                     const forgotPasswordForm = document.getElementById('forgotPasswordForm');
                     if (forgotPasswordForm) {
                         forgotPasswordForm.style.display = 'none'; // Hide input field
                     }
-                    setMessage('If the email is registered, a password reset link has been sent.', result.message);
+                    resetForm();
+                    setMessage(result.message);
                     setError(''); // Clear any previous errors
+                   
                 }
             } catch (error) {
                 console.error('Error sending password reset email:', error);
@@ -58,12 +66,7 @@ function ForgotPassword({modalIsOpen, closeForgotPasswordModal}) {
             setMessage(''); // Clear the success message if there's an error
         }
     };
-    const handleEmailChange = (e) => {
-        setEmail(e.target.value);
-        setError('');
-        
-    };
-
+    
     
     return (
         <>

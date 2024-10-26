@@ -12,14 +12,14 @@ function AdminDashboard() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log(data);
+                
                 setUpEvents(data);
             } catch (error) {
                 console.error(`Error: ${error}`);
             }
         };
         fetchEvents();
-        console.log(UpcomingEvents);
+
     }
     , []); // empty dependency array to run only once
             

@@ -1,10 +1,14 @@
 import React, {useEffect, useState} from 'react';
+import VolunteerInfo from '../Components/VolunteerInfo';
+
 const VolunteerList=() => {
     const [volunteers, setVolunteers] = useState([]);
+    const [selectedVolunteer, setSelectedVolunteer] = useState(null); // Track selected volunteer
+    const [showModal, setShowModal] = useState(false); // Track modal visibility
 
     //Fetch the volunteer data from the backend
     useEffect(() => {
-        console.log('failed')
+       
         const fetchVolunteers = async () => {
             try{
                 const response = await fetch('http://localhost:8080/api/admin/volunteers/details');
@@ -12,7 +16,7 @@ const VolunteerList=() => {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log(data);
+            
                 setVolunteers(data);
             } catch (error) {
       
@@ -22,6 +26,17 @@ const VolunteerList=() => {
         fetchVolunteers();
     }, []);
 
+    // Open the modal and load selected volunteer data
+    const handleEditClick = (volunteer) => {
+        setSelectedVolunteer(volunteer);
+        setShowModal(true);
+    };
+
+    // Close modal and reset selected volunteer
+    const handleCloseModal = () => {
+        setSelectedVolunteer(null);
+        setShowModal(false);
+    };
 
     return (
         
@@ -50,13 +65,7 @@ const VolunteerList=() => {
                     <td></td>
                     <td></td>
                     </tr>
-                    <tr>
-                    <th scope="row"></th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    </tr>
+                    
                 </tbody>
                 </table>
 
@@ -73,7 +82,7 @@ const VolunteerList=() => {
                     <th scope="col">Email</th>
                     <th scope="col">Schedule Preferences</th>
                     <th scope="col">Task Preferences</th>
-                    <th scope="col">Edit</th>
+                    <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -89,7 +98,15 @@ const VolunteerList=() => {
                             <td>{volunteer.email}</td>
                             <td>{volunteer["Schedule Preferences"].join(', ')}</td>
                             <td>{volunteer["Task Preferences"].join(', ')}</td>
-                            <td><button type="button" className="btn btn-primary">Edit</button></td>
+                            <td>
+                                <button 
+                                    type="button" 
+                                    className="btn btn-primary"
+                                    onClick={() => handleEditClick(volunteer)}
+                                >
+                                    View Info
+                                </button>
+                            </td>
                         </tr>
                     ))
                 )}  
@@ -97,7 +114,12 @@ const VolunteerList=() => {
                 </table>
 
         </div>
-
+        {/* Render the VolunteerModal component */}
+        <VolunteerInfo
+                volunteer={selectedVolunteer}
+                show={showModal}
+                handleClose={handleCloseModal}
+            />
     </section>
    
         
