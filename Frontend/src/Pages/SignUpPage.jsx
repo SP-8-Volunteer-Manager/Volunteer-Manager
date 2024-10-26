@@ -14,6 +14,8 @@ function SignUpPage() {
 
     const intialValues = { username: "", password: "", confirmPassword: "", email: "", firstName: "", lastName: "", inputName: "", address: "", city: "", state: "", zip: "",
          phoneNumber: "", carrier: "", receivesms: false, receiveemail: false, smalldog: false, bigdog: false, cat: false, onetimeevent: false,
+         emailoptin: false,
+         smsoptin: false,
          MondayAM : false, 
          TuesdayAM : false,  
          WednesdayAM : false,  
@@ -69,7 +71,7 @@ function SignUpPage() {
       const checkboxChange = (e) => {
         const { name, checked } = e.target;
         setFormValues({ ...formValues, [name]: checked });
-        //console.log(name + " " +  checked);
+        console.log(name + " " +  checked);
       };
     
       //form submission handler
@@ -118,6 +120,7 @@ function SignUpPage() {
 
         //   console.log(values.phoneNumber.length);
         //   console.log(values.phoneNumber);
+        console.log("ReceiveSMS: " + values.receivesms)
           if(values.phoneNumber) // phone exists
           {
             if(values.phoneNumber.length != 10)
@@ -132,20 +135,48 @@ function SignUpPage() {
 
         if (values.receivesms === true)
         {
-        console.log(values.carrier);
             if (!values.carrier)
             {
                 errors.carrier = "Please choose a phone carrier";
             }
         }
 
+        if (values.receivesms === false && values.carrier)
+        {
+            errors.carrier = "Reset Carrier Dropdown to \'Select Carrier\'";
+        }
+
+        if (values.receiveemail === false && values.receivesms === false)
+        {
+            errors.receiveemail = "Select at least one";
+        }
+
+        if (values.receivesms === true && values.smsoptin === false)
+        {
+            errors.smsoptin = "SMS Opt-in required";
+        }
+
+        if (values.receiveemail === true && values.emailoptin === false)
+        {
+            errors.emailoptin = "Email Opt-in required";
+        }
+
+        if (values.receiveemail === false && values.emailoptin === true)
+        {
+            errors.emailoptin = "Uncheck email opt in";
+        }
+
+        if (values.receivesms === false && values.smsoptin === true)
+        {
+            errors.smsoptin = "Uncheck sms opt in";
+        }
 
         if (!values.password) {
           errors.password = "Password cannot be blank";
         } 
-        // else if (values.password.length < 8) {
-        //   errors.password = "Password must be 8 characters or more";
-        // }
+        else if (values.password.length < 6) {
+          errors.password = "Password must be 6 characters or more";
+        }
         
 
 
@@ -443,15 +474,15 @@ function SignUpPage() {
                         </div>
 
                         <hr className="mt-5"/>
-                        
-                        {/* 1. Why do we need these below
-                        2. There's no place to store it */}
 
-                        {/* <div className="col-md-12 mb-4">
+                         <div className="col-md-12 mb-4">
                             
                             <p className="fw-bold mb-1"> Prefered communication method</p>
                             <div className="form-check">
-                                <input className="form-check-input" type="checkbox" id="checkSMS"/>
+                                <input className="form-check-input" type="checkbox" id="checkSMS"
+                                name="receivesms" 
+                                value={formValues.receivesms} 
+                                onChange={checkboxChange}/>
                                 <label className="form-check-label" htmlFor="checkSMS">SMS notifications</label>
                             </div>
                             <div className="form-check">
@@ -461,20 +492,23 @@ function SignUpPage() {
                                 onChange={checkboxChange}/>
                                 <label className="form-check-label" htmlFor="checkEmail">Email notifications</label>
                             </div>
-                        </div> */}
+                            {formErrors.receiveemail && (
+                            <span className="error">{formErrors.receiveemail}</span>
+                            )}
+                        </div> 
 
                         <div className="col-md-6">
                             <div className="form-check">
                                 <p className="fw-bold mb-1"> Opt in to SMS messages</p>
                                 <input className="form-check-input" type="checkbox" id="SMScheck" 
-                                name="receivesms" 
-                                value={formValues.receivesms} 
+                                name="smsoptin" 
+                                value={formValues.smsoptin} 
                                 onChange={checkboxChange}/>
                                 <label className="form-check-label" htmlFor="SMScheck">
                                     By opting in you agree to receive SMS notifications about news, updates, volunteer activities.
                                 </label>
-                                {formErrors.receivesms && (
-                            <span className="error">{formErrors.receivesms}</span>
+                                {formErrors.smsoptin && (
+                            <span className="error">{formErrors.smsoptin}</span>
                             )}
                             </div>
                         </div>
@@ -492,14 +526,14 @@ function SignUpPage() {
                             <div className="form-check">
                                 <p className="fw-bold mb-1"> Opt in to email notifications</p>
                                 <input className="form-check-input" type="checkbox" id="emailCheck"
-                                name="receiveemail"
-                                value={formValues.receiveemail}
+                                name="emailoptin"
+                                value={formValues.emailoptin}
                                 onChange={checkboxChange}/>
                                 <label className="form-check-label" htmlFor="emailCheck">
                                     By opting in you agree to receive email notifications about news, updates, volunteer activities.
                                 </label>
-                                {formErrors.receiveemail && (
-                            <span className="error">{formErrors.receiveemail}</span>
+                                {formErrors.emailoptin && (
+                            <span className="error">{formErrors.emailoptin}</span>
                             )}
                             </div>
                         </div>

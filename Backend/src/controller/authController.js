@@ -193,6 +193,17 @@ console.log("Creating shift preferences")
           res.status(500).json({ message: 'Error inserting to task_pref table for one time task', error: serror.message });
           }
       }
+      // // supabase sign up user with Supabase.auth currently not working email address not authroized error
+      // const { data: authdata, error: autherror } = await supabase.auth.signUp({
+      //   email: email,
+      //   password: password,
+      // })
+      // console.log(autherror)
+      // if (autherror) {
+      //   res.status(500).json({ message: 'Supabase signup error', error: autherror.message });
+      //   return;
+      // }
+      // console.log(authdata)
 
       res.status(200).json({message: "Successfully signed up", error: "N"});
             
@@ -201,8 +212,6 @@ console.log("Creating shift preferences")
       console.log(error);
       res.status(500).json({ message: error.message});
     }
-    
-
   };
 
   //Login Function
