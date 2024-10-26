@@ -209,30 +209,34 @@ console.log("Creating shift preferences")
   const login = async (req, res) => {
     console.log('Received request:', req.body);
     const { username, password } = req.body;
-    
+
     try {
       // Retrieve the user by username
       const { data: user, error: fetchError } = await supabase
-        .from('User') 
+        .from('User')
         .select('username, password_hash')
         .eq('username', username)
         .single();
-  
+
       if (fetchError || !user) {
-        //return res.status(200).json({ error:"Y", message: 'Username already exists'});
-        return res.status(200).json({ message: 'Invalid email or password' });
-      }
-      // Compare the password with the hashed password stored in the database
-      const isMatch = await bcrypt.compare(password, user.password_hash);
-      console.log("Ismatch Value: " + isMatch);
-      if (!isMatch) {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
-    
-      // if (password !== user.password_hash) {
-      //   return res.status(401).json({ message: 'Invalid email or password' });
-      // }
-      res.status(200).json({ message: 'Login successful', user: user });
+
+      // Compare the password with the hashed password stored in the database
+      //const isMatch = await bcrypt.compare(password, user.password_hash);
+
+  {/*if (!isMatch) {
+
+        return res.status(401).json({ message: 'Invalid email or password' });
+
+      }
+
+    */}
+
+      if (password !== user.password_hash) {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
+      res.status(200).json({ message: 'Login successful', user: user /*, token */ });
     } catch (error) {
       res.status(500).json({ message: 'Error logging in', error: error.message });
     }
@@ -240,7 +244,9 @@ console.log("Creating shift preferences")
 
   // Function to send a password reset email
 const resetPassword = async (req, res) => {
+  
   const { email } = req.body;
+  
 
   if (!email) {
       return res.status(400).json({ error: 'Email is required' });
@@ -249,11 +255,11 @@ const resetPassword = async (req, res) => {
   try {
       // Supabase API call to send a password reset email
       const { error } = await supabase.auth.resetPasswordForEmail(email);
-
+      
       if (error) {
           return res.status(400).json({ error: 'Failed to send password reset email. Please try again.' });
       }
-
+     
       return res.status(200).json({ message: 'If the email is registered, a password reset link has been sent.' });
   } catch (err) {
       console.error('Error sending password reset email:', err);

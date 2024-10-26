@@ -11,7 +11,7 @@ function LogIn({ setIsLoggedIn, closeModal, reset, onResetDone  }) {
 //add const for username and password
     const[username, setUsername] = useState('');
     const[password, setPassword] = useState('');
-
+    
     const[error, setError] = useState('');
     const navigate = useNavigate();
 
