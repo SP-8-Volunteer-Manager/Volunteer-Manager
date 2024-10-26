@@ -2,6 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controller/authController');
+// Route for user exists check
+router.post('/checkuserexists', authController.checkuserexists);
 
 // Route for user signup
 router.post('/signup', authController.signup);
