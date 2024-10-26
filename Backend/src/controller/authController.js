@@ -1,4 +1,7 @@
-const supabase = require('../config/supabaseClient');
+const { authLogin } = require('../supabase/authLogin'); // Import authLogin function
+const { createAuthUser } = require('../supabase/createAuthUser'); // Import createAuthUser function
+const { createDbUser } = require('../supabase/createDbUser'); // Import createDbUser function
+const { supabase } = require('../config/supabaseClient'); // Assuming this exports the supabase instance
 const bcrypt = require('bcrypt');
 
 //Validate Password Function
@@ -127,10 +130,40 @@ const resetPassword = async (req, res) => {
       return res.status(500).json({ error: 'Internal server error.' });
   }
 };
-  
+ const post_signup = async (req, res) => {
+  // Destructure email and password from req.body
+  const { email, password, username } = req.body;
+  try {
+    // Await the authId from createAuthUser
+    const authId = await createAuthUser(email, password); // Ensure you await this if it's a promise
+
+    // Now call createDbUser with the authId, username, and email
+    await createDbUser({ auth_id: authId, username, email });
+
+    // Respond with success
+    res.status(201).json({ message: 'User created successfully' });
+  } catch (error) {
+    // Handle any errors
+    res.status(500).json({ message: 'Error creating user', error: error.message });
+  }
+};
+
+
+ const post_login = async (req, res) => {
+  let {email,password}=req.body;
+
+  try{
+   let data = await authLogin(email,password);
+  res.status(200).json({ message: 'User created successfully' });
+  } catch(error){
+    res.status(400).json({ message: 'Error creating user', error: error.message });
+  }
+};
   module.exports = {
     signup,
     login,
     resetPassword,
+    post_signup,
+    post_login
   };
   

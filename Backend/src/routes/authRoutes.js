@@ -12,4 +12,6 @@ router.post('/login', authController.login);
 // Route for password reset
 router.post('/forgot-password', authController.resetPassword)
 
+router.post('/post_signup', authController.post_signup);
+router.post('/post_login', authController.post_login);
 module.exports = router; //  sure to export the router
