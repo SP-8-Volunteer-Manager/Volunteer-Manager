@@ -39,7 +39,7 @@ function ForgotPassword({modalIsOpen, closeForgotPasswordModal}) {
                 });
 
                 const result = await response.json();
-                console.log(response); // For debugging
+                
 
                 if (!response.ok || result.error) {
                     setError(result.error || 'Failed to send reset email. Please try again.');
