@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-//change the function to display the task list
+//display the task list
 function AdminEventList() {
     const [events, setEvents] = useState([]);
 
@@ -78,24 +78,7 @@ function AdminEventList() {
                        );
                     })
                     )}
-                {/*Comment out the empty table rows
-                <tr>
-                    <th scope="row"></th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td><button type="button" className="btn btn-primary">Edit</button></td>
-                    </tr>
-                    <tr>
-                    <th scope="row"></th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td><button type="button" className="btn btn-primary">Edit</button></td>
-                    </tr>*/}
-                    
+               
                     
                 </tbody>
                 </table>

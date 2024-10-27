@@ -26,7 +26,7 @@ function LogIn({ setIsLoggedIn, closeModal, reset, onResetDone  }) {
     useEffect(() => {
         if (reset) {
             resetForm();
-            onResetDone(); // Signal to parent that the reset is done
+            onResetDone();
         }
     }, [reset, onResetDone]);
 

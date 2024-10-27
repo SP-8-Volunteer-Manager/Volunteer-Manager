@@ -421,7 +421,7 @@ function SignUpPage() {
                         </div>
                         
                         <div className="col-md-6">
-                            <label htmlFor="inputEmail4" className="form-label">Email *</label>
+                            <label htmlFor="inputEmail" className="form-label">Email *</label>
                             <input type="email"
                                     name="email"
                                     value={formValues.email} 
@@ -461,7 +461,7 @@ function SignUpPage() {
                             )}
                         </div>
                         <div className="col-md-6">
-                            <label htmlFor="inputConfirmPassword" className="form-label">Confirm Password *</label>
+                            <label htmlFor="inputconfirmPassword" className="form-label">Confirm Password *</label>
                             <input type="password"
                                     name="confirmPassword"
                                     value={formValues.confirmPassword} 
@@ -610,7 +610,7 @@ function SignUpPage() {
                                     name="inputName"
                                     value={formValues.inputName} 
                                     className="form-control"
-                                    id="inputName" 
+                                    id="signForm" 
                                     onChange={handleChange} />
                             {formErrors.inputName && (
                             <span className="error">{formErrors.inputName}</span>

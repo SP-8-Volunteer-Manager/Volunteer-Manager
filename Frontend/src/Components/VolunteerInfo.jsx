@@ -24,16 +24,22 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
        
     };
     const handleModalClose = () => {
-        handleClose(); // Close the VolunteerInfo modal
-        setShowNotificationModal(false); // Reset notification modal state
+        handleClose(); 
+        setShowNotificationModal(false); 
     };
 
-    // Toggle edit mode to enable/disable fields
+   
     
     useEffect(() => {
-        // Update local state when volunteer prop changes
+       
         if (volunteer) {
-            setEditableVolunteer(volunteer);
+            setEditableVolunteer({
+                name: `${volunteer.first_name} ${volunteer.last_name}`,
+                "Phone number": volunteer.phone,
+                email: volunteer.User.email,
+                "Schedule Preferences": volunteer.shift_prefer.map(shift => `${shift.shift.day} ${shift.shift.time}`) || [],
+                "Task Preferences": volunteer.task_prefer.map(task => task.task_type.type_name) || [], 
+            });
         }
     }, [volunteer]);
 
@@ -53,7 +59,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
         setIsEditMode(!isEditMode);
     };
 
-    if (!editableVolunteer) return null; // If no volunteer is selected, do not render
+    if (!volunteer) return null; 
 
     return (
         <>
@@ -72,7 +78,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                             value={editableVolunteer.name}
                             
                             
-                            onChange={handleChange} // Handle change
+                            onChange={handleChange} 
                             disabled={!isEditMode}
                        />
                     </div>
@@ -85,7 +91,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                             value={editableVolunteer["Phone number"]}
                             disabled={!isEditMode}
                            
-                            onChange={handleChange} // Handle change
+                            onChange={handleChange}
                         />
                     </div>
                     <div className="form-group">
@@ -97,7 +103,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                             value={editableVolunteer.email || ''}
                             disabled={!isEditMode}
                             
-                            onChange={handleChange} // Handle change
+                            onChange={handleChange}
                         />
                     </div>
                     <div className="form-group">
@@ -109,7 +115,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                             value={(editableVolunteer["Schedule Preferences"] || []).join(', ') || ''}
                             disabled={!isEditMode}
                             
-                            onChange={handleChange} // Handle change
+                            onChange={handleChange}
                         />
                     </div>
                     <div className="form-group">
@@ -121,7 +127,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                             value={(editableVolunteer["Task Preferences"] || []).join(', ') || ''}
                             disabled={!isEditMode}
                            
-                            onChange={handleChange} // Handle change
+                            onChange={handleChange} 
                         />
                     </div>
                 </form>
@@ -147,7 +153,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                     show={showNotificationModal}
                     handleClose={() => setShowNotificationModal(false)}
                     handleSend={handleSendNotification}
-                    volunteerName={volunteer?.name}
+                    volunteerName={editableVolunteer?.name}
                 />
        
         </>

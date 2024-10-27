@@ -153,7 +153,7 @@ function MyCalendar() {
                 events={events} // Show all events
                 startAccessor="start"
                 endAccessor="end"
-                style={{ height: '500px', margin: '20px', overflowY: 'auto' }} // Set a fixed height and allow vertical scrolling
+                style={{ height: '500px', margin: '20px'}} 
                 defaultDate={selectedDate} // Set the selected date as the default date
                 views={['month']} // Limit views to month
                 odayPropGetter={dayPropGetter}
