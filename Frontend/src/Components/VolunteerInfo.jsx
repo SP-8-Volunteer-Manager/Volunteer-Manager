@@ -63,7 +63,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
 
     return (
         <>
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={show} onHide={handleClose} className="modal-dialog">
             <Modal.Header closeButton>
                 <Modal.Title>Volunteer Details</Modal.Title>
             </Modal.Header>
@@ -145,7 +145,6 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                     {isEditMode ? 'Save' : 'Edit'}
                 </Button>
             </Modal.Footer>
-            
         </Modal>
         {/* Notification Modal */}
         
