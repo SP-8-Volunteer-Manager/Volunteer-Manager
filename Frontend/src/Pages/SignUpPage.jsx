@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import StateDropdown from '../Components/StateDropdown';
 import CarrierDropdown from "../Components/CarrierDropdown";
 import ShiftCheckbox from "../Components/ShiftCheckbox";
+import TaskCheckbox from "../Components/TaskCheckbox";
 //import { checkuserexists } from "../../../Backend/src/controller/authController";
 
 
@@ -264,6 +265,13 @@ function SignUpPage() {
         if (formValues.SaturdayPM == true) shiftData.push({day:'Saturday', time:'PM'});
         if (formValues.SundayPM == true) shiftData.push({day:'Sunday', time:'PM'});
        
+        var taskData =[];
+        if (formValues.smalldog == true) taskData.push("Small Dog");
+        if (formValues.bigdog == true) taskData.push("Big Dog");
+        if (formValues.cat == true) taskData.push("Cat");
+        if (formValues.onetimeevent == true) taskData.push("Event");
+
+
        // console.log(shiftData);
        var signupData = {
             username:formValues.username,
@@ -279,10 +287,7 @@ function SignUpPage() {
             carrier:formValues.carrier,
             receivesms:formValues.receivesms,
             receiveemail:formValues.receiveemail,
-            smalldog:formValues.smalldog,
-            bigdog:formValues.bigdog,
-            cat:formValues.cat,
-            onetimeevent:formValues.onetimeevent,
+            taskpref:taskData,
             shiftpref:shiftData};
            // console.log(signupData)
         return signupData;
@@ -302,22 +307,23 @@ function SignUpPage() {
                     body: JSON.stringify(signupData),
                 });
                 const result = await response.json();
-
+                console.log("Signup Response Received: ")
+                console.log(result)
+                console.log(response)
                 if (response.ok) {
-                    if (result.error == "Y")
+                    if (result.error)
                     {
                         console.log(result.message);
                         setUserMsg(result.message);
                     }
-
-                    if (result.error == "N")
-                        {
-                            console.log(result.message);
-                            setUserMsg(result.message);
-                        }
+                } else{
+                    setUserMsg("Unexpected error in signup");
                 }
+                
             }
              catch(error){
+                console.log("Catch Block Error: ")
+                console.log(error)
                 throw error;
             }
     };
@@ -568,27 +574,11 @@ function SignUpPage() {
                         <hr className="mt-5"/>
 
                         <p className="fw-bold my-3">Task Preference:</p>
-                    
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="smallDog" name="smalldog" value={formValues.smalldog} 
-                                onChange={checkboxChange}/>
-                            <label className="form-check-label" htmlFor="smallDog">Small Dogs</label>
-                        </div>
-                            <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="bigDog" name="bigdog" value={formValues.bigdog} 
-                                onChange={checkboxChange}/>
-                            <label className="form-check-label" htmlFor="bigDog">Big Dogs</label>
-                        </div>
-                            <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="cat" name="cat" value={formValues.cat} 
-                                onChange={checkboxChange}/>
-                            <label className="form-check-label" htmlFor="cat">Cats</label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="oneTimeEvent" name="onetimeevent" value={formValues.onetimeevent} 
-                                onChange={checkboxChange}/>
-                            <label className="form-check-label" htmlFor="oneTimeEvent">One-time events</label>
-                        </div>
+                        <TaskCheckbox task_type="smalldog" label="Small Dogs" checkboxChange={checkboxChange}/>
+                        <TaskCheckbox task_type="bigdog" label="Big Dogs" checkboxChange={checkboxChange}/>             
+                        <TaskCheckbox task_type="cat" label="Cats" checkboxChange={checkboxChange}/>             
+                        <TaskCheckbox task_type="onetimeevent" label="One-time events" checkboxChange={checkboxChange}/>             
+
                         {formErrors.onetimeevent && (
                             <span className="error">{formErrors.onetimeevent}</span>
                             )}
