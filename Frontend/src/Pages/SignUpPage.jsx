@@ -13,8 +13,11 @@ function SignUpPage() {
     const[usermsg, setUserMsg] = useState('');
     const[email, setEmail] = useState('');
 
-    const intialValues = { username: "", password: "", confirmPassword: "", email: "", firstName: "", lastName: "", inputName: "", address: "", city: "", state: "", zip: "",
-         phoneNumber: "", carrier: "", receivesms: false, receiveemail: false, smalldog: false, bigdog: false, cat: false, onetimeevent: false,
+    const intialValues = { username: "", password: "", confirmPassword: "",
+         email: "", firstName: "", lastName: "", inputName: "", 
+         address: "", city: "", state: "", zip: "",
+         phoneNumber: "", carrier: "", receivesms: false, receiveemail: false, 
+         smalldog: false, bigdog: false, cat: false, onetimeevent: false,
          emailoptin: false,
          smsoptin: false,
          MondayAM : false, 
@@ -47,6 +50,7 @@ function SignUpPage() {
         const { name, value } = e.target;
         setFormValues({ ...formValues, [name]: value });
       };
+
       const handleUserBlur = (e) => {
         const { name, value } = e.target;
        console.log("blur:" + value)
@@ -71,15 +75,21 @@ function SignUpPage() {
 
       const checkboxChange = (e) => {
         const { name, checked } = e.target;
-        setFormValues({ ...formValues, [name]: checked });
-        console.log(name + " " +  checked);
-      };
+        setFormValues({
+            ...formValues,
+            [name]: checked,
+            ...(name === 'receivesms' && !checked ? { smsoptin: false, carrier: '' } : {}),
+            ...(name === 'receiveemail' && !checked ? { emailoptin: false } : {}),
+        });
+    };
+
     
       //form submission handler
       const handleSubmit = (e) => {
         e.preventDefault();
         setFormErrors(validate(formValues));
         setIsSubmitting(true);
+        
       };
     
       //form validation handler
@@ -142,14 +152,10 @@ function SignUpPage() {
             }
         }
 
-        if (values.receivesms === false && values.carrier)
-        {
-            errors.carrier = "Reset Carrier Dropdown to \'Select Carrier\'";
-        }
-
+        
         if (values.receiveemail === false && values.receivesms === false)
         {
-            errors.receiveemail = "Select at least one";
+            errors.receiveemail = "Select at least one ";
         }
 
         if (values.receivesms === true && values.smsoptin === false)
@@ -162,6 +168,14 @@ function SignUpPage() {
             errors.emailoptin = "Email Opt-in required";
         }
 
+        {/* do not need it. Automaticaly changes the calues of opt-in checkboxes
+        depending on the value of prefer communication method checkboxes
+
+        if (values.receivesms === false && values.carrier)
+        {
+            errors.carrier = "Reset Carrier Dropdown to \'Select Carrier\'";
+        }
+
         if (values.receiveemail === false && values.emailoptin === true)
         {
             errors.emailoptin = "Uncheck email opt in";
@@ -171,9 +185,10 @@ function SignUpPage() {
         {
             errors.smsoptin = "Uncheck sms opt in";
         }
+        */}
 
         if (!values.password) {
-          errors.password = "Password cannot be blank";
+          errors.password = "Password is required";
         } 
         else if (values.password.length < 6) {
           errors.password = "Password must be 6 characters or more";
@@ -182,7 +197,7 @@ function SignUpPage() {
 
 
           if(!values.confirmPassword)
-            errors.confirmPassword = "Confirm Password cannot be blank";
+            errors.confirmPassword = "Confirm Password is required";
         //   else if (values.confirmPassword.length < 8) {
         //     errors.confirmPassword = "Confirm Password must be 8 characters or more";
         //   }
@@ -190,13 +205,13 @@ function SignUpPage() {
             if (values.password && values.confirmPassword)
             {
                 if(values.password != values.confirmPassword)
-                    errors.confirmPassword = "Confirm password mismatch";
+                    errors.confirmPassword = "Password and Confirm Password do not match";
             }
 
             if(values.receivesms === false && values.receiveemail === false)
             {
-                errors.receiveemail = "Choose at least one of email or sms";
-                errors.receivesms = "Choose at least one of email or sms";
+                errors.receiveemail = "Choose at least one communication method";
+                errors.receivesms = "Choose at least one communication method";
             }
 
             if (values.smalldog === false && values.bigdog === false && values.cat === false && values.onetimeevent === false)
@@ -235,7 +250,7 @@ function SignUpPage() {
             
             if(errors)
             {
-                setUserMsg("Please fix errors and resubmit");
+                setUserMsg("Please fill required fields");
             }
 
         return errors;
@@ -375,7 +390,8 @@ function SignUpPage() {
                                     value={formValues.firstName} 
                                     className="form-control"
                                     id="inputFirstName" 
-                                    onChange={handleChange} />
+                                    onChange={handleChange} 
+                                    required/>
                             {formErrors.firstName && (
                             <span className="error">{formErrors.firstName}</span>
                             )}
@@ -387,7 +403,8 @@ function SignUpPage() {
                                     value={formValues.lastName} 
                                     className="form-control"
                                     id="inputLastName" 
-                                    onChange={handleChange} />
+                                    onChange={handleChange} 
+                                    required/>
                             {formErrors.lastName && (
                             <span className="error">{formErrors.lastName}</span>
                             )}
@@ -433,7 +450,8 @@ function SignUpPage() {
                                     value={formValues.email} 
                                     className="form-control"
                                     id="inputEmail" 
-                                    onChange={handleChange} />
+                                    onChange={handleChange} 
+                                    required/>
                             {formErrors.email && (
                             <span className="error">{formErrors.email}</span>
                             )}
@@ -449,7 +467,8 @@ function SignUpPage() {
                                     className="form-control"
                                     id="inputUsername" 
                                     onBlur={handleUserBlur}
-                                    onChange={handleChange} />
+                                    onChange={handleChange} 
+                                    required/>
                             {usercheckerror !='' && (
                             <span className="error">{usercheckerror}</span>
                             )}
@@ -461,7 +480,8 @@ function SignUpPage() {
                                     value={formValues.password} 
                                     className="form-control"
                                     id="inputPassword" 
-                                    onChange={handleChange} />
+                                    onChange={handleChange} 
+                                    required/>
                             {formErrors.password && (
                             <span className="error">{formErrors.password}</span>
                             )}
@@ -473,7 +493,8 @@ function SignUpPage() {
                                     value={formValues.confirmPassword} 
                                     className="form-control"
                                     id="inputconfirmPassword" 
-                                    onChange={handleChange} />
+                                    onChange={handleChange} 
+                                    required/>
                             {formErrors.confirmPassword && (
                             <span className="error">{formErrors.confirmPassword}</span>
                             )}
@@ -508,8 +529,11 @@ function SignUpPage() {
                                 <p className="fw-bold mb-1"> Opt in to SMS messages</p>
                                 <input className="form-check-input" type="checkbox" id="SMScheck" 
                                 name="smsoptin" 
+                                checked={formValues.smsoptin}
                                 value={formValues.smsoptin} 
-                                onChange={checkboxChange}/>
+                                onChange={checkboxChange}
+                                disabled={!formValues.receivesms}
+                                required={formValues.receivesms}/>
                                 <label className="form-check-label" htmlFor="SMScheck">
                                     By opting in you agree to receive SMS notifications about news, updates, volunteer activities.
                                 </label>
@@ -522,7 +546,7 @@ function SignUpPage() {
 
                         <div className="col-md-6" >
                             <label htmlFor="PhoneCarrier" className="form-label">Choose Your Phone Carrier</label>
-                            <CarrierDropdown dropdownChange={dropdownChange}/>
+                            <CarrierDropdown dropdownChange={dropdownChange} receivesms={formValues.receivesms} carrier={formValues.carrier} />
                             {formErrors.carrier && (
                             <span className="error">{formErrors.carrier}</span>
                             )}
@@ -533,8 +557,11 @@ function SignUpPage() {
                                 <p className="fw-bold mb-1"> Opt in to email notifications</p>
                                 <input className="form-check-input" type="checkbox" id="emailCheck"
                                 name="emailoptin"
+                                checked={formValues.emailoptin}
                                 value={formValues.emailoptin}
-                                onChange={checkboxChange}/>
+                                onChange={checkboxChange}
+                                disabled={!formValues.receiveemail}
+                                required={formValues.receiveemail}/>
                                 <label className="form-check-label" htmlFor="emailCheck">
                                     By opting in you agree to receive email notifications about news, updates, volunteer activities.
                                 </label>
@@ -601,7 +628,8 @@ function SignUpPage() {
                                     value={formValues.inputName} 
                                     className="form-control"
                                     id="signForm" 
-                                    onChange={handleChange} />
+                                    onChange={handleChange} 
+                                    required/>
                             {formErrors.inputName && (
                             <span className="error">{formErrors.inputName}</span>
                             )}

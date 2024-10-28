@@ -47,7 +47,9 @@ const VolunteerList=() => {
             }
     
             setVolunteers((prevVolunteers) =>
-                prevVolunteers.filter((v) => v.id !== volunteer.id)
+                prevVolunteers.map((v) =>
+                    v.id === volunteer.id ? { ...v, new: false } : v
+                )
             );
     
         } catch (error) {
