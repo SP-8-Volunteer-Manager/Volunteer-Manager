@@ -1,4 +1,4 @@
-const { authLogin } = require('../supabase/authLogin'); // Import authLogin function
+//const { authLogin } = require('../supabase/authLogin'); // Import authLogin function
 const { createAuthUser } = require('../supabase/createAuthUser'); // Import createAuthUser function
 const { createDbUser } = require('../supabase/createDbUser'); // Import createDbUser function
 const { supabase } = require('../config/supabaseClient'); // Assuming this exports the supabase instance
@@ -316,15 +316,13 @@ const resetPassword = async (req, res) => {
 };
  const post_signup = async (req, res) => {
   // Destructure email and password from req.body
-  const { email, password, username } = req.body;
+  const { email, password } = req.body;
   try {
-    // Await the authId from createAuthUser
-    const authId = await createAuthUser(email, password); // Ensure you await this if it's a promise
-
-    // Now call createDbUser with the authId, username, and email
-    await createDbUser({ auth_id: authId, username, email });
-
-    // Respond with success
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    })
+    
     res.status(201).json({ message: 'User created successfully' });
   } catch (error) {
     // Handle any errors
