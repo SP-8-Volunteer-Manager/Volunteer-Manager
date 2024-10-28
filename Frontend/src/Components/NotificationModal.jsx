@@ -21,7 +21,7 @@ const NotificationModal = ({ show, handleClose, handleSend, volunteerName }) => 
     
 
     return (
-        <Modal show={show} onHide={handleModalClose}>
+        <Modal show={show} onHide={handleModalClose} className="modal-dialog">
             <Modal.Header closeButton>
                 <Modal.Title>Send Notification to {volunteerName}</Modal.Title>
             </Modal.Header>
