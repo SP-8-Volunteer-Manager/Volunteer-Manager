@@ -26,6 +26,7 @@ app.use('/api/contact', contactRoutes);
 
 
 
+
 // Simple route to check if the server is running
 app.get('/', (req, res) => {
     res.send('Backend server with Supabase is running');

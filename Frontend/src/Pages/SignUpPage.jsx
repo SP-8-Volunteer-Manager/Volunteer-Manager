@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import StateDropdown from '../Components/StateDropdown';
 import CarrierDropdown from "../Components/CarrierDropdown";
 import ShiftCheckbox from "../Components/ShiftCheckbox";
+import TaskCheckbox from "../Components/TaskCheckbox";
 //import { checkuserexists } from "../../../Backend/src/controller/authController";
 
 
@@ -12,8 +13,13 @@ function SignUpPage() {
     const[usermsg, setUserMsg] = useState('');
     const[email, setEmail] = useState('');
 
-    const intialValues = { username: "", password: "", confirmPassword: "", email: "", firstName: "", lastName: "", inputName: "", address: "", city: "", state: "", zip: "",
-         phoneNumber: "", carrier: "", receivesms: false, receiveemail: false, smalldog: false, bigdog: false, cat: false, onetimeevent: false,
+    const intialValues = { username: "", password: "", confirmPassword: "",
+         email: "", firstName: "", lastName: "", inputName: "", 
+         address: "", city: "", state: "", zip: "",
+         phoneNumber: "", carrier: "", receivesms: false, receiveemail: false, 
+         smalldog: false, bigdog: false, cat: false, onetimeevent: false,
+         emailoptin: false,
+         smsoptin: false,
          MondayAM : false, 
          TuesdayAM : false,  
          WednesdayAM : false,  
@@ -44,6 +50,7 @@ function SignUpPage() {
         const { name, value } = e.target;
         setFormValues({ ...formValues, [name]: value });
       };
+
       const handleUserBlur = (e) => {
         const { name, value } = e.target;
        console.log("blur:" + value)
@@ -68,15 +75,21 @@ function SignUpPage() {
 
       const checkboxChange = (e) => {
         const { name, checked } = e.target;
-        setFormValues({ ...formValues, [name]: checked });
-        //console.log(name + " " +  checked);
-      };
+        setFormValues({
+            ...formValues,
+            [name]: checked,
+            ...(name === 'receivesms' && !checked ? { smsoptin: false, carrier: '' } : {}),
+            ...(name === 'receiveemail' && !checked ? { emailoptin: false } : {}),
+        });
+    };
+
     
       //form submission handler
       const handleSubmit = (e) => {
         e.preventDefault();
         setFormErrors(validate(formValues));
         setIsSubmitting(true);
+        
       };
     
       //form validation handler
@@ -118,6 +131,7 @@ function SignUpPage() {
 
         //   console.log(values.phoneNumber.length);
         //   console.log(values.phoneNumber);
+        console.log("ReceiveSMS: " + values.receivesms)
           if(values.phoneNumber) // phone exists
           {
             if(values.phoneNumber.length != 10)
@@ -132,25 +146,58 @@ function SignUpPage() {
 
         if (values.receivesms === true)
         {
-        console.log(values.carrier);
             if (!values.carrier)
             {
                 errors.carrier = "Please choose a phone carrier";
             }
         }
 
+        
+        if (values.receiveemail === false && values.receivesms === false)
+        {
+            errors.receiveemail = "Select at least one ";
+        }
+
+        if (values.receivesms === true && values.smsoptin === false)
+        {
+            errors.smsoptin = "SMS Opt-in required";
+        }
+
+        if (values.receiveemail === true && values.emailoptin === false)
+        {
+            errors.emailoptin = "Email Opt-in required";
+        }
+
+        {/* do not need it. Automaticaly changes the calues of opt-in checkboxes
+        depending on the value of prefer communication method checkboxes
+
+        if (values.receivesms === false && values.carrier)
+        {
+            errors.carrier = "Reset Carrier Dropdown to \'Select Carrier\'";
+        }
+
+        if (values.receiveemail === false && values.emailoptin === true)
+        {
+            errors.emailoptin = "Uncheck email opt in";
+        }
+
+        if (values.receivesms === false && values.smsoptin === true)
+        {
+            errors.smsoptin = "Uncheck sms opt in";
+        }
+        */}
 
         if (!values.password) {
-          errors.password = "Password cannot be blank";
+          errors.password = "Password is required";
         } 
-        // else if (values.password.length < 8) {
-        //   errors.password = "Password must be 8 characters or more";
-        // }
+        else if (values.password.length < 6) {
+          errors.password = "Password must be 6 characters or more";
+        }
         
 
 
           if(!values.confirmPassword)
-            errors.confirmPassword = "Confirm Password cannot be blank";
+            errors.confirmPassword = "Confirm Password is required";
         //   else if (values.confirmPassword.length < 8) {
         //     errors.confirmPassword = "Confirm Password must be 8 characters or more";
         //   }
@@ -158,13 +205,13 @@ function SignUpPage() {
             if (values.password && values.confirmPassword)
             {
                 if(values.password != values.confirmPassword)
-                    errors.confirmPassword = "Confirm password mismatch";
+                    errors.confirmPassword = "Password and Confirm Password do not match";
             }
 
             if(values.receivesms === false && values.receiveemail === false)
             {
-                errors.receiveemail = "Choose at least one of email or sms";
-                errors.receivesms = "Choose at least one of email or sms";
+                errors.receiveemail = "Choose at least one communication method";
+                errors.receivesms = "Choose at least one communication method";
             }
 
             if (values.smalldog === false && values.bigdog === false && values.cat === false && values.onetimeevent === false)
@@ -203,7 +250,7 @@ function SignUpPage() {
             
             if(errors)
             {
-                setUserMsg("Please fix errors and resubmit");
+                setUserMsg("Please fill required fields");
             }
 
         return errors;
@@ -233,6 +280,13 @@ function SignUpPage() {
         if (formValues.SaturdayPM == true) shiftData.push({day:'Saturday', time:'PM'});
         if (formValues.SundayPM == true) shiftData.push({day:'Sunday', time:'PM'});
        
+        var taskData =[];
+        if (formValues.smalldog == true) taskData.push("Small Dog");
+        if (formValues.bigdog == true) taskData.push("Big Dog");
+        if (formValues.cat == true) taskData.push("Cat");
+        if (formValues.onetimeevent == true) taskData.push("Event");
+
+
        // console.log(shiftData);
        var signupData = {
             username:formValues.username,
@@ -248,10 +302,7 @@ function SignUpPage() {
             carrier:formValues.carrier,
             receivesms:formValues.receivesms,
             receiveemail:formValues.receiveemail,
-            smalldog:formValues.smalldog,
-            bigdog:formValues.bigdog,
-            cat:formValues.cat,
-            onetimeevent:formValues.onetimeevent,
+            taskpref:taskData,
             shiftpref:shiftData};
            // console.log(signupData)
         return signupData;
@@ -271,22 +322,23 @@ function SignUpPage() {
                     body: JSON.stringify(signupData),
                 });
                 const result = await response.json();
-
+                console.log("Signup Response Received: ")
+                console.log(result)
+                console.log(response)
                 if (response.ok) {
-                    if (result.error == "Y")
+                    if (result.error)
                     {
                         console.log(result.message);
                         setUserMsg(result.message);
                     }
-
-                    if (result.error == "N")
-                        {
-                            console.log(result.message);
-                            setUserMsg(result.message);
-                        }
+                } else{
+                    setUserMsg("Unexpected error in signup");
                 }
+                
             }
              catch(error){
+                console.log("Catch Block Error: ")
+                console.log(error)
                 throw error;
             }
     };
@@ -338,7 +390,8 @@ function SignUpPage() {
                                     value={formValues.firstName} 
                                     className="form-control"
                                     id="inputFirstName" 
-                                    onChange={handleChange} />
+                                    onChange={handleChange} 
+                                    required/>
                             {formErrors.firstName && (
                             <span className="error">{formErrors.firstName}</span>
                             )}
@@ -350,7 +403,8 @@ function SignUpPage() {
                                     value={formValues.lastName} 
                                     className="form-control"
                                     id="inputLastName" 
-                                    onChange={handleChange} />
+                                    onChange={handleChange} 
+                                    required/>
                             {formErrors.lastName && (
                             <span className="error">{formErrors.lastName}</span>
                             )}
@@ -390,13 +444,14 @@ function SignUpPage() {
                         </div>
                         
                         <div className="col-md-6">
-                            <label htmlFor="inputEmail4" className="form-label">Email *</label>
+                            <label htmlFor="inputEmail" className="form-label">Email *</label>
                             <input type="email"
                                     name="email"
                                     value={formValues.email} 
                                     className="form-control"
                                     id="inputEmail" 
-                                    onChange={handleChange} />
+                                    onChange={handleChange} 
+                                    required/>
                             {formErrors.email && (
                             <span className="error">{formErrors.email}</span>
                             )}
@@ -412,7 +467,8 @@ function SignUpPage() {
                                     className="form-control"
                                     id="inputUsername" 
                                     onBlur={handleUserBlur}
-                                    onChange={handleChange} />
+                                    onChange={handleChange} 
+                                    required/>
                             {usercheckerror !='' && (
                             <span className="error">{usercheckerror}</span>
                             )}
@@ -424,34 +480,36 @@ function SignUpPage() {
                                     value={formValues.password} 
                                     className="form-control"
                                     id="inputPassword" 
-                                    onChange={handleChange} />
+                                    onChange={handleChange} 
+                                    required/>
                             {formErrors.password && (
                             <span className="error">{formErrors.password}</span>
                             )}
                         </div>
                         <div className="col-md-6">
-                            <label htmlFor="inputConfirmPassword" className="form-label">Confirm Password *</label>
+                            <label htmlFor="inputconfirmPassword" className="form-label">Confirm Password *</label>
                             <input type="password"
                                     name="confirmPassword"
                                     value={formValues.confirmPassword} 
                                     className="form-control"
                                     id="inputconfirmPassword" 
-                                    onChange={handleChange} />
+                                    onChange={handleChange} 
+                                    required/>
                             {formErrors.confirmPassword && (
                             <span className="error">{formErrors.confirmPassword}</span>
                             )}
                         </div>
 
                         <hr className="mt-5"/>
-                        
-                        {/* 1. Why do we need these below
-                        2. There's no place to store it */}
 
-                        {/* <div className="col-md-12 mb-4">
+                         <div className="col-md-12 mb-4">
                             
                             <p className="fw-bold mb-1"> Prefered communication method</p>
                             <div className="form-check">
-                                <input className="form-check-input" type="checkbox" id="checkSMS"/>
+                                <input className="form-check-input" type="checkbox" id="checkSMS"
+                                name="receivesms" 
+                                value={formValues.receivesms} 
+                                onChange={checkboxChange}/>
                                 <label className="form-check-label" htmlFor="checkSMS">SMS notifications</label>
                             </div>
                             <div className="form-check">
@@ -461,20 +519,26 @@ function SignUpPage() {
                                 onChange={checkboxChange}/>
                                 <label className="form-check-label" htmlFor="checkEmail">Email notifications</label>
                             </div>
-                        </div> */}
+                            {formErrors.receiveemail && (
+                            <span className="error">{formErrors.receiveemail}</span>
+                            )}
+                        </div> 
 
                         <div className="col-md-6">
                             <div className="form-check">
                                 <p className="fw-bold mb-1"> Opt in to SMS messages</p>
                                 <input className="form-check-input" type="checkbox" id="SMScheck" 
-                                name="receivesms" 
-                                value={formValues.receivesms} 
-                                onChange={checkboxChange}/>
+                                name="smsoptin" 
+                                checked={formValues.smsoptin}
+                                value={formValues.smsoptin} 
+                                onChange={checkboxChange}
+                                disabled={!formValues.receivesms}
+                                required={formValues.receivesms}/>
                                 <label className="form-check-label" htmlFor="SMScheck">
                                     By opting in you agree to receive SMS notifications about news, updates, volunteer activities.
                                 </label>
-                                {formErrors.receivesms && (
-                            <span className="error">{formErrors.receivesms}</span>
+                                {formErrors.smsoptin && (
+                            <span className="error">{formErrors.smsoptin}</span>
                             )}
                             </div>
                         </div>
@@ -482,7 +546,7 @@ function SignUpPage() {
 
                         <div className="col-md-6" >
                             <label htmlFor="PhoneCarrier" className="form-label">Choose Your Phone Carrier</label>
-                            <CarrierDropdown dropdownChange={dropdownChange}/>
+                            <CarrierDropdown dropdownChange={dropdownChange} receivesms={formValues.receivesms} carrier={formValues.carrier} />
                             {formErrors.carrier && (
                             <span className="error">{formErrors.carrier}</span>
                             )}
@@ -492,14 +556,17 @@ function SignUpPage() {
                             <div className="form-check">
                                 <p className="fw-bold mb-1"> Opt in to email notifications</p>
                                 <input className="form-check-input" type="checkbox" id="emailCheck"
-                                name="receiveemail"
-                                value={formValues.receiveemail}
-                                onChange={checkboxChange}/>
+                                name="emailoptin"
+                                checked={formValues.emailoptin}
+                                value={formValues.emailoptin}
+                                onChange={checkboxChange}
+                                disabled={!formValues.receiveemail}
+                                required={formValues.receiveemail}/>
                                 <label className="form-check-label" htmlFor="emailCheck">
                                     By opting in you agree to receive email notifications about news, updates, volunteer activities.
                                 </label>
-                                {formErrors.receiveemail && (
-                            <span className="error">{formErrors.receiveemail}</span>
+                                {formErrors.emailoptin && (
+                            <span className="error">{formErrors.emailoptin}</span>
                             )}
                             </div>
                         </div>
@@ -534,27 +601,11 @@ function SignUpPage() {
                         <hr className="mt-5"/>
 
                         <p className="fw-bold my-3">Task Preference:</p>
-                    
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="smallDog" name="smalldog" value={formValues.smalldog} 
-                                onChange={checkboxChange}/>
-                            <label className="form-check-label" htmlFor="smallDog">Small Dogs</label>
-                        </div>
-                            <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="bigDog" name="bigdog" value={formValues.bigdog} 
-                                onChange={checkboxChange}/>
-                            <label className="form-check-label" htmlFor="bigDog">Big Dogs</label>
-                        </div>
-                            <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="cat" name="cat" value={formValues.cat} 
-                                onChange={checkboxChange}/>
-                            <label className="form-check-label" htmlFor="cat">Cats</label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="checkbox" id="oneTimeEvent" name="onetimeevent" value={formValues.onetimeevent} 
-                                onChange={checkboxChange}/>
-                            <label className="form-check-label" htmlFor="oneTimeEvent">One-time events</label>
-                        </div>
+                        <TaskCheckbox task_type="smalldog" label="Small Dogs" checkboxChange={checkboxChange}/>
+                        <TaskCheckbox task_type="bigdog" label="Big Dogs" checkboxChange={checkboxChange}/>             
+                        <TaskCheckbox task_type="cat" label="Cats" checkboxChange={checkboxChange}/>             
+                        <TaskCheckbox task_type="onetimeevent" label="One-time events" checkboxChange={checkboxChange}/>             
+
                         {formErrors.onetimeevent && (
                             <span className="error">{formErrors.onetimeevent}</span>
                             )}
@@ -576,8 +627,9 @@ function SignUpPage() {
                                     name="inputName"
                                     value={formValues.inputName} 
                                     className="form-control"
-                                    id="inputName" 
-                                    onChange={handleChange} />
+                                    id="signForm" 
+                                    onChange={handleChange} 
+                                    required/>
                             {formErrors.inputName && (
                             <span className="error">{formErrors.inputName}</span>
                             )}
