@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import VolunteerInfo from '../Components/VolunteerInfo';
 import { Pagination } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
+import NotificationModal from '../Components/NotificationModal';
 
 const VolunteerList=() => {
     const [volunteers, setVolunteers] = useState([]);
@@ -15,7 +17,17 @@ const VolunteerList=() => {
     const [currentAllPage, setCurrentAllPage] = useState(1);
     const newVolunteersPerPage = 5;
     const allVolunteersPerPage = 10;
+    const [showNotificationModal, setShowNotificationModal] = useState(false);
 
+    const handleSendNotification = (message) => {
+        console.log("Sending notification:", message);
+        
+       
+    };
+    const handleModalClose = () => {
+        handleClose(); 
+        setShowNotificationModal(false); 
+    };
     //Fetch the volunteer data from the backend
     useEffect(() => {
        
@@ -318,6 +330,7 @@ const VolunteerList=() => {
                 )}  
                 </tbody>
             </table>
+            
              {/* Pagination for All Volunteers */}
             <Pagination>
                 <Pagination.First onClick={() => handlePageChange(1, "all")} disabled={currentAllPage === 1} />
@@ -336,12 +349,29 @@ const VolunteerList=() => {
             </Pagination>
       
         </div>
-        {/* VolunteerModal component */}
+        {/* VolunteerInfo component */}
         <VolunteerInfo
-                volunteer={selectedVolunteer}
-                show={showModal}
-                handleClose={handleCloseModal}
-            />
+            volunteer={selectedVolunteer}
+            show={showModal}
+            handleClose={handleCloseModal}
+        />
+
+        {/* Notification Modal */}
+        
+        <NotificationModal 
+            show={showNotificationModal}
+            handleClose={() => setShowNotificationModal(false)}
+            handleSend={handleSendNotification}
+            volunteerName={'All'}
+        />
+       
+       <Button 
+                    onClick={() => setShowNotificationModal(true)} 
+                >
+                    Send Notification
+            </Button>
+
+
     </section>
    
         
