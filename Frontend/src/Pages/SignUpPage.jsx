@@ -56,7 +56,12 @@ function SignUpPage() {
        console.log("blur:" + value)
        if (value != "")
        {
-        handleUserCheck();
+          handleUserCheck();
+       }
+       else 
+       {
+            //formErrors.username == "Username is required";
+            setUserCheckError("Username is required");
        }
       };
 
@@ -87,6 +92,8 @@ function SignUpPage() {
       //form submission handler
       const handleSubmit = (e) => {
         e.preventDefault();
+        if (formValues.username == "")
+            setUserCheckError("Username is required");
         setFormErrors(validate(formValues));
         setIsSubmitting(true);
         
@@ -99,30 +106,25 @@ function SignUpPage() {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
     
         if (!values.email) {
-          errors.email = "Email cannot be blank";
+          errors.email = "Email is required";
         } else if (!regex.test(values.email)) {
           errors.email = "Invalid email format";
         }
-        if (!values.username) {
-            errors.username = "Username cannot be blank";
-        }
+        console.log("--formvalues");
+        console.log(formValues);
+        if (values.username == "") {
+            errors.username = "Username is required";
+        } else
         if (usercheckerror != "")
-        {
-            errors.username = usercheckerror;
-        }
-
-        // if (values.username) {
-        //     console.log('user check')
-        //    const p =  checkUserExists(values.username)
-        //    p.then()
-        //    console.log(dta);
-        // }
-          if (!values.firstName) {
-            errors.firstName = "First Name cannot be blank";
+         {
+             errors.username = usercheckerror;
+         }
+         if (!values.firstName) {
+            errors.firstName = "First Name is required";
           }
 
           if (!values.lastName) {
-            errors.lastName = "Last Name cannot be blank";
+            errors.lastName = "Last Name is required";
           }
 
           if (!values.inputName) {
@@ -344,7 +346,7 @@ function SignUpPage() {
     };
 
     const handleUserCheck = async () => {
-        console.log("Entering handle user check")
+        console.log("Entering handle user check for: " + formValues.username)
         try{
             setUserCheckError('');
             const response = await fetch('http://localhost:8080/api/auth/checkuserexists', {
@@ -361,7 +363,6 @@ function SignUpPage() {
                 {
                     console.log(result.message);
                     setUserCheckError(result.message)
-                    console.log("Error Set Hook: " + usercheckerror);
                 }
             }
         }
@@ -467,8 +468,7 @@ function SignUpPage() {
                                     className="form-control"
                                     id="inputUsername" 
                                     onBlur={handleUserBlur}
-                                    onChange={handleChange} 
-                                    required/>
+                                    onChange={handleChange} />
                             {usercheckerror !='' && (
                             <span className="error">{usercheckerror}</span>
                             )}
