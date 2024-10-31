@@ -1,4 +1,4 @@
-const { supabase } = require('../config/supabaseClient'); // Assuming this exports the supabase instance
+const supabase = require('../config/supabaseClient');
 const bcrypt = require('bcrypt');
 
 //Validate Password Function
@@ -252,15 +252,9 @@ console.log("Creating shift preferences")
 
   //Login Function
   const login = async (req, res) => {
-<<<<<<< HEAD
-    console.log('Received request:', req.body);
-=======
     console.log('Received request login');
     const { username, password } = req.body;
->>>>>>> 8d70a611d8146c17fcfcf180c6cf4863c178f1e9
 
-    const { username, password } = req.body;
-    
     try {
       // Retrieve the user by username
       const { data: user, error: fetchError } = await supabase
@@ -275,18 +269,6 @@ console.log("Creating shift preferences")
 
       // Compare the password with the hashed password stored in the database
       const isMatch = await bcrypt.compare(password, user.password_hash);
-<<<<<<< HEAD
-      console.log("Ismatch Value: " + isMatch);
-      if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid email or password' });
-
-      }
-    
-      // if (password !== user.password_hash) {
-      //   return res.status(401).json({ message: 'Invalid email or password' });
-      // }
-      res.status(200).json({ message: 'Login successful', user: user });
-=======
 
   if (!isMatch) {
 
@@ -300,16 +282,12 @@ console.log("Creating shift preferences")
         return res.status(401).json({ message: 'Invalid email or password' });
       }*/}
       res.status(200).json({ message: 'Login successful', user: user /*, token */ });
->>>>>>> 8d70a611d8146c17fcfcf180c6cf4863c178f1e9
     } catch (error) {
       res.status(500).json({ message: 'Error logging in', error: error.message });
     }
   };
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 8d70a611d8146c17fcfcf180c6cf4863c178f1e9
   // Function to send a password reset email
 const resetPassword = async (req, res) => {
   
@@ -334,56 +312,10 @@ const resetPassword = async (req, res) => {
       return res.status(500).json({ error: 'Internal server error.' });
   }
 };
-
-const post_signup = async (req, res) => {
-  // Destructure email and password from req.body
-  const { email, password } = req.body;
-
-  try {
-    // Sign up the user with Supabase using the provided email and password
-    const { data, error } = await supabase.auth.signUp({
-      email,    // Use destructured email from req.body
-      password, // Use destructured password from req.body
-    });
-
-    if (error) {
-      throw error;
-    }
-
-    // Respond with success if no errors occurred
-    res.status(201).json({ message: 'User created successfully', data });
-  } catch (error) {
-    // Handle any errors
-    res.status(500).json({ message: 'Error creating user', error: error.message });
-  }
-};
-
-
-
-const post_login = async (req, res) => {
-  const { email, password } = req.body;  // Extract email and password from the request body
-
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      return res.status(400).json({ message: 'Error logging in', error: error.message });
-    }
-
-    res.status(200).json({ message: 'Login successful', user: data });
-  } catch (error) {
-    res.status(500).json({ message: 'Internal server error', error: error.message });
-  }
-};
-
+  
   module.exports = {
     checkuserexists,
     signup,
     login,
-    resetPassword,
-    post_signup,
-    post_login
+    resetPassword
   };
