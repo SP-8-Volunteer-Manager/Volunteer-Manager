@@ -1,6 +1,3 @@
-const { authLogin } = require('../supabase/authLogin'); // Import authLogin function
-const { createAuthUser } = require('../supabase/createAuthUser'); // Import createAuthUser function
-const { createDbUser } = require('../supabase/createDbUser'); // Import createDbUser function
 const { supabase } = require('../config/supabaseClient'); // Assuming this exports the supabase instance
 const bcrypt = require('bcrypt');
 
@@ -314,18 +311,24 @@ const resetPassword = async (req, res) => {
       return res.status(500).json({ error: 'Internal server error.' });
   }
 };
- const post_signup = async (req, res) => {
+
+const post_signup = async (req, res) => {
   // Destructure email and password from req.body
-  const { email, password, username } = req.body;
+  const { email, password } = req.body;
+
   try {
-    // Await the authId from createAuthUser
-    const authId = await createAuthUser(email, password); // Ensure you await this if it's a promise
+    // Sign up the user with Supabase using the provided email and password
+    const { data, error } = await supabase.auth.signUp({
+      email,    // Use destructured email from req.body
+      password, // Use destructured password from req.body
+    });
 
-    // Now call createDbUser with the authId, username, and email
-    await createDbUser({ auth_id: authId, username, email });
+    if (error) {
+      throw error;
+    }
 
-    // Respond with success
-    res.status(201).json({ message: 'User created successfully' });
+    // Respond with success if no errors occurred
+    res.status(201).json({ message: 'User created successfully', data });
   } catch (error) {
     // Handle any errors
     res.status(500).json({ message: 'Error creating user', error: error.message });
@@ -333,16 +336,26 @@ const resetPassword = async (req, res) => {
 };
 
 
- const post_login = async (req, res) => {
-  let {email,password}=req.body;
 
-  try{
-   let data = await authLogin(email,password);
-  res.status(200).json({ message: 'User created successfully' });
-  } catch(error){
-    res.status(400).json({ message: 'Error creating user', error: error.message });
+const post_login = async (req, res) => {
+  const { email, password } = req.body;  // Extract email and password from the request body
+
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      return res.status(400).json({ message: 'Error logging in', error: error.message });
+    }
+
+    res.status(200).json({ message: 'Login successful', user: data });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
+
   module.exports = {
     checkuserexists,
     signup,

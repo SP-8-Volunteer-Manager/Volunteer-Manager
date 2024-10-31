@@ -9,6 +9,7 @@
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.21.1",
+    "react-bootstrap": "^2.10.5",
     "react-router-dom": "^6.26.2"
   }
 }

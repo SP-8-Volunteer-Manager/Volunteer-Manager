@@ -1,7 +1,7 @@
-POST http://localhost:8080/API/auth/login
+POST http://localhost:8080/API/auth/signup
 Content-Type: application/json
 
 {
-    "username": "johndoe",
-    "password": "2"
+    "email": "vnlan123@gmail.com",
+    "password": "Somethingstrong123"
 }
