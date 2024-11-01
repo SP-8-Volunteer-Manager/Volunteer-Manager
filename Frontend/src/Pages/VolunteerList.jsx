@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import VolunteerInfo from '../Components/VolunteerInfo';
 import { Pagination } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
-import NotificationModal from '../Components/NotificationModal';
+//import NotificationModal from '../Components/NotificationModal';
 
 const VolunteerList=() => {
     const [volunteers, setVolunteers] = useState([]);
@@ -17,17 +17,17 @@ const VolunteerList=() => {
     const [currentAllPage, setCurrentAllPage] = useState(1);
     const newVolunteersPerPage = 5;
     const allVolunteersPerPage = 10;
-    const [showNotificationModal, setShowNotificationModal] = useState(false);
+    //const [showNotificationModal, setShowNotificationModal] = useState(false);
 
-    const handleSendNotification = (message) => {
-        console.log("Sending notification:", message);
+   // const handleSendNotification = (message) => {
+     //   console.log("Sending notification:", message);
         
        
-    };
-    const handleModalClose = () => {
-        handleClose(); 
-        setShowNotificationModal(false); 
-    };
+    //};
+    //const handleModalClose = () => {
+      //  handleClose(); 
+        //setShowNotificationModal(false); 
+    //};
     //Fetch the volunteer data from the backend
     useEffect(() => {
        
@@ -358,7 +358,7 @@ const VolunteerList=() => {
 
         {/* Notification Modal */}
         
-        <NotificationModal 
+        {/*<NotificationModal 
             show={showNotificationModal}
             handleClose={() => setShowNotificationModal(false)}
             handleSend={handleSendNotification}
@@ -371,7 +371,7 @@ const VolunteerList=() => {
                     Send Notification
             </Button>
 
-
+*/}
     </section>
    
         

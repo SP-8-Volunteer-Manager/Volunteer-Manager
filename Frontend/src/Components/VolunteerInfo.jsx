@@ -152,7 +152,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                     show={showNotificationModal}
                     handleClose={() => setShowNotificationModal(false)}
                     handleSend={handleSendNotification}
-                    volunteerName={editableVolunteer?.name}
+                    volunteer={volunteer}
                 />
        
         </>
