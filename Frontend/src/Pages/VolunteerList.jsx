@@ -19,11 +19,11 @@ const VolunteerList=() => {
     const allVolunteersPerPage = 10;
     const [showNotificationModal, setShowNotificationModal] = useState(false);
 
-    const handleSendNotification = (message) => {
-        console.log("Sending notification:", message);
+   // const handleSendNotification = (message) => {
+     //   console.log("Sending notification:", message);
         
        
-    };
+    //};
     const handleModalClose = () => {
         handleClose(); 
         setShowNotificationModal(false); 
@@ -361,15 +361,15 @@ const VolunteerList=() => {
         <NotificationModal 
             show={showNotificationModal}
             handleClose={() => setShowNotificationModal(false)}
-            handleSend={handleSendNotification}
-            volunteerName={'All'}
+          //  handleSend={handleSendNotification}
+            volunteers={filteredAllVolunteers}
         />
        
        <Button 
-                    onClick={() => setShowNotificationModal(true)} 
+                onClick={() => setShowNotificationModal(true)} 
                 >
                     Send Notification
-            </Button>
+        </Button>
 
 
     </section>

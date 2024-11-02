@@ -10,6 +10,7 @@ const authRoutes = require('./routes/authRoutes');
 const VolunteerRoutes = require('./routes/volunteerRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const adminEventsListRoutes = require('./routes/adminEventsListRoutes'); 
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const corsOption = {
     origin: ["http://localhost:5173"],
@@ -23,6 +24,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminEventsListRoutes);
 app.use('/api/admin', VolunteerRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/notification', notificationRoutes);
 
 
 
