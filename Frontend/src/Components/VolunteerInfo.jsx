@@ -18,11 +18,12 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
 
     const [showNotificationModal, setShowNotificationModal] = useState(false);
 
-    const handleSendNotification = (message) => {
+{/*    const handleSendNotification = (message) => {
         console.log("Sending notification:", message);
         
        
     };
+    */}
     const handleModalClose = () => {
         handleClose(); 
         setShowNotificationModal(false); 
@@ -151,8 +152,8 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                 <NotificationModal 
                     show={showNotificationModal}
                     handleClose={() => setShowNotificationModal(false)}
-                    handleSend={handleSendNotification}
-                    volunteer={volunteer}
+              //      handleSend={handleSendNotification}
+                    volunteers={volunteer}
                 />
        
         </>
