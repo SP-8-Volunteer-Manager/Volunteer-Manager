@@ -1,8 +1,10 @@
 import MyCalendar from "../Components/MyCalendar";
 import React, {useEffect, useState} from 'react';
+import { Link } from 'react-router-dom';
 
 function AdminDashboard() {
     const [UpcomingEvents, setUpEvents] = useState([]);
+    const [newVolunteersCount, setNewVolunteersCount] = useState(0);
     
     useEffect(() => {
         const fetchEvents = async () => {
@@ -12,16 +14,30 @@ function AdminDashboard() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log(data);
+                
                 setUpEvents(data);
             } catch (error) {
                 console.error(`Error: ${error}`);
             }
         };
+        const fetchNewVolunteersCount = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/admin/volunteers/new/count'); // Adjust endpoint as necessary
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                setNewVolunteersCount(data.count);
+            } catch (error) {
+                console.error(`Error fetching new volunteers count: ${error}`);
+            }
+        };
+
         fetchEvents();
-        console.log(UpcomingEvents);
+        fetchNewVolunteersCount();
+
     }
-    , []); // empty dependency array to run only once
+    , []);
             
 
 
@@ -34,7 +50,14 @@ function AdminDashboard() {
             
             <div className="col-lg-6 pt-5 text-center rounded-5" style={{backgroundColor: '#f0f6fd'}}>
                 <h2 className="fw-bold text-body-emphasis mb-3">Notifications</h2>
-                <p className="lead">There are 2 new volunteers. View their registration!</p>
+                {newVolunteersCount > 0 ? (
+                        <p className="lead">
+                            You have {newVolunteersCount} new volunteer(s). 
+                            <Link to="/volunteerList" className="btn btn-link">Review their registration!</Link>
+                        </p>
+                    ) : (
+                        <p className="lead">No new volunteers.</p>
+                    )}
             </div>
             <div className="col-lg-6 px-lg-5">
                 <MyCalendar />

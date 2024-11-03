@@ -1,8 +1,12 @@
 import React, {useEffect, useState} from 'react';
-//change the function to display the task list
+import EventInfo from '../Components/EventInfo';
+
+//display the task list
 function AdminEventList() {
     const [events, setEvents] = useState([]);
-
+    const [selectedEvent, setSelectedEvent] = useState(null); // Track selected event
+    const [showModal, setShowModal] = useState(false); // Track modal visibility
+    const [previousScrollPosition, setPreviousScrollPosition] = useState(0); 
     //Fetch the event data from the backend
     useEffect(() => {
         const fetchEvents = async () => {
@@ -21,7 +25,19 @@ function AdminEventList() {
         fetchEvents();
     }, []);
     
+    // Open the modal and load selected volunteer data
+    const handleViewInfoClick = (event) => {
+        setPreviousScrollPosition(window.scrollY); // Save scroll position
+        setSelectedEvent(event);
+        setShowModal(true);
+    };
 
+    // Close modal and reset selected volunteer
+    const handleCloseModal = () => {
+        setSelectedEvent(null);
+        setShowModal(false);
+        window.scrollTo(0, previousScrollPosition); // Scroll to saved position
+    };
 
     return (
         
@@ -38,11 +54,12 @@ function AdminEventList() {
                     <tr>
                 
                     <th scope="col">Task Name</th>
-                    <th scope="col">Description</th>
+                    <th scope="col" className="description-column"> Description</th>
                     <th scope="col">Task Type</th>
                     <th scope="col">Location</th>
                     <th scope="col">Date</th>
                     <th scope="col">Time</th>
+                    <th scope="col">Volunteer</th>
                     <th scope="col">Action</th>
                     </tr>
                 </thead>
@@ -52,43 +69,52 @@ function AdminEventList() {
                     <tr>
                         <td colSpan="5">No new volunteer founds</td>
                     </tr>
-                ) : (
-                    events.map((event) => (
-                    <tr key={event.id}>
-                        <td>{event.name}</td>
-                        <td>{event.description}</td>
-                        <td>{event.task_type_id}</td>
-                        <td>{event.location}</td>
-                        <td>{event.start_date}</td>
-                        <td>{event.start_time}</td>
-                        <td><button type="button" className="btn btn-primary">Edit</button></td>
-                        </tr>
-                    ))
-                )}
-                {/*Comment out the empty table rows
-                <tr>
-                    <th scope="row"></th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td><button type="button" className="btn btn-primary">Edit</button></td>
-                    </tr>
-                    <tr>
-                    <th scope="row"></th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td><button type="button" className="btn btn-primary">Edit</button></td>
-                    </tr>*/}
-                    
+                    ) : (
+                        events.map((event) => {
+                            // Determine if the volunteer is assigned
+                            const volunteerAssigned = event.assignment && event.assignment.length > 0;
+                        return (
+                            <tr key={event.id}>
+                                <td>{event.name}</td>
+                                <td className="description-column">{event.description}</td>
+                                <td>{event.task_type.type_name}</td>
+                                <td>{event.location}</td>
+                                <td>{event.start_date}</td>
+                                <td>{event.start_time}</td>
+                                <td>
+                                        {volunteerAssigned
+                                        ? `${event.assignment[0].volunteer.first_name} ${event.assignment[0].volunteer.last_name}`
+                                        :   <span style={{ color: 'red', fontWeight: 'bold' }}>
+                                            No volunteer assigned
+                                            </span>
+                                        }
+                                    </td>
+                                <td>
+                                    <button 
+                                        type="button" 
+                                        className="btn btn-primary" 
+                                        onClick={() => handleViewInfoClick(event)}
+                                    >
+                                        View info
+                                    </button>
+                                </td>
+                            </tr>
+                       );
+                    })
+                    )}
+               
                     
                 </tbody>
                 </table>
 
         </div>
         </div>
+        {/* EventInfo component */}
+        <EventInfo
+                event={selectedEvent}
+                show={showModal}
+                handleClose={handleCloseModal}
+            />
     </section>
    
         
