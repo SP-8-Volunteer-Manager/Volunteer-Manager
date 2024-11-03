@@ -1,5 +1,6 @@
 const supabase = require('../config/supabaseClient');
-const bcrypt = require('bcrypt');
+//const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 //Validate Password Function
 function validatePass(password){
