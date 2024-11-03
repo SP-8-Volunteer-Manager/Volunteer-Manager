@@ -10,6 +10,8 @@
     "ejs": "^3.1.10",
     "express": "^4.21.1",
     "react-bootstrap": "^2.10.5",
-    "react-router-dom": "^6.26.2"
+    "react-router-dom": "^6.26.2",
+     "render-build": "npm install --build-from-source"
+    
   }
 }
