@@ -13,7 +13,7 @@ const adminEventsListRoutes = require('./routes/adminEventsListRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 
 const corsOptions = {
-    origin: 'https://hbpr.onrender.com', // Replace this with your frontend's URL
+    origin: 'https://hbpr.onrender.com', 
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
     credentials: true, // Allow cookies to be sent
 };
@@ -39,6 +39,12 @@ app.get('/', (req, res) => {
 
 
 // API Route to Get Todos from Supabase
-app.listen(8080, () => {
+/*app.listen(8080, () => {
     console.log("Server is running on port 8080");
 });
+*/
+const PORT = process.env.PORT || 8080; // Use environment variable PORT or fallback to 8080
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`); // Log the port the server is running on
+});
+
