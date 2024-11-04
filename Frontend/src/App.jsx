@@ -33,7 +33,7 @@ function App() {
   
   const fetchAPI = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/`);
+      const response = await axios.get(`${API_BASE_URL}`);
       console.log(response.data); // Check the response data
     } catch (error) {
       console.error("Error fetching data from backend:", error); // Log any errors
