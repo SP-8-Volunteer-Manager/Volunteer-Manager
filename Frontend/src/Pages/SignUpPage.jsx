@@ -3,7 +3,8 @@ import StateDropdown from '../Components/StateDropdown';
 import CarrierDropdown from "../Components/CarrierDropdown";
 import ShiftCheckbox from "../Components/ShiftCheckbox";
 import TaskCheckbox from "../Components/TaskCheckbox";
-//import { checkuserexists } from "../../../Backend/src/controller/authController";
+import API_BASE_URL from '../config';
+
 
 
 function SignUpPage() {
@@ -316,7 +317,7 @@ function SignUpPage() {
                 const signupData = makeFormData();
                 console.log(JSON.stringify(signupData));
                 //console.log(JSON.stringify(formValues));
-                const response = await fetch('http://localhost:8080/api/auth/signup', {
+                const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -349,7 +350,7 @@ function SignUpPage() {
         console.log("Entering handle user check for: " + formValues.username)
         try{
             setUserCheckError('');
-            const response = await fetch('http://localhost:8080/api/auth/checkuserexists', {
+            const response = await fetch(`${API_BASE_URL}/api/auth/checkuserexists`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

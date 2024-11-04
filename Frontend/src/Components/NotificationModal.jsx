@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-
+import API_BASE_URL from '../config';
 
 
 const NotificationModal = ({ show, handleClose,  volunteers }) => {
@@ -42,7 +42,8 @@ const NotificationModal = ({ show, handleClose,  volunteers }) => {
              */} 
        //     if (sms && optInSms) {
         //        console.log("Request body:", { phoneNumber, carrier, message, optInSms });
-                await fetch('http://localhost:8080/api/notification/send', {
+             
+        await fetch(`${API_BASE_URL}/api/notification/send`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

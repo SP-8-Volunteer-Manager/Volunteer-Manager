@@ -3,6 +3,7 @@ import VolunteerInfo from '../Components/VolunteerInfo';
 import { Pagination } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
 import NotificationModal from '../Components/NotificationModal';
+import API_BASE_URL from '../config';
 
 const VolunteerList=() => {
     const [volunteers, setVolunteers] = useState([]);
@@ -33,7 +34,7 @@ const VolunteerList=() => {
        
         const fetchVolunteers = async () => {
             try{
-                const response = await fetch('http://localhost:8080/api/admin/volunteers/details');
+                const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/details`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -105,7 +106,7 @@ const VolunteerList=() => {
     const handleReviewNewVolunteer = async (volunteer) => {
         handleViewInfoClick(volunteer);
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/volunteers/${volunteer.id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/${volunteer.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
