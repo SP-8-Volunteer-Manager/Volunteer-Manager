@@ -13,7 +13,7 @@ const adminEventsListRoutes = require('./routes/adminEventsListRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 
 const corsOptions = {
-    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL,FRONTEND_URL_DNS,'http://localhost:5173'], 
+    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_DNS,'http://localhost:5173'], 
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Allowed methods
     credentials: true, // Allow cookies to be sent
 };
