@@ -30,10 +30,15 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)  // Track login state
   const navigate = useNavigate(); // Initialize useNavigate
   
-  const fetchAPI = async () =>{
-    //const response = await axios.get("http://localhost:8080/api");
-    //console.log(response.data.f);
+  const fetchAPI = async () => {
+    try {
+      const response = await axios.get("https://volunteer-manager-0sco.onrender.com/"); // Update this URL
+      console.log(response.data); // Check the response data
+    } catch (error) {
+      console.error("Error fetching data from backend:", error); // Log any errors
+    }
   };
+  
 
   const handleLogout = () => {
     const confirmLogout = window.confirm("Are you sure you want to log out?");
