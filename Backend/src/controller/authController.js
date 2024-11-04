@@ -1,8 +1,6 @@
-//const { authLogin } = require('../supabase/authLogin'); // Import authLogin function
-const { createAuthUser } = require('../supabase/createAuthUser'); // Import createAuthUser function
-const { createDbUser } = require('../supabase/createDbUser'); // Import createDbUser function
-const { supabase } = require('../config/supabaseClient'); // Assuming this exports the supabase instance
-const bcrypt = require('bcrypt');
+const supabase = require('../config/supabaseClient');
+//const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 //Validate Password Function
 function validatePass(password){
@@ -107,19 +105,7 @@ const signup = async (req, res) => {
     const {firstName, lastName,  address, phoneNumber, city, state, zip, carrier, receiveemail, receivesms} = req.body; //volunteer data
     const {shiftpref} = req.body;  // shift data
     const {taskpref} = req.body;   // task data
-    // NOTE: This function does not implement supabase transactions as of now
-    // Researching this currently, if all database calls work signup will be complete
-
-    //Validate Username using regex
-    // //const usernameError = validateUsername(username);
-    // const passwordError = validatePass(password);
-      // // if (usernameError) {
-    // //   return res.status(400).json({ message: usernameError });
-    // // }
-  
-    // if (passwordError) {
-    //   return res.status(400).json({ message: passwordError });
-    // }
+    // NOTE: This function will rollback in case of error
 
      try {
        // Check if user already exists, as a double check
@@ -135,11 +121,13 @@ const signup = async (req, res) => {
           console.log(existingUser)
           return res.status(200).json({ error:"Y", message: 'Signup username already exists'});
         }
+
+// ------------- Local user add outine ------
        // Hash the password
        //console.log(bcrypt);
+      console.log("Add User")
       const hashedPassword = await bcrypt.hash(password, 10);
       // Add user to the database
-      console.log("Add User")
       const { data, error } = await supabase
         .from('User')
         .insert([{ username, password_hash: hashedPassword, email, role: "volunteer" }])
@@ -150,12 +138,12 @@ const signup = async (req, res) => {
         return res.status(200).json({ message: 'Error adding user', error: error.message });
       }
       // get the id from the user table.
-      console.log(data);
+      //console.log(data);
       let userid = data[0].id;
       console.log("Created user: " + userid)
 
 
-// insert into volunteer
+//----------------- insert into volunteer -------------------
     const { data:vdata, error: verror } = await supabase
         .from('volunteer')
         .insert([{ user_id: userid, first_name: firstName, last_name: lastName, phone: phoneNumber, address: address, 
@@ -173,9 +161,8 @@ const signup = async (req, res) => {
 
 
 // populate task_pref
-    // insert tasks into 
+    // ------------- insert tasks pref ------------------
   console.log("Creating task preferences")
-
   for (let i = 0; i < taskpref.length; i++)
     {
         let taskname = taskpref[i];
@@ -202,7 +189,7 @@ const signup = async (req, res) => {
         }
     }
 
-// insert shift_pref
+// ----------------- insert shift_pref---------------------------
 // for each shiftPref array
 // look up shift_id  of day and time
 // isert (volid,shiftid)
@@ -236,18 +223,26 @@ console.log("Creating shift preferences")
           return res.status(200).json({ message: 'Insert error, shift preference', error: serror.message });
           }
       }
-      // // supabase sign up user with Supabase.auth currently not working email address not authroized error
-      // const { data: authdata, error: autherror } = await supabase.auth.signUp({
-      //   email: email,
-      //   password: password,
-      // })
-      // console.log(autherror)
-      // if (autherror) {
-      //   res.status(500).json({ message: 'Supabase signup error', error: autherror.message });
-      //   return;
-      // }
-      // console.log(authdata)
 
+
+      
+    // ----------------- supabase sign up user with Supabase.auth 
+    //-----------This code works once custom domain was created and integrated with supabase
+    //  1. Create free domain with cloudns
+    //  2. Create an account with resend and configure cloudns with information from resend
+    //  3. Verify the domain in cloudns
+    //  4. Integrate resend with supabase by choosing domain and creating api key
+    //  5. The code below will work after that
+    const { data: authdata, error: autherror } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    })
+    console.log(authdata)
+    console.log(autherror)
+    if (autherror) {
+      return res.status(500).json({ message: 'Supabase signup error', error: autherror.message });
+    }
+    
       return res.status(200).json({message: "Successfully signed up", error: "N"});
             
 
@@ -258,10 +253,9 @@ console.log("Creating shift preferences")
 
   //Login Function
   const login = async (req, res) => {
-    console.log('Received request:', req.body);
-
+    console.log('Received request login');
     const { username, password } = req.body;
-    
+
     try {
       // Retrieve the user by username
       const { data: user, error: fetchError } = await supabase
@@ -276,20 +270,25 @@ console.log("Creating shift preferences")
 
       // Compare the password with the hashed password stored in the database
       const isMatch = await bcrypt.compare(password, user.password_hash);
-      console.log("Ismatch Value: " + isMatch);
-      if (!isMatch) {
+
+  if (!isMatch) {
+
         return res.status(401).json({ message: 'Invalid email or password' });
 
       }
+
     
-      // if (password !== user.password_hash) {
-      //   return res.status(401).json({ message: 'Invalid email or password' });
-      // }
-      res.status(200).json({ message: 'Login successful', user: user });
+{/*
+      if (password !== user.password_hash) {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }*/}
+      res.status(200).json({ message: 'Login successful', user: user /*, token */ });
     } catch (error) {
       res.status(500).json({ message: 'Error logging in', error: error.message });
     }
   };
+
+
   // Function to send a password reset email
 const resetPassword = async (req, res) => {
   
@@ -314,38 +313,10 @@ const resetPassword = async (req, res) => {
       return res.status(500).json({ error: 'Internal server error.' });
   }
 };
- const post_signup = async (req, res) => {
-  // Destructure email and password from req.body
-  const { email, password } = req.body;
-  try {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
-    
-    res.status(201).json({ message: 'User created successfully' });
-  } catch (error) {
-    // Handle any errors
-    res.status(500).json({ message: 'Error creating user', error: error.message });
-  }
-};
-
-
- const post_login = async (req, res) => {
-  let {email,password}=req.body;
-
-  try{
-   let data = await authLogin(email,password);
-  res.status(200).json({ message: 'User created successfully' });
-  } catch(error){
-    res.status(400).json({ message: 'Error creating user', error: error.message });
-  }
-};
+  
   module.exports = {
     checkuserexists,
     signup,
     login,
-    resetPassword,
-    post_signup,
-    post_login
+    resetPassword
   };

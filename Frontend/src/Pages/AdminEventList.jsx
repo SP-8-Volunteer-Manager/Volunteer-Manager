@@ -1,13 +1,18 @@
 import React, {useEffect, useState} from 'react';
+import EventInfo from '../Components/EventInfo';
+import API_BASE_URL from '../config';
+
 //display the task list
 function AdminEventList() {
     const [events, setEvents] = useState([]);
-
+    const [selectedEvent, setSelectedEvent] = useState(null); // Track selected event
+    const [showModal, setShowModal] = useState(false); // Track modal visibility
+    const [previousScrollPosition, setPreviousScrollPosition] = useState(0); 
     //Fetch the event data from the backend
     useEffect(() => {
         const fetchEvents = async () => {
             try{
-                const response = await fetch('http://localhost:8080/api/admin/events');
+                const response = await fetch(`${API_BASE_URL}/api/admin/events`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -21,7 +26,19 @@ function AdminEventList() {
         fetchEvents();
     }, []);
     
+    // Open the modal and load selected volunteer data
+    const handleViewInfoClick = (event) => {
+        setPreviousScrollPosition(window.scrollY); // Save scroll position
+        setSelectedEvent(event);
+        setShowModal(true);
+    };
 
+    // Close modal and reset selected volunteer
+    const handleCloseModal = () => {
+        setSelectedEvent(null);
+        setShowModal(false);
+        window.scrollTo(0, previousScrollPosition); // Scroll to saved position
+    };
 
     return (
         
@@ -58,22 +75,30 @@ function AdminEventList() {
                             // Determine if the volunteer is assigned
                             const volunteerAssigned = event.assignment && event.assignment.length > 0;
                         return (
-                        <tr key={event.id}>
-                            <td>{event.name}</td>
-                            <td className="description-column">{event.description}</td>
-                            <td>{event.task_type.type_name}</td>
-                            <td>{event.location}</td>
-                            <td>{event.start_date}</td>
-                            <td>{event.start_time}</td>
-                            <td>
-                                    {volunteerAssigned
-                                    ? `${event.assignment[0].volunteer.first_name} ${event.assignment[0].volunteer.last_name}`
-                                    :   <span style={{ color: 'red', fontWeight: 'bold' }}>
-                                        No volunteer assigned
-                                        </span>
-                                    }
+                            <tr key={event.id}>
+                                <td>{event.name}</td>
+                                <td className="description-column">{event.description}</td>
+                                <td>{event.task_type.type_name}</td>
+                                <td>{event.location}</td>
+                                <td>{event.start_date}</td>
+                                <td>{event.start_time}</td>
+                                <td>
+                                        {volunteerAssigned
+                                        ? `${event.assignment[0].volunteer.first_name} ${event.assignment[0].volunteer.last_name}`
+                                        :   <span style={{ color: 'red', fontWeight: 'bold' }}>
+                                            No volunteer assigned
+                                            </span>
+                                        }
+                                    </td>
+                                <td>
+                                    <button 
+                                        type="button" 
+                                        className="btn btn-primary" 
+                                        onClick={() => handleViewInfoClick(event)}
+                                    >
+                                        View info
+                                    </button>
                                 </td>
-                            <td><button type="button" className="btn btn-primary">Edit</button></td>
                             </tr>
                        );
                     })
@@ -85,6 +110,12 @@ function AdminEventList() {
 
         </div>
         </div>
+        {/* EventInfo component */}
+        <EventInfo
+                event={selectedEvent}
+                show={showModal}
+                handleClose={handleCloseModal}
+            />
     </section>
    
         

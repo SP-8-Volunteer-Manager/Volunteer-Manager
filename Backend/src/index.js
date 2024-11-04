@@ -10,19 +10,24 @@ const authRoutes = require('./routes/authRoutes');
 const VolunteerRoutes = require('./routes/volunteerRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const adminEventsListRoutes = require('./routes/adminEventsListRoutes'); 
+const notificationRoutes = require('./routes/notificationRoutes');
 
-const corsOption = {
-    origin: ["http://localhost:5173"],
+const corsOptions = {
+    origin: [process.env.FRONTEND_URL, 'http://localhost:5173'], 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
+    credentials: true, // Allow cookies to be sent
 };
 
+app.options('*', cors(corsOptions)); // Handle preflight requests
 
-app.use(cors(corsOption));
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminEventsListRoutes);
 app.use('/api/admin', VolunteerRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/notification', notificationRoutes);
 
 
 
@@ -34,6 +39,12 @@ app.get('/', (req, res) => {
 
 
 // API Route to Get Todos from Supabase
-app.listen(8080, () => {
+/*app.listen(8080, () => {
     console.log("Server is running on port 8080");
 });
+*/
+const PORT = process.env.PORT || 8080; // Use environment variable PORT or fallback to 8080
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`); // Log the port the server is running on
+});
+

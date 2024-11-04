@@ -1,6 +1,7 @@
 import MyCalendar from "../Components/MyCalendar";
 import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
+import API_BASE_URL from '../config';
 
 function AdminDashboard() {
     const [UpcomingEvents, setUpEvents] = useState([]);
@@ -9,7 +10,8 @@ function AdminDashboard() {
     useEffect(() => {
         const fetchEvents = async () => {
             try{
-                const response = await fetch('http://localhost:8080/api/admin/upcomingevents');
+                
+                const response = await fetch(`${API_BASE_URL}/api/admin/upcomingevents`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -22,7 +24,7 @@ function AdminDashboard() {
         };
         const fetchNewVolunteersCount = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/admin/volunteers/new/count'); // Adjust endpoint as necessary
+                const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/new/count`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

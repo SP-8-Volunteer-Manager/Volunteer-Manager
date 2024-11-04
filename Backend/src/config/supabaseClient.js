@@ -13,6 +13,8 @@ if (!supabaseUrl || !supabaseServiceKey) {
     process.exit(1); // Exit if the variables are not set
 }
 
+
+
 // Initialize Supabase client
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
