@@ -45,7 +45,7 @@ const sendNotification = async (req, res) => {
                 sendSMS(phoneNumber, message, carrier);
                 
             }
-            else if (email) {
+            if (email) {
                 promises.push(sendEmail(email_address, message));
             } 
             
@@ -76,23 +76,24 @@ const sendSMS = async (phoneNumber, message, carrier) => {
 
     console.log(`Sending SMS to ${recipient}: ${message}`);
 
-   {/* const notification = {
+    const notification = {
         from: 'team@volunteermanager.ip-ddns.com',
         to: [recipient],
         subject: 'Volunteer Notification',
         html: message,
         text: message.replace(/<[^>]*>/g, '')
     };
-    */}
+    
 
     // Send sns using Resend
-    {/*try {
+    try {
         await resend.emails.send(notification);
         console.log(`Notification sent to: ${recipient}`);
     } catch (error) {
         console.error(`Error sending email to ${recipient}:`, error);
     }
-    */}
+    
+    {/*
     const nodemailer = require('nodemailer');
     try{
         const transporter = nodemailer.createTransport({
@@ -104,7 +105,7 @@ const sendSMS = async (phoneNumber, message, carrier) => {
         });
         
         await transporter.sendMail({
-            from: process.env.EMAIL_USER,
+            from: process.env.EMAIL_USER,,
             to: [recipient],
             subject: 'Volunteer Notification',
             text: message,
@@ -113,6 +114,7 @@ const sendSMS = async (phoneNumber, message, carrier) => {
     } catch (err) {
         console.error(`Error sending email to ${recipient}:`, err.message);
     }
+        */}
     
 };
 
@@ -122,7 +124,7 @@ const sendEmail = async (recipientEmail, message) => {
     console.log(`Sending Email to ${recipientEmail}: ${message}`);
 
     const notification = {
-        from: 'team@volunteermanager.ip-ddns.com',
+        from: 'VolunteerManager<team@volunteermanager.ip-ddns.com>',
         to: [recipientEmail],
         subject: 'Volunteer Notification',
         html: message,

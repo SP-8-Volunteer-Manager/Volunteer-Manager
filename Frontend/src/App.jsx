@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios';
 import { Routes, Route} from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
+import API_BASE_URL from './config'; 
 
 import './App.css'
 
@@ -32,7 +33,7 @@ function App() {
   
   const fetchAPI = async () => {
     try {
-      const response = await axios.get("https://volunteer-manager-0sco.onrender.com/"); // Update this URL
+      const response = await axios.get(`${API_BASE_URL}/`);
       console.log(response.data); // Check the response data
     } catch (error) {
       console.error("Error fetching data from backend:", error); // Log any errors

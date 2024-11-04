@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import EventInfo from '../Components/EventInfo';
+import API_BASE_URL from '../config';
 
 //display the task list
 function AdminEventList() {
@@ -11,7 +12,7 @@ function AdminEventList() {
     useEffect(() => {
         const fetchEvents = async () => {
             try{
-                const response = await fetch('http://localhost:8080/api/admin/events');
+                const response = await fetch(`${API_BASE_URL}/api/admin/events`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

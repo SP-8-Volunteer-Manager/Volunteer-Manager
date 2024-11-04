@@ -1,6 +1,7 @@
 //import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Logo from '../assets/HBPR-logo.png'
+import API_BASE_URL from '../config';
 
 function ForgotPassword({modalIsOpen, closeForgotPasswordModal}) {
     const [email, setEmail] = useState('');
@@ -30,7 +31,7 @@ function ForgotPassword({modalIsOpen, closeForgotPasswordModal}) {
         if (email) {
             try {
                 // Triggering Supabase API call to send a password reset email
-                const response = await fetch('http://localhost:8080/api/auth/forgot-password', {
+                const response = await fetch(`{${API_BASE_URL}}/api/auth/forgot-password`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

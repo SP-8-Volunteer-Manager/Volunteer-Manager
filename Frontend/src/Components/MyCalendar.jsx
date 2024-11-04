@@ -8,7 +8,7 @@ import EventInfoModal from './EventInfoModal';
 import 'react-calendar/dist/Calendar.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import API_BASE_URL from '../config';
 
 const localizer = momentLocalizer(moment);
 
@@ -26,7 +26,7 @@ function MyCalendar() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/admin/events'); 
+        const response = await fetch(`${API_BASE_URL}/api/admin/events`);
         const data = await response.json();
         
         // Map data to the required format for BigCalendar

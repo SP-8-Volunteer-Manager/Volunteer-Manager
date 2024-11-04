@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import API_BASE_URL from '../config';
 
 function ContactUs() {
     const [name, setName] = useState('');
@@ -54,7 +54,7 @@ function ContactUs() {
         };
         
         try {
-            const response = await fetch('http://localhost:8080/api/contact/sendMessage', {
+            const response = await fetch(`${API_BASE_URL}/api/contact/sendMessage`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json', // Set the content type to JSON

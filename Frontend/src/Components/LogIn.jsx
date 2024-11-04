@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import ForgotPassword from './ForgotPassword';
-
+import API_BASE_URL from '../config';
 
 
 
@@ -36,7 +36,7 @@ function LogIn({ setIsLoggedIn, closeModal, reset, onResetDone  }) {
         
         if(username && password){
             try {
-                const response = await fetch('https://volunteer-manager-0sco.onrender.com/api/auth/login', {
+                const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
