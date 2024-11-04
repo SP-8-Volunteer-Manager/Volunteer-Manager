@@ -12,10 +12,13 @@ const contactRoutes = require('./routes/contactRoutes');
 const adminEventsListRoutes = require('./routes/adminEventsListRoutes'); 
 const notificationRoutes = require('./routes/notificationRoutes');
 
-const corsOption = {
-    origin: ["http://localhost:5173"],
+const corsOptions = {
+    origin: 'https://hbpr.onrender.com', // Replace this with your frontend's URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
+    credentials: true, // Allow cookies to be sent
 };
 
+app.options('*', cors(corsOptions)); // Handle preflight requests
 
 app.use(cors(corsOption));
 app.use(express.json());
