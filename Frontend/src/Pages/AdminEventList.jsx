@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import EventInfo from '../Components/EventInfo';
 import API_BASE_URL from '../config';
+import NewEvent from '../Components/NewEvent';
 
 //display the task list
 function AdminEventList() {
@@ -33,11 +34,19 @@ function AdminEventList() {
         setShowModal(true);
     };
 
+    const handleNewEventClick = () => {
+        setShowModal(true);
+    };
+
     // Close modal and reset selected volunteer
     const handleCloseModal = () => {
         setSelectedEvent(null);
         setShowModal(false);
         window.scrollTo(0, previousScrollPosition); // Scroll to saved position
+    };
+
+    const handleNewEventCloseModal = () => {
+        setShowModal(false);
     };
 
     return (
@@ -48,7 +57,9 @@ function AdminEventList() {
         <div>
         <div className="d-flex justify-content-between align-items-center m-5">
                 <h2>Event Information</h2> 
-                <button type="button" className="btn btn-primary">New event</button>
+                <button type="button" 
+                className="btn btn-primary"
+                onClick={() => handleNewEventClick()}>New event</button>
             </div>
             <table className="table">
                 <thead>
@@ -68,7 +79,7 @@ function AdminEventList() {
                     {/* Display the event list */}
                     {events.length ==0 ? (
                     <tr>
-                        <td colSpan="5">No new volunteer founds</td>
+                        <td colSpan="5">No new volunteers found</td>
                     </tr>
                     ) : (
                         events.map((event) => {
@@ -116,6 +127,11 @@ function AdminEventList() {
                 show={showModal}
                 handleClose={handleCloseModal}
             />
+
+        <NewEvent
+        show={showModal}
+        handleClose={handleNewEventCloseModal}
+        />
     </section>
    
         
