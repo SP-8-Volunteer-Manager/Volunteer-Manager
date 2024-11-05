@@ -77,7 +77,7 @@ const sendSMS = async (phoneNumber, message, carrier) => {
     console.log(`Sending SMS to ${recipient}: ${message}`);
 
     const notification = {
-        from: 'team@volunteermanager.ip-ddns.com',
+        from: `VolunteerManager<${process.env.SENDER_EMAIL}>`,
         to: [recipient],
         subject: 'Volunteer Notification',
         html: message,
@@ -124,7 +124,7 @@ const sendEmail = async (recipientEmail, message) => {
     console.log(`Sending Email to ${recipientEmail}: ${message}`);
 
     const notification = {
-        from: 'VolunteerManager<team@volunteermanager.ip-ddns.com>',
+        from: `VolunteerManager<${process.env.SENDER_EMAIL}>`,
         to: [recipientEmail],
         subject: 'Volunteer Notification',
         html: message,

@@ -31,7 +31,7 @@ function ForgotPassword({modalIsOpen, closeForgotPasswordModal}) {
         if (email) {
             try {
                 // Triggering Supabase API call to send a password reset email
-                const response = await fetch(`{${API_BASE_URL}}/api/auth/forgot-password`, {
+                const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -13,14 +13,16 @@ const adminEventsListRoutes = require('./routes/adminEventsListRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 
 const corsOptions = {
-    origin: [process.env.FRONTEND_URL, 'http://localhost:5173'], 
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
+    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_DNS,'http://localhost:5173'], 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Allowed methods
     credentials: true, // Allow cookies to be sent
 };
 
 app.options('*', cors(corsOptions)); // Handle preflight requests
 
 app.use(cors(corsOptions));
+
+
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
