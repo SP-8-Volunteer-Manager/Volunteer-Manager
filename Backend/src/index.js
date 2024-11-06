@@ -13,9 +13,9 @@ const adminEventsListRoutes = require('./routes/adminEventsListRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 
 const corsOptions = {
-    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_DNS,'http://localhost:5173'], 
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Allowed methods
-    credentials: true, // Allow cookies to be sent
+    origin: 'http://localhost:5173', // Allow the React app to connect to the server
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Include necessary methods
+    credentials: true,
 };
 
 app.options('*', cors(corsOptions)); // Handle preflight requests
