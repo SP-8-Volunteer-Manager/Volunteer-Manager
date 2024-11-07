@@ -54,47 +54,67 @@ const getNewVolunteersCount = async (req, res) => {
     }
 };
 
+// Assume this is in your Express.js backend route handler file
 const updateVolunteer = async (req, res) => {
     const volunteerId = req.params.id;
     const { volunteerData, schedulePreferences, taskPreferences } = req.body;
 
     try {
-        // Update the volunteer table
+        // Update volunteer's basic information
         const { data: volunteerUpdate, error: volunteerError } = await supabase
             .from('volunteer')
-            .update(volunteerData)
+            .update({
+                first_name: volunteerData.first_name,
+                last_name: volunteerData.last_name,
+                phone: volunteerData.phone,
+                email: volunteerData.email
+            })
             .eq('id', volunteerId);
 
-        if (volunteerError) throw volunteerError;
+        if (volunteerError) throw new Error(`Volunteer update failed: ${volunteerError.message}`);
 
-        // Update or Insert Schedule Preferences
-        const scheduleUpdates = schedulePreferences.map(preference => ({
+        // Update schedule preferences (shift_prefer table)
+        await supabase
+            .from('shift_prefer')
+            .delete()
+            .eq('volunteer_id', volunteerId);
+
+        const scheduleUpdates = schedulePreferences.map(pref => ({
             volunteer_id: volunteerId,
-            ...preference,
+            shift_id: pref.shift_id, // Assuming shift_id is passed from the frontend as part of the preference data
         }));
+
         const { error: scheduleError } = await supabase
-            .from('schedule_preferences')
-            .upsert(scheduleUpdates, { onConflict: ['volunteer_id', 'day', 'time'] });
+            .from('shift_prefer')
+            .insert(scheduleUpdates);
 
-        if (scheduleError) throw scheduleError;
+        if (scheduleError) throw new Error(`Schedule preferences update failed: ${scheduleError.message}`);
 
-        // Update or Insert Task Preferences
-        const taskUpdates = taskPreferences.map(task => ({
+        // Update task preferences (task_prefer table)
+        await supabase
+            .from('task_prefer')
+            .delete()
+            .eq('volunteer_id', volunteerId);
+
+        const taskUpdates = taskPreferences.map(pref => ({
             volunteer_id: volunteerId,
-            ...task,
+            task_type_id: pref.task_type_id, // Using task_type_id based on your schema
         }));
+
         const { error: taskError } = await supabase
-            .from('task_preferences')
-            .upsert(taskUpdates, { onConflict: ['volunteer_id', 'task_type_id'] });
+            .from('task_prefer')
+            .insert(taskUpdates);
 
-        if (taskError) throw taskError;
+        if (taskError) throw new Error(`Task preferences update failed: ${taskError.message}`);
 
-        res.status(200).json({ message: 'Volunteer information updated successfully.' });
+        res.status(200).json({ message: 'Volunteer updated successfully' });
     } catch (error) {
-        console.error('Error updating volunteer information:', error);
-        res.status(500).json({ error: 'Failed to update volunteer information.' });
+        console.error('Error updating volunteer:', error);
+        res.status(500).json({ error: error.message });
     }
 };
+
+
 
 // Fetch schedule preferences from the 'shift' table
 const getSchedulePreferences = async (req, res) => {
