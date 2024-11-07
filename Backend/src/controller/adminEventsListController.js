@@ -45,13 +45,5 @@ const getUpcomingEvents = async (req, res) => {
     }
 };
 
-//Save New Event Backend Database Code needs to be implemented
-const saveNewEvent = async (req, res) => {
-     console.log("in SaveNew Eevent")
-     console.log(req.body);
-     return res.status(200).json({ message: 'New event created, please close modal'});
 
-    //return res.status(400).json("Event Saved");
-}
-
-module.exports = { getEventLists, getUpcomingEvents, saveNewEvent }; // export the controller functions
+module.exports = { getEventLists, getUpcomingEvents }; // export the controller functions

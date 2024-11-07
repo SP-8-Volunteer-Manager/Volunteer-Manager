@@ -1,8 +1,8 @@
-const pool = require('../config/supabaseClient');
+const supabase = require('../config/supabaseClient');
 
 const getVolunteers = async (req, res) => {
     try {
-        const { data, error } = await pool
+        const { data, error } = await supabase
             .from('volunteer')
             .select(`*,
                 shift_prefer(shift(day,time)),
@@ -24,7 +24,7 @@ const updateVolunteerStatus = async (req, res) => {
     const { id } = req.params;
 
     // Update the "new" attribute to false
-    const { data, error } = await pool
+    const { data, error } = await supabase
         .from('volunteer')
         .update({ new: false }) // Update the "new" attribute
         .eq('id', id); // Find the volunteer by id
@@ -38,7 +38,7 @@ const updateVolunteerStatus = async (req, res) => {
 
 const getNewVolunteersCount = async (req, res) => {
     try {
-        const { data, error } = await pool
+        const { data, error } = await supabase
             .from('volunteer')
             .select('id', { count: 'exact' })
             .eq('new', true);

@@ -40,9 +40,11 @@ const sendNotification = async (req, res) => {
                 first_name: firstName,
                 last_name: lastName
             } = volunteer;
+
             const promises = [];
+
             if (sms && optInSms && phoneNumber && carrier) {
-                sendSMS(phoneNumber, message, carrier);
+               // sendSMS(phoneNumber, message, carrier);
                 
             }
             if (email) {
@@ -50,15 +52,21 @@ const sendNotification = async (req, res) => {
             } 
             
             
-
-           
-            await Promise.all(promises);
+            try {
+                await Promise.all(promises);
+            } catch (error) {
+                console.error(`Error sending notification to volunteer ID ${volunteer.id}:`, error);
+                
+            }
         });
        
 
      // Wait for all notifications to complete
+     console.log('Starting to send notifications...');
      await Promise.all(notificationPromises);
+     console.log('All notifications have been processed.');
      res.status(200).json({ message: "Notifications sent successfully!" });
+     
 
     } catch (err) {
         console.error("Error sending notifications:", err.message);
@@ -181,4 +189,4 @@ const sendSMSToVolunteer = ( phoneNumber, carrier,  message, optInSms) => {
 //};
 
 
-module.exports = { sendNotification };
+module.exports = { sendNotification, sendEmail };

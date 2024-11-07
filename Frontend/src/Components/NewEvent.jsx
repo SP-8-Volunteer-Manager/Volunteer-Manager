@@ -1,4 +1,4 @@
-import { name } from "ejs";
+
 import React, { useState, useEffect } from "react";
 import { Modal, Button } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
@@ -7,160 +7,155 @@ import API_BASE_URL from '../config';
 
 
 const NewEvent = ({ show, handleClose }) => {
-
-   
+    const [taskTypes, setTaskTypes] = useState([]);
+    const [shifts, setShifts] = useState([]);
     const [eventName, setEventName] = useState('');
     const [description, setDescription] = useState('');
-
     const [taskType, setTaskType] = useState('0');
-    const [taskFreq, setTaskFreq] = useState(false);
-
-    const [shiftPref, setShiftPref] = useState('0');
-
-
-    
-    const [startDate, setStartDate] = useState();
-    const [startTime, setStartTime] = useState();
-
+    const [taskShift, setTaskShift] = useState('0');
+    const [startDate, setStartDate] = useState(null);
+    const [startTime, setStartTime] = useState(null);
     const [location, setLocation] = useState('');
-
-    const [isDisabled, setIsDisabled] = useState(true);
-    const [isValid, setIsValid] = useState(true);
-    const [isShiftValid, setIsShiftValid] = useState(true);
-
-
     const [usermsg, setUserMsg] = useState('');
-    const [error, setError] = useState('');
+    const [errors, setErrors] = useState({});
+    const [taskFreq, setTaskFreq] = useState(null);
+    const [volunteers, setVolunteers] = useState([]);
+    const [taskCreated, setTaskCreated] = useState(false);
+    const [taskId, setTaskId] = useState(null);
+    const [assignedVolunteer, setAssignedVolunteer] = useState('');
+    const [isVolunteerAssigned, setIsVolunteerAssigned] = useState(false);
+    const [notificationSent, setNotificationSent] = useState(false);
 
+    useEffect(() => {
+        const fetchTaskTypes = async () => {
+            try {
+               
+                const response = await fetch(`${API_BASE_URL}/api/task/taskTypes`);
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                
+                const data = await response.json();
+                setTaskTypes(data);
+            } catch (error) {
+                console.error("Error fetching task types:", error);
+            }
+        };
+        const fetchShifts = async () => {
+            try {
+               
+                const response = await fetch(`${API_BASE_URL}/api/task/shift`);
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }            
+                const data = await response.json();
+                setShifts(data);
+            } catch (error) {
+                console.error("Error fetching task types:", error);
+            }
+        };
+
+        const fetchVolunteers = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/details`);
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                const data = await response.json();
+                setVolunteers(data);
+            } catch (error) {
+                console.error("Error fetching volunteers:", error);
+            }
+        };
+
+        if (show) {
+            fetchTaskTypes();
+            fetchShifts();
+            fetchVolunteers();
+        }
+    }, [show]);
 
 
     const handleModalClose = () => {
+        setErrors({});
         setEventName('');
         setDescription('');
         setTaskType('0');
-        setShiftPref('0');
-        setStartDate();
-        setStartTime();
+        setTaskShift('0');
+        setStartDate(null);
+        setStartTime(null);
         setLocation('')
-        setIsValid(true);
-        setIsShiftValid(true);
-        setIsDisabled(true);
         setUserMsg('');
+        setTaskFreq(null);
+        setTaskCreated(false);
+        setNotificationSent(false);
+        setAssignedVolunteer('');
+        setTaskId(null);
         handleClose(); 
+        
     };
 
-
-    // Handle changes to input fields
+   
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-    };
-
-    const handleEventNameChange = (e) => {
-        setEventName(e.target.value);
-    }
-
-    const handleEventDescriptionChange = (e) => {
-        setDescription(e.target.value);
-    }
-
-    const handleTaskTypeChange = (e) => {
-        //console.log(e.target.value)
-        setTaskType(e.target.value);
-        setIsValid(e.target.value !== '0');
-    }
-
-    const handleShiftPrefChange = (e) => {
-
-        setShiftPref(e.target.value);
-        setIsShiftValid(e.target.value !== '0');
-    }
-
-    const handleTaskFreqChange = (e) => {
-        if (e.target.value == "true")
-        {
-            setIsDisabled(false);
+        switch (name) {
+            case 'eventName':
+                setEventName(value);
+                break;
+            case 'description':
+                setDescription(value);
+                break;
+            case 'location':
+                setLocation(value);
+                break;
+            case 'taskType':
+                setTaskType(value);
+                break;
+            case 'taskShift':
+                setTaskShift(value);
+                break;
+            case 'taskFreq':
+                setTaskFreq(e.target.value === 'true');
+            default:
+                break;
         }
-
-        if (e.target.value == "false")
-            {
-                setIsDisabled(true);
-                setShiftPref('0');
-            }
-        setTaskFreq(e.target.value);
-    }
-
-    const handleDateChange = (e) => {
-        console.log(e.target.value)
-        setStartDate(e.target.value);
-    }
-
-    const handleTimeChange = (e) => {
-        console.log(e.target.value)
-        setStartTime(e.target.value);
-    }
-
-    const handleLocationChange = (e) => {
-        setLocation(e.target.value);
-    }
-
-    function makeFormData() {
-        
-        // console.log(eventName);
-        // console.log(description);
-    
-        // console.log(taskType);
-        // console.log(taskFreq);
-        // console.log(shiftPref);
-    
-    
-        
-        //console.log(startDate);
-
-        let dt = startTime.toLocaleDateString('en-CA', {hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit'});
-                               
-        let tm = dt.split(' ')[1];
-
-        //console.log(tm);
-    
-        //console.log(location);
-
-        var postData = {
-            name:eventName,
-            desc:description,
-            taskType:taskType,
-            taskFreq:taskFreq,
-            shiftPref:shiftPref,
-            startDate:startDate,
-            startTime:tm,
-            loc:location,
-            };
-
-            return postData;
-        
-    }
-
+        setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
+    };
     const handleSave = async (e) => {
         e.preventDefault();
-        setUserMsg('');
-        if (taskType == '0')
-        {
-            setIsValid(false);
+        setErrors({});
+   
+        const validationErrors = {};
+        if (taskType === '0') validationErrors.taskType = 'Please select a task type.';
+        if (!eventName) validationErrors.eventName = 'Event name is required.';
+        if (!description) validationErrors.description = 'Description is required.';
+        if (!location) validationErrors.location = 'Location is required.';
+        if (taskShift === '0') validationErrors.taskShift = 'Please select a task shift.';
+        if (taskFreq === null) validationErrors.taskFreq = 'Please select a task frequency.';
+       
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
             return;
         }
 
-        //If recurring task then shift pref must be picked        
-        if (taskFreq == "true" && shiftPref == '0')
-        {
-            setIsShiftValid(false);
-            return;
-        }
+        
         try{
             
-            console.log("In handleSave");
-            const postData = makeFormData();
-            //console.log(JSON.stringify(formValues));
-            const response = await fetch(`${API_BASE_URL}/api/admin/savenewevent`, {
+     
+            const formattedStartDate = startDate ? startDate.toISOString().split('T')[0] : null;
+            const formattedStartTime = startTime ? startTime.toLocaleTimeString('en-US', { hour12: false }) : null;
+
+            const postData = {
+                name: eventName,
+                description,
+                task_type_id: taskType,  
+                is_recurring: taskFreq, 
+                shift_id: taskShift,  
+                start_date: formattedStartDate,  
+                start_time: formattedStartTime,  
+                location, 
+              };
+            const response = await fetch(`${API_BASE_URL}/api/task/createTask`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -168,190 +163,301 @@ const NewEvent = ({ show, handleClose }) => {
                 body: JSON.stringify(postData),
             });
             const result = await response.json();
-             console.log("handleSave Response Received: ")
-             console.log("result: >>>>")
-             console.log(result)
-             console.log("response: >>>>")
-             console.log(response) 
+            
+
             if (response.ok) {
-                console.log(result.error)
-                if (result.error !== '')
-                {
-                    console.log(result.message);
-                    setUserMsg(result.message);
+                console.log("Response received:", result); 
+               
+                if (result.task) {
+                    
+                    setTaskCreated(true);
+                
+                    setTaskId(result.task[0].id); 
+                    setUserMsg(result.message || 'Event saved successfully!');
                 }
             } else{
-                setUserMsg(result.message);
+                setUserMsg(result.message || 'Failed to save event.');
             }
             
         }
          catch(error){
-            console.log("Catch Block Error: ")
+            console.log("Error saving event:")
             console.log(error)
+            setUserMsg('Error saving event.');
             throw error;
         }
 
     }
 
-    
+    const handleAssignVolunteer = async () => {
+       
+        if (!taskId || assignedVolunteer === '0') {return;}
+        const volunteerIdInt = typeof assignedVolunteer === 'string' ? parseInt(assignedVolunteer, 10) : assignedVolunteer;
+        console.log("taskID, volunteerId", taskId," ", volunteerIdInt)
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/task/assignVolunteer`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ taskId, volunteerId: volunteerIdInt }),
+            });
 
+            const result = await response.json();
+        
+            if (response.ok) {
+                console.log(result.message)
+                setUserMsg(result.message);
+                setIsVolunteerAssigned(true);
+            } else {
+                setUserMsg('Failed to assign volunteer.');
+            }
+        } catch (error) {
+            console.error('Error assigning volunteer:', error);
+            setUserMsg('Error assigning volunteer.');
+        }
+    };
+    const handleSendNotifications = async () => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/task/notifyVolunteers`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ taskId }),
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                setNotificationSent(true);
+                console.log(response.message);
+                setUserMsg('Notifications sent successfully!', result.message);
+            } else {
+                setUserMsg('Failed to send notifications.');
+            }
+        } catch (error) {
+            console.error('Error sending notifications:', error);
+            setUserMsg('Error sending notifications.');
+        }
+    };
 
     return (
         <>
-        <Modal show={show} onHide={handleClose} className="modal-dialog">
+        <Modal show={show} onHide={handleModalClose} className="modal" style={{ maxHeight: 'calc(100vh)', overflowY: 'auto' }}>
         <form onSubmit={handleSave}>
             <Modal.Header>
                 <Modal.Title>New Event Details</Modal.Title>
             </Modal.Header>
             
-            <Modal.Body>
+            <Modal.Body >
                 
                     <div className="form-group">
-                    <label htmlFor="eventname">Name</label>
+                        <label htmlFor="eventname" className="form-label">Name</label>
                         <input
                             type="text"
-                            className="form-control"
+                            className={`form-control ${errors.eventName ? 'is-invalid' : ''}`} 
                             id="eventname"
+                            name="eventName"
                             placeholder="Enter event name"
                             value={eventName}
-                            onChange={handleEventNameChange}
-                             
-                            required
-                       />
+                            onChange={handleChange}
+                                
+                        />
+                        {errors.eventName && <div className="invalid-feedback">{errors.eventName}</div>}
                     </div>
                     <div className="form-group">
-                        <label>Description</label>
-                        <input
-                            type="text"
-                            className="form-control"
+                        <label htmlFor="description" className="form-label">Description</label>
+                        <textarea
+                            className={`form-control ${errors.description ? 'is-invalid' : ''}`} 
+                            id="description"
                             name="description"
                             placeholder="Brief description of task"
                             value={description}
-                            onChange={handleEventDescriptionChange}
+                            onChange={handleChange}
                             
-                            required
                         />
+                        {errors.description && <div className="invalid-feedback">{errors.description}</div>}
                     </div>
                     <div className="form-group">
-                        <label>Task Type</label>
-                        <div>
+                        <label htmlFor="taskType" className="form-label">Task Type</label>
                         <select name="taskType" id="taskType" 
-                        onChange={handleTaskTypeChange}
-                        value={taskType} 
-                        required>
+                            onChange={handleChange}
+                            value={taskType} 
+                            className={`form-select ${errors.taskType ? 'is-invalid' : ''}`} 
+                        >
                             <option value="0"> -- select an option -- </option>
-                            <option value="1">Small Dog</option>
-                            <option value="2">Big Dog</option>
-                            <option value="3">Cat</option>
-                            <option value="4">One Time Event</option>
-                            </select>
-                            {!isValid && <p style={{ color: 'red' }}>Please select an option</p>}
-                        </div>
+                                {taskTypes.map((type) => (
+                                    <option key={type.id} value={type.id}>
+                                        {type.type_name}
+                                    </option>
+                                ))}
+                        </select>
+                        {errors.taskType && <div className="invalid-feedback">{errors.taskType}</div>}
+                       
                     </div>
                     <div className="form-group">
                         <label>Task Frequency</label>
-                        <div>
-                        <label>
+                        <div  className="form-check">
                             <input 
-                            type="radio" 
-                            name="taskFreq"
-                            className="radio-new-task"
-                            value="false"
-                            
-                            onChange={handleTaskFreqChange} 
+                                type="radio" 
+                                name="taskFreq"
+                                id="taskFreq1"
+                                value="false"
+                                className={`form-check-input ${errors.taskFreq ? 'is-invalid' : ''}`}
+                                onChange={handleChange}
+                                checked={taskFreq === false}
+                                                       
                             />
+                            <label className="form-check-label" htmlFor="taskFreq1">
                             One Time Task
-                        </label>
-                        <label>
+                            </label>
+                        
                             <input 
-                            type="radio" 
-                            value="true" 
-                            name="taskFreq"
-                            className="radio-new-task"
-                            onChange={handleTaskFreqChange} 
+                                type="radio"
+                                name="taskFreq"
+                                id="taskFreq2"
+                                value='true'
+                                className={`radio-new-task ${errors.taskFreq ? 'is-invalid' : ''}`}
+                                onChange={handleChange} 
+                                checked={taskFreq === true}
                             />
+                             <label className="form-check-label" htmlFor="taskFreq2">
                             Recurring Task
                         </label>
+                        {errors.taskFreq && <div className="invalid-feedback">{errors.taskFreq}</div>}
                         </div>
                     </div>
                     <div className="form-group">
-                        <label>Shift Type</label>
-                        <div>
-                        <select name="shiftPref" 
-                            id="shiftPref"
-                            onChange={handleShiftPrefChange}
-                            value={shiftPref}
-                            disabled={isDisabled}
+                        <label htmlFor="taskShift" className="form-label">Shift</label>                        
+                        <select name="taskShift" 
+                            id="taskShift"
+                            className={`form-select ${errors.taskShift ? 'is-invalid' : ''}`} 
+                            onChange={handleChange}
+                            value={taskShift}
+                            
                             >
                             <option value="0"> -- select an option -- </option>
-                            <option value="43">Monday AM</option>
-                            <option value="44">Monday PM</option>
-                            <option value="45">Tuesday AM</option>
-                            <option value="46">Tuesday PM</option>
-                            <option value="47">Wednesday AM</option>
-                            <option value="48">Wednesday PM</option>
-                            <option value="49">Thursday AM</option>
-                            <option value="50">Thursday PM</option>
-                            <option value="51">Friday AM</option>
-                            <option value="52">Friday PM</option>
-                            <option value="53">Saturday AM</option>
-                            <option value="54">Saturday PM</option>
-                            <option value="55">Sunday AM</option>
-                            <option value="56">Sunday PM</option>
-
-                            </select>
-                            {!isShiftValid && <p style={{ color: 'red' }}>Please select an option</p>}
-                        </div>
+                                {shifts.map((shift) => (
+                                    <option key={shift.id} value={shift.id}>
+                                        {`${shift.day} ${shift.time}`}
+                                    </option>
+                                ))}
+                        </select>
+                        {errors.taskShift && <div className="invalid-feedback">{errors.taskShift}</div>}
+                    
                     </div>
                     <div className="form-group">
-                        <label>Date</label>
+                        <label htmlFor="date" className="form-label">Date</label>
                         <DatePicker 
+                            className={`datetimepicker ${errors.startDate ? 'is-invalid' : ''}`} 
                             selected={startDate}
-                            onChange={(date) => { 
-                                let dt = date.toLocaleDateString('en-CA', {year: 'numeric', month: '2-digit', day: '2-digit'});
-                                console.log(dt)
-                                setStartDate(dt)}}
-                            value={startDate} 
-                            className="datetimepicker"
+                            onChange={(date) => setStartDate(date)} 
+                            id="date" 
                             dateFormat="yyyy/MM/dd"
                             required
                             />
+                           
                     </div>
+
                     <div className="form-group">
-                        <label>Time</label>
+                        <label htmlFor="time" className="form-label">Time</label>
                         <DatePicker
+                            className={'datetimepicker'} 
                             selected={startTime}
-                            value={startTime}
                             onChange={(time) => {setStartTime(time)}}
                             showTimeSelect
                             showTimeSelectOnly
                             timeIntervals={30}
-                            className="datetimepicker"
+                            id="time"
                             dateFormat="h:mm aa"
                             required
                             />
+                            
                     </div>
+                    
                     <div className="form-group">
                         <label>Location</label>
                         <input
                             type="text"
-                            className="form-control"
+                            className={`form-control ${errors.location ? 'is-invalid' : ''}`} 
                             name="location"
+                            value={location}
                             placeholder="Location of task"
-                            onChange={handleLocationChange} 
-                            required
+                            onChange={handleChange}
                         />
+                        {errors.location && <div className="invalid-feedback">{errors.location}</div>}
                     </div>
-                
+                    <div className="my-2">
+                        <Button  
+                            variant="primary" 
+                            type="submit"
+                            disabled={taskCreated}
+                            >
+                            Save
+                        </Button>
+                    </div>
+                    <hr />
+                    {taskCreated && (
+                        <>
+                            <div className="alert alert-success mt-3">
+                                Task created successfully! You can now assign a volunteer or send notifications to volunteers that might be interested in the task
+                            
+                            </div>   
+                        
+                            <hr />
+                     
+                        </>
+                    )}
+                    <div className="form-group">
+                        <label htmlFor="assignVolunteer" className="form-label">Assign Volunteer</label>
+                        <select 
+                            id="assignVolunteer" 
+                            className="form-select" 
+                            value={assignedVolunteer} 
+                            onChange={(e) => setAssignedVolunteer(e.target.value)}
+                            disabled={!taskCreated}  
+                        >
+                            <option value="0"> -- Select a volunteer -- </option>
+                            {volunteers.map(volunteer => (
+                                <option key={volunteer.id} value={volunteer.id}>
+                                    {volunteer.first_name} {volunteer.last_name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="my-2">
+                        <Button 
+                            variant="primary" 
+                            onClick={handleAssignVolunteer} 
+                            disabled={!taskCreated || isVolunteerAssigned}
+                        >
+                            Assign volunteer
+                        </Button>
+                        <hr />
+                    </div>
+                    <div className="my-2">
+                        <Button 
+                            variant="primary" 
+                            onClick={handleSendNotifications} 
+                            disabled={!taskCreated || isVolunteerAssigned}
+                        >
+                            Send Notifications
+                        </Button>
+                    </div>
+                    
+                    
             </Modal.Body>
             <Modal.Footer>
-            <span className="error">{usermsg}</span>
-                <Button variant="secondary" onClick={handleModalClose}>
+                <span className="error">{usermsg}</span>
+                <Button 
+                    variant="secondary" 
+                    onClick={handleModalClose}
+                    
+                    >
                     Close
                 </Button>
-                <Button variant="primary" type="submit">
-                    Save
-                </Button>
+               
+                
                 
             </Modal.Footer>
             </form>
