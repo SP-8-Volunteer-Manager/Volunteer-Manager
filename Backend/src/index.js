@@ -11,6 +11,7 @@ const VolunteerRoutes = require('./routes/volunteerRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const adminEventsListRoutes = require('./routes/adminEventsListRoutes'); 
 const notificationRoutes = require('./routes/notificationRoutes');
+const taskRoutes = require('./routes/taskRoutes');
 
 const corsOptions = {
     origin: 'http://localhost:5173', // Allow the React app to connect to the server
@@ -30,6 +31,7 @@ app.use('/api/admin', adminEventsListRoutes);
 app.use('/api/admin', VolunteerRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/notification', notificationRoutes);
+app.use('/api/task', taskRoutes);
 
 
 
