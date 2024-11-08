@@ -1,7 +1,8 @@
 const supabase = require('../config/supabaseClient');
-
 const { Resend } = require('resend');
 const { sendEmail } = require('./notificationController'); 
+const { sendSMS } = require('./notificationController'); 
+
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -143,12 +144,26 @@ catch (taskError) {
 };
 
 
-
-        
 const createMessageForVolunteers = async (task)  => {
 
-    const { name, location, day, time, description } = task;
+    const { name, location, start_date, start_time, description } = task;
+    
+     // Convert start_date to MM/DD/YYYY format
+     const day = new Date(start_date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    });
 
+    // Convert start_time to 12-hour format with AM/PM
+    const time = new Date(`1970-01-01T${start_time}Z`).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZone: "UTC"
+    });
+
+    console.log("task: ", task);
     // Generate a default message using task information
     const defaultMessage = `
         <p><strong>Task Alert: ${name}</strong></p>
@@ -211,31 +226,6 @@ const notifyMatchingVolunteers = async (req, res)  => {
             message: "Notifications sent successfully!",
             results: notificationResults,
         });
-
-        
-        // const notificationPromises = [];
-        // // Loop through volunteers and send individual messages
-        // for (const volunteer of volunteers) {
-        //     console.log(volunteer);
-        //     const taskLink = `https://url/confirm/${taskId}?volunteerId=${volunteer.id}`; // Unique link for each volunteer
-        //     const message = `${defaultMessage}<p><a href="${taskLink}">Click here to confirm your availability</a></p>`;
-        //     const notificationPromise = sendNotification({
-        //         body: {
-        //             volunteers: [volunteer],
-        //             message,
-        //         },
-        //     }).then(() => {
-        //         return { volunteerId: volunteer.id, success: true };
-        //     }).catch((error) => {
-        //         console.error(`Error sending notification to volunteer ID ${volunteer.id}:`, error);
-        //         return { volunteerId: volunteer.id, success: false };
-        //     });
-
-        //     notificationPromises.push(notificationPromise);
-        // }
-        // // Wait for all notifications to finish
-        // const notificationResults = await Promise.all(notificationPromises);
-        // res.status(200).json({ message: "Notifications sent successfully!", results: notificationResults });
     }
     catch (error) {
         console.error("Error in notifyMatchingVolunteers:", error);
@@ -270,8 +260,7 @@ const sendDirectNotification = async (volunteer, message) => {
         if (volunteer.receive_phone && volunteer.consent_for_sms) {
             const { phone, carrier } = volunteer;
             console.log(`Sending SMS to ${volunteer.first_name} ${volunteer.last_name} at ${phone} via ${carrier}`);
-          
-            // 
+            await sendSMS(phone, message);
         }
         //volunteer.receive_email has to be added
        
@@ -289,7 +278,8 @@ const sendDirectNotification = async (volunteer, message) => {
 };
 
 
-module.exports = { 
+module.exports =  { 
+ 
     getTaskTypes,
     getShift,
     createTask,

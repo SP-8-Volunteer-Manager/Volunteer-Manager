@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button } from 'react-bootstrap';
 import NotificationModal from './NotificationModal';
 import Select from 'react-select';
+import API_BASE_URL from '../config';
 
 const VolunteerInfo = ({ volunteer, show, handleClose }) => {
     const [isEditMode, setIsEditMode] = useState(false);
@@ -27,7 +28,8 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
     useEffect(() => {
         const fetchOptions = async () => {
             try {
-                const scheduleResponse = await fetch(`http://localhost:8080/api/admin/scheduleOptions`);
+              
+                const scheduleResponse = await fetch(`${API_BASE_URL}/api/admin/scheduleOptions`);
                 if (!scheduleResponse.ok) {
                     throw new Error(`Failed to fetch schedule options, status: ${scheduleResponse.status}`);
                 }
@@ -37,7 +39,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                     label: `${option.day} ${option.time}`
                 })));
 
-                const taskResponse = await fetch(`http://localhost:8080/api/admin/taskOptions`);
+                const taskResponse = await fetch(`${API_BASE_URL}/api/admin/taskOptions`);
                 if (!taskResponse.ok) {
                     throw new Error(`Failed to fetch task options, status: ${taskResponse.status}`);
                 }
@@ -112,7 +114,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
             })),
         };
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/volunteers/info/${volunteer.id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/info/${volunteer.id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updateData),
