@@ -28,10 +28,12 @@ const updateVolunteerStatus = async (req, res) => {
         .from('volunteer')
         .update({ new: false }) // Update the "new" attribute
         .eq('id', id); // Find the volunteer by id
-
+        
     if (error) {
         return res.status(400).json({ error: error.message });
     }
+
+    
 
     return res.status(200).json({ data });
 };
@@ -81,7 +83,7 @@ const updateVolunteer = async (req, res) => {
 
         const scheduleUpdates = schedulePreferences.map(pref => ({
             volunteer_id: volunteerId,
-            shift_id: pref.shift_id, // Assuming shift_id is passed from the frontend as part of the preference data
+            shift_id: pref.shift_id, 
         }));
 
         const { error: scheduleError } = await supabase
@@ -119,7 +121,7 @@ const updateVolunteer = async (req, res) => {
 // Fetch schedule preferences from the 'shift' table
 const getSchedulePreferences = async (req, res) => {
     try {
-        const { data, error } = await pool
+        const { data, error } = await supabase
             .from('shift')
             .select('day, time'); // Supabase query to select specific columns
 
@@ -141,7 +143,7 @@ const getSchedulePreferences = async (req, res) => {
 // Fetch task preferences from the 'task_type' table
 const getTaskOptions = async (req, res) => {
     try {
-        const { data, error } = await pool
+        const { data, error } = await supabase
             .from('task_type')
             .select('id, type_name'); // Ensure to select both id and type_name
 
@@ -161,7 +163,7 @@ const getTaskOptions = async (req, res) => {
 
 
 
-   
+
 module.exports = { 
     getVolunteers,
     updateVolunteerStatus,

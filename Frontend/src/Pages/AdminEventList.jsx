@@ -8,6 +8,7 @@ function AdminEventList() {
     const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null); // Track selected event
     const [showModal, setShowModal] = useState(false); // Track modal visibility
+    const [showNewEventModal, setShowNewEventModal] = useState(false); // Track modal visibility
     const [previousScrollPosition, setPreviousScrollPosition] = useState(0); 
     //Fetch the event data from the backend
     useEffect(() => {
@@ -35,7 +36,7 @@ function AdminEventList() {
     };
 
     const handleNewEventClick = () => {
-        setShowModal(true);
+        setShowNewEventModal(true);
     };
 
     // Close modal and reset selected volunteer
@@ -46,7 +47,7 @@ function AdminEventList() {
     };
 
     const handleNewEventCloseModal = () => {
-        setShowModal(false);
+        setShowNewEventModal(false);
     };
 
     return (
@@ -129,7 +130,7 @@ function AdminEventList() {
             />
 
         <NewEvent
-        show={showModal}
+        show={showNewEventModal}
         handleClose={handleNewEventCloseModal}
         />
     </section>
