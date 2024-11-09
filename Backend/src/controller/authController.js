@@ -255,12 +255,12 @@ console.log("Creating shift preferences")
   const login = async (req, res) => {
     console.log('Received request login');
     const { username, password } = req.body;
-
+    var em = ''
     try {
       // Retrieve the user by username
       const { data: user, error: fetchError } = await supabase
         .from('User')
-        .select('username, password_hash')
+        .select('id, username, email, password_hash, role')
         .eq('username', username)
         .single();
 
@@ -271,18 +271,20 @@ console.log("Creating shift preferences")
       // Compare the password with the hashed password stored in the database
       const isMatch = await bcrypt.compare(password, user.password_hash);
 
-  if (!isMatch) {
-
+      if (!isMatch) {
         return res.status(401).json({ message: 'Invalid email or password' });
-
       }
-
-    
-{/*
-      if (password !== user.password_hash) {
-        return res.status(401).json({ message: 'Invalid email or password' });
-      }*/}
-      res.status(200).json({ message: 'Login successful', user: user /*, token */ });
+      // login to supabase
+      em = user.email;
+      const { data:authdata, error:autherror } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: password
+      })
+    //console.log(authdata)
+    //console.log(autherror)
+    const rcdata = {userId: user.id, username: user.username, email: user.email, role: user.role}
+    //console.log(rcdata)
+    res.status(200).json({ message: 'Login successful', user: rcdata /*, token */ });
     } catch (error) {
       res.status(500).json({ message: 'Error logging in', error: error.message });
     }

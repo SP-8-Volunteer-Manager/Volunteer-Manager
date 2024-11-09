@@ -13,6 +13,8 @@ import ContactUs from './Pages/ContactUs'
 import MyPortal from './Pages/MyPortal'
 import SignUpPage from './Pages/SignUpPage';
 import AdminDashboard from './Pages/AdminDashboard';
+import VolunteerDashboard from './Pages/VolunteerDashboard';
+import MyProfile from './Pages/MyProfile';
 import VolunteerList from './Pages/VolunteerList';
 import AdminEventList from './Pages/AdminEventList';
 
@@ -22,6 +24,7 @@ import Login from './Components/LogIn'
 import LoggedInNavigation from './Components/LoggedInNavigation';
 import ScrollToTop from './Components/ScrollToTop';
 import Footer from './Components/Footer'
+import VolunteerNavigation from './Components/VolunteerNavigation';
 
 
 
@@ -29,10 +32,14 @@ import Footer from './Components/Footer'
 function App() {
   
   const [isLoggedIn, setIsLoggedIn] = useState(false)  // Track login state
-  const navigate = useNavigate(); // Initialize useNavigate
   
+  const [userData, setUserData] = useState({})  // Track userdata
+  const navigate = useNavigate(); // Initialize useNavigate
+  console.log("Is loggedin= " + isLoggedIn + " as role: " + userData.role)
+
   const fetchAPI = async () => {
     try {
+      console.log("---app.jsx fetchapi--")
       const response = await axios.get(`${API_BASE_URL}/`);
       console.log(response.data); // Check the response data
     } catch (error) {
@@ -45,11 +52,21 @@ function App() {
     const confirmLogout = window.confirm("Are you sure you want to log out?");
     if (confirmLogout) {
       setIsLoggedIn(false); // Perform logout
+      //supabaseLogout();
       navigate('/'); // Redirect to home page after logging out
 
     }
   };
   
+  // const supabaseLogout = async() => {
+  //   const { error } = await supabase.auth.signOut()
+  //   console.log('supabase logout');
+  //   console.log(error);
+  //   const { data: { user } } = await supabase.auth.getUser()
+  //   console.log('supabase getuser');
+  //   console.log(user)
+  // }
+
   useEffect(() => {
     fetchAPI();
   },[]);
@@ -61,9 +78,12 @@ function App() {
           <ScrollToTop />
          {/*} <div className="d-flex flex-grow-1"> {/* Ensure content area can grow */}
           <Routes>
-            {isLoggedIn ? (
-            // Routes for logged-in users
+          { // outer bracket
+            isLoggedIn && userData.role == "admin" ?
+           (
+            // Routes for logged-in admin users
             <>
+              {console.log("Admin view")}
             
               <Route path="/" element={<LoggedInNavigation onLogout={handleLogout} />}>
                 <Route index element={<AdminDashboard />} />
@@ -74,13 +94,34 @@ function App() {
                 <Route path="*" element={<ErrorPage />} />
               </Route>
             </>
-          ) : (
+          ) 
+          :     //else
+          ( // nested ternary
+            isLoggedIn && userData.role == "volunteer" ?
+            (
+             
+             // Routes for logged-in volunteer users
+             <>
+              {console.log("Volunteer view")}
+               <Route path="/" element={<VolunteerNavigation onLogout={handleLogout} />}>
+                 <Route index element={<VolunteerDashboard />} />
+                 
+                 <Route path="/myProfile" element={<MyProfile userData={userData}/>} />
+                 <Route path="/adminEventList" element={<AdminEventList />} />
+                 
+                 <Route path="*" element={<ErrorPage />} />
+               </Route>
+             </>
+            )
+          :
+          (
             // Routes for guests (not logged in)
             <>
+              {console.log("Not logged in view")}
             <Route path="/" element={<Navigation />}>
-                <Route index element={<Home setIsLoggedIn={setIsLoggedIn} />} />
+                <Route index element={<Home setIsLoggedIn={setIsLoggedIn} setUserData={setUserData}/>} />
                 <Route path="aboutUs" element={<AboutUs />} />
-                <Route path="myPortal"  element={<MyPortal setIsLoggedIn={setIsLoggedIn} />}  />
+                <Route path="myPortal"  element={<MyPortal setIsLoggedIn={setIsLoggedIn} setUserData={setUserData}/>}  />
                 <Route path="contactUs" element={<ContactUs />} />
                 <Route path="/signUp" element={<SignUpPage />} />
                
@@ -89,14 +130,16 @@ function App() {
               </Route>
               <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} /> 
             </>
-            )}
+            )
+          )            
+            
+            } // outer bracket
+
           </Routes>
           </div>
           <div className="mt-auto">
             <Footer />
           </div>
-       {/* </div>  */  }  
-     
     </>
       )
     };
