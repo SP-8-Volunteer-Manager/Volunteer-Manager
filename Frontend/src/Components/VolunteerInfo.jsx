@@ -28,17 +28,18 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
     useEffect(() => {
         const fetchOptions = async () => {
             try {
-              
                 const scheduleResponse = await fetch(`${API_BASE_URL}/api/admin/scheduleOptions`);
                 if (!scheduleResponse.ok) {
                     throw new Error(`Failed to fetch schedule options, status: ${scheduleResponse.status}`);
                 }
                 const scheduleData = await scheduleResponse.json();
+                console.log('schedule data', scheduleData);
                 setScheduleOptions(scheduleData.map(option => ({
-                    value: `${option.day} ${option.time}`,
+                    key: option.id,
+                    value: option.id,
                     label: `${option.day} ${option.time}`
                 })));
-
+                
                 const taskResponse = await fetch(`${API_BASE_URL}/api/admin/taskOptions`);
                 if (!taskResponse.ok) {
                     throw new Error(`Failed to fetch task options, status: ${taskResponse.status}`);
@@ -53,6 +54,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
             }
         };
         fetchOptions();
+        console.log("schedule options", scheduleOptions);
     }, []);
 
     // Load volunteer data into editable state when component mounts or volunteer changes
@@ -64,7 +66,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                 phone: volunteer.phone || '',
                 email: volunteer.email || '',
                 "Schedule Preferences": volunteer.shift_prefer ? volunteer.shift_prefer.map(shift => ({
-                    value: `${shift.shift.day} ${shift.shift.time}`,
+                    value: shift.shift.id,
                     label: `${shift.shift.day} ${shift.shift.time}`
                 })) : [],
                 "Task Preferences": volunteer.task_prefer ? volunteer.task_prefer.map(task => ({

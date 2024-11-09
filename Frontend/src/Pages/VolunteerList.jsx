@@ -58,6 +58,9 @@ const VolunteerList=() => {
 
     // Filter volunteers based on the filter criteria
     const filterVolunteers = (volunteersList) => {
+        if (!nameFilter && !taskFilter && !shiftDayFilter && !shiftTimeFilter) {
+            return volunteersList;
+        }
         return volunteersList.filter(volunteer => {
             const fullName = `${volunteer.first_name} ${volunteer.last_name}`.toLowerCase();
             const matchesName = fullName.includes(nameFilter.toLowerCase());
@@ -81,11 +84,13 @@ const VolunteerList=() => {
     });
 
     const filteredAllVolunteers = filterVolunteers(sortedVolunteers);
+   
 
     const indexOfLastAllVolunteer = currentAllPage * allVolunteersPerPage;
     const indexOfFirstAllVolunteer = indexOfLastAllVolunteer - allVolunteersPerPage;
     const currentAllVolunteers = filteredAllVolunteers.slice(indexOfFirstAllVolunteer, indexOfLastAllVolunteer);
     const totalAllPages = Math.ceil(filteredAllVolunteers.length / allVolunteersPerPage);
+
 
 
     
@@ -132,7 +137,34 @@ const VolunteerList=() => {
     };
 
     // Close modal and reset selected volunteer
-    const handleCloseModal = () => {
+    const handleCloseModal = async () => {
+        if (selectedVolunteer) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/${selectedVolunteer.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(selectedVolunteer),  // Send updated volunteer data
+                });
+    
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+    
+                const updatedVolunteer = await response.json();
+    
+                // Update the volunteers state to reflect the updated volunteer
+                setVolunteers((prevVolunteers) =>
+                    prevVolunteers.map((v) =>
+                        v.id === updatedVolunteer.id ? updatedVolunteer : v // Replace with the updated volunteer
+                    )
+                );
+    
+            } catch (error) {
+                console.error(`Error updating volunteer: ${error}`);
+            }
+        }
         setSelectedVolunteer(null);
         setShowModal(false);
         window.scrollTo(0, previousScrollPosition); // Scroll to saved position
