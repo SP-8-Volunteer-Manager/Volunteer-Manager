@@ -30,18 +30,21 @@ function MyCalendar() {
         const data = await response.json();
         
         // Map data to the required format for BigCalendar
-        const formattedEvents = data.map(event => ({
+        const formattedEvents = data.map(event => {
+          const localDate = new Date(event.start_date + 'T00:00:00')
+          return {
+          
           title: event.name,
-          start: new Date(event.start_date),
-          end: new Date(event.start_date),
+          start: localDate,
+          end: localDate,
           task_type: event.task_type?.type_name || 'N/A',
           description: event.description, 
           location: event.location,
           volunteer: event.assignment && event.assignment.length > 0 
                     ? `${event.assignment[0].volunteer.first_name} ${event.assignment[0].volunteer.last_name}`
                     : 'No volunteer assigned', // Handle no assignment
-        }));
-
+        }
+      });
         setEvents(formattedEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
@@ -73,7 +76,7 @@ function MyCalendar() {
       );
     });
   };
-
+  
   const tileContent = ({ date }) => {
     const eventsForDate = getEventsForDate(date);
     return (
@@ -84,7 +87,7 @@ function MyCalendar() {
       </div>
     );
   };
-
+  
   const openEventsModal = (date) => {
     const eventsForDate = getEventsForDate(date);
     setEventsForSelectedDay(eventsForDate);
