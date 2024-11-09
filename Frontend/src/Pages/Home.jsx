@@ -8,7 +8,7 @@ import dogImage from '../assets/dog.jpg'
 import cat from '../assets/cat.png'
 
 
-function Home({ setIsLoggedIn }) {
+function Home({ setIsLoggedIn, setUserData }) {
     const [showModal, setShowModal] = useState(false);
     const [resetForm, setResetForm] = useState(false);
 
@@ -98,7 +98,7 @@ function Home({ setIsLoggedIn }) {
                         </div>
                         <div className="modal-body p-5 pt-0 mb-4">
                              {/* Pass closeModal and setIsLoggedIn to the Login component */}
-                            <Login setIsLoggedIn={setIsLoggedIn} closeModal={handleClose} reset={resetForm} onResetDone={() => setResetForm(false)}/>
+                            <Login setIsLoggedIn={setIsLoggedIn} closeModal={handleClose} reset={resetForm} onResetDone={() => setResetForm(false)} setUserData={setUserData}/>
                         </div>
                         
                         

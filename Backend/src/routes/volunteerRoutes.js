@@ -14,4 +14,7 @@ router.patch('/volunteers/info/:id', volunteerController.updateVolunteer);
 router.get('/scheduleOptions', volunteerController.getSchedulePreferences);
 router.get('/taskOptions', volunteerController.getTaskOptions);
 
+router.post('/getVolunteer', volunteerController.getVolunteer);
+router.post('/volunteers/updateMyProfile', volunteerController.updateMyProfile);
+
 module.exports = router; // export the router

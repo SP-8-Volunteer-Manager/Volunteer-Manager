@@ -7,7 +7,7 @@ import API_BASE_URL from '../config';
 
 
 
-function LogIn({ setIsLoggedIn, closeModal, reset, onResetDone  }) {
+function LogIn({ setIsLoggedIn, closeModal, reset, onResetDone, setUserData  }) {
 //add const for username and password
     const[username, setUsername] = useState('');
     const[password, setPassword] = useState('');
@@ -51,13 +51,23 @@ function LogIn({ setIsLoggedIn, closeModal, reset, onResetDone  }) {
                     }
                     return;
                 }
+                console.log('Login success response')
+                const rdata = await response.json();
+                console.log(rdata)
+                const userData = rdata.user
+                console.log(userData)
+                //console.log(response);
                 //Setting user
-                setIsLoggedIn(true);      
+                setIsLoggedIn(true);
+                // console.log("setting user role:")
+                // console.log(userData.role)
+                setUserData(userData);
                 closeModal();
                 resetForm();
                 window.scrollTo(0, 0);
                 navigate('/');
             } catch(error){
+                console.log(error);
                 setError(error.message);
             }
         }
