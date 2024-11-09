@@ -86,6 +86,7 @@ const updateVolunteer = async (req, res) => {
             shift_id: pref.shift_id, 
         }));
 
+
         const { error: scheduleError } = await supabase
             .from('shift_prefer')
             .insert(scheduleUpdates);
@@ -123,11 +124,12 @@ const getSchedulePreferences = async (req, res) => {
     try {
         const { data, error } = await supabase
             .from('shift')
-            .select('day, time'); // Supabase query to select specific columns
+            .select('*'); // Supabase query to select specific columns
 
         if (error) throw error; // Handle error from Supabase
 
         const scheduleOptions = data.map(shift => ({
+            id: shift.id,
             day: shift.day,
             time: shift.time,
         }));
