@@ -33,7 +33,7 @@ const confirmAvailability = async (req, res) => {
              return res.status(500).json({ error: 'Error updating confirmation.' });
          }
 
-         return res.status(200).json({ message: 'Availability confirmed successfully.' });
+         return res.status(200).json({ message: 'Your confirmation has been received. If you are assigned to this task, you will receive an additional notification.' });
         }
 
         // Add a new confirmation record
@@ -46,7 +46,7 @@ const confirmAvailability = async (req, res) => {
                 return res.status(500).json({ error: 'Error inserting confirmation.' });
             }
 
-        res.status(200).json({ message: 'Availability confirmed successfully.' });
+        res.status(200).json({ message: 'Your confirmation has been received. If you are assigned to this task, you will receive an additional notification.' });
     } catch (error) {
         console.error("Error confirming availability:", error);
         res.status(500).json({ error: "Error confirming availability." });
