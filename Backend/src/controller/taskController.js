@@ -238,7 +238,7 @@ const sendMessageToVolunteers = async (volunteers, taskId, message) => {
     try {
         // Loop through each volunteer and send a notification with their specific message
         const notificationPromises = volunteers.map(async (volunteer) => {
-            const taskLink = `https://url/confirm/${taskId}?volunteerId=${volunteer.id}`;
+            const taskLink = `${process.env.FRONTEND_URL}/${taskId}/${volunteer.id}`;
             const personalizedMessage = `${message}<p><a href="${taskLink}">Click here to confirm your availability</a></p>`;
 
             // Send the notification to the volunteer
@@ -277,6 +277,24 @@ const sendDirectNotification = async (volunteer, message) => {
     }
 };
 
+const getTaskDetails = async (req, res) => {
+    const { taskId } = req.params;
+    console.log("Received taskId:", taskId);
+    try {
+        const { data: task, error } = await supabase
+            .from('task')
+            .select('*')
+            .eq('id', taskId)
+            .single();
+
+        if (error) throw error;
+        res.status(200).json(task);
+    } catch (error) {
+        console.error("Error fetching task details:", error);
+        res.status(500).json({ error: "Error fetching task details." });
+    }
+};
+
 
 module.exports =  { 
  
@@ -285,6 +303,5 @@ module.exports =  {
     createTask,
     notifyMatchingVolunteers,
     assignVolunteerToTask,
-    
-
+    getTaskDetails
 };

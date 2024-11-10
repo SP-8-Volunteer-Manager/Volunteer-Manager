@@ -243,7 +243,7 @@ console.log("Creating shift preferences")
       return res.status(500).json({ message: 'Supabase signup error', error: autherror.message });
     }
     
-      return res.status(200).json({message: "Successfully signed up", error: "N"});
+      return res.status(200).json({message: "Successfully signed up. Please check your email for verification link", error: "N"});
             
 
     } catch (error) {  // global catch
