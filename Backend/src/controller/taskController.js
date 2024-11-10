@@ -238,7 +238,7 @@ const sendMessageToVolunteers = async (volunteers, taskId, message) => {
     try {
         // Loop through each volunteer and send a notification with their specific message
         const notificationPromises = volunteers.map(async (volunteer) => {
-            const taskLink = `${process.env.FRONTEND_URL}/${taskId}/${volunteer.id}`;
+            const taskLink = `${process.env.FRONTEND_URL}/confirm/${taskId}/${volunteer.id}`;
             const personalizedMessage = `${message}<p><a href="${taskLink}">Click here to confirm your availability</a></p>`;
 
             // Send the notification to the volunteer
@@ -279,7 +279,7 @@ const sendDirectNotification = async (volunteer, message) => {
 
 const getTaskDetails = async (req, res) => {
     const { taskId } = req.params;
-  
+ 
     try {
         const { data: task, error } = await supabase
             .from('task')
