@@ -7,14 +7,16 @@ const cors = require("cors");
 const supabase = require('./config/supabaseClient'); // Import the Supabase client
 const app = express();
 const authRoutes = require('./routes/authRoutes');
-const VolunteerRoutes = require('./routes/volunteerRoutes');
+const volunteerRoutes = require('./routes/volunteerRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const adminEventsListRoutes = require('./routes/adminEventsListRoutes'); 
 const notificationRoutes = require('./routes/notificationRoutes');
 const taskRoutes = require('./routes/taskRoutes');
+const confirmationRoutes = require('./routes/confirmationRoutes');
+
 
 const corsOptions = {
-    origin: 'http://localhost:5173', // Allow the React app to connect to the server
+    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_DNS,'http://localhost:5173'], 
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Include necessary methods
     credentials: true,
 };
@@ -28,10 +30,11 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminEventsListRoutes);
-app.use('/api/admin', VolunteerRoutes);
+app.use('/api/admin', volunteerRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/notification', notificationRoutes);
 app.use('/api/task', taskRoutes);
+app.use('/api/confirmation', confirmationRoutes)
 
 
 

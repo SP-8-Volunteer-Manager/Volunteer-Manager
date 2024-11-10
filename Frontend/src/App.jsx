@@ -25,6 +25,7 @@ import LoggedInNavigation from './Components/LoggedInNavigation';
 import ScrollToTop from './Components/ScrollToTop';
 import Footer from './Components/Footer'
 import VolunteerNavigation from './Components/VolunteerNavigation';
+import TaskConfirmationPage from './Pages/TaskConfirmationPage';
 
 
 
@@ -124,10 +125,10 @@ function App() {
                 <Route path="myPortal"  element={<MyPortal setIsLoggedIn={setIsLoggedIn} setUserData={setUserData}/>}  />
                 <Route path="contactUs" element={<ContactUs />} />
                 <Route path="/signUp" element={<SignUpPage />} />
-               
                 <Route path="*" element={<ErrorPage />} />
                 
               </Route>
+              <Route path="/confirm/:taskId/:volunteerId" element={<TaskConfirmationPage />} />
               <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} /> 
             </>
             )

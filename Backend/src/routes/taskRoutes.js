@@ -19,5 +19,6 @@ router.get('/shift', taskController.getShift);
 router.post('/createTask', taskController.createTask);
 router.post('/assignVolunteer', taskController.assignVolunteerToTask );
 router.post('/notifyVolunteers', taskController.notifyMatchingVolunteers );
+router.get('/:taskId', taskController.getTaskDetails);
 
 module.exports = router;
