@@ -279,7 +279,7 @@ const sendDirectNotification = async (volunteer, message) => {
 
 const getTaskDetails = async (req, res) => {
     const { taskId } = req.params;
-    console.log("Received taskId:", taskId);
+  
     try {
         const { data: task, error } = await supabase
             .from('task')

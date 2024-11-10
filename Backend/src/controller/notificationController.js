@@ -180,8 +180,9 @@ try{
 
 
 const sendEmail = async (recipientEmail, message) => {
-  
+    
     console.log(`Sending Email to ${recipientEmail}: ${message}`);
+    console.log("message:", message)
     const plainText = htmlToText(message, {
         wordwrap: null
     });

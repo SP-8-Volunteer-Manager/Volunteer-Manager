@@ -44,6 +44,12 @@ app.get('/', (req, res) => {
     res.send('Backend server with Supabase is running');
 });
 
+const path = require('path');
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+  });
+
 
 // API Route to Get Todos from Supabase
 /*app.listen(8080, () => {
