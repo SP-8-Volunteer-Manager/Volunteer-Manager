@@ -203,7 +203,7 @@ const getMyProfile = async (req, res) => {
                 `)
                 .single()
                 .eq('user_id', userid);
-        console.log("After Select: " + error)
+        //console.log("After Select: " + error)
         if (error) {
            console.log(error);
             throw error;
@@ -211,7 +211,7 @@ const getMyProfile = async (req, res) => {
         console.log(data)
         res.status(200).json(data);
     } catch (error) {
-        console.log("catch getvolunteer")
+        //console.log("catch getvolunteer")
         console.log(error)
         res.status(400).json({ message: error.message });
     }
@@ -222,7 +222,7 @@ const updateMyProfile = async (req, res) => {
     //console.log("Update Profile: " + volunteerId)
     const {  schedulePreferences, taskPreferences } = req.body;
     const { volunteerData } = req.body;
-    console.log(volunteerData)
+    //console.log(volunteerData)
 
     try {
         // Update volunteer's basic information
@@ -292,28 +292,30 @@ const getUpcomingEventCount = async (req, res) => {
         //console.log(req.params)
         var params = req.params
         const { userid } = req.params;
-        //console.log(typeof userid)
-       // console.log(userid)
+        
 // find volunteerid from the vol table
         const {data:vdata, error:verror} = await supabase 
         .from('volunteer')
         .select('id')
         .eq('user_id', userid);
 
-
         if (verror)
         {
             throw verror
         }
-
-        //console.log(vdata)
         var volid = vdata[0].id;
-
-        // 
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); 
+        const next7Days = new Date();
+        next7Days.setDate(today.getDate() + 7);
+        //retrieve events for the next seven days 
         const { data, error } = await supabase
             .from('assignment')
             .select('volunteer_id', { count: 'exact' })
-            .eq('volunteer_id', volid);
+            .eq('volunteer_id', volid)
+            .gte('start_date', today.toISOString())
+            .lte('start_date', next7Days.toISOString())
+            .order('start_date', { ascending: true });
 
         if (error) {
             throw error;
@@ -325,6 +327,82 @@ const getUpcomingEventCount = async (req, res) => {
     }
 };
 
+const getMyUpcomingEvents = async (req, res) => {
+    try {
+        //console.log(req.params)
+        var params = req.params
+        const { userid } = req.params;
+        
+// find volunteerid from the vol table
+        const {data:vdata, error:verror} = await supabase 
+        .from('volunteer')
+        .select('id')
+        .eq('user_id', userid);
+
+        if (verror)
+        {
+            throw verror
+        }
+        var volid = vdata[0].id;
+
+        // Retrieve events
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); 
+        const next7Days = new Date();
+        next7Days.setDate(today.getDate() + 7);
+        //retrieve events for the next seven days 
+        const { data, error } = await supabase
+            .from('assignment')
+            .select('assign_id, start_date, start_time, task(name,description,location)')
+            .eq('volunteer_id', volid)
+            .gte('start_date', today.toISOString())
+            .lte('start_date', next7Days.toISOString())
+            .order('start_date', { ascending: true });
+
+        if (error) {
+            throw error;
+        }
+        res.status(200).json( data ); 
+    } catch (error) {
+        console.error('Error fetching my upcoming events:', error);
+        res.status(500).json({ error: 'Error fetching my upcoming events' });
+    }
+};
+
+const getMyCalendarEvents = async (req, res) => {
+    try {
+        const { userid } = req.params;
+        //console.log("getMyCalendarEvents")
+
+        // find volunteerid from the vol table
+        const {data:vdata, error:verror} = await supabase 
+        .from('volunteer')
+        .select('id')
+        .eq('user_id', userid);
+
+        if (verror)
+        {
+            throw verror
+        }
+        var volid = vdata[0].id;
+
+
+        
+        const { data, error } = await supabase
+            .from('assignment')
+            .select('task(*,task_type(type_name))')
+            .eq('volunteer_id', volid);
+
+        if (error) {
+            throw error;
+        }
+
+        //console.log("Data after query", data)
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
    
 module.exports = { 
     getVolunteers,
@@ -336,6 +414,8 @@ module.exports = {
     getMyProfile,
     updateMyProfile,
     getUpcomingEventCount,
+    getMyUpcomingEvents,
+    getMyCalendarEvents,
     getVolunteerDetails
 };
 
