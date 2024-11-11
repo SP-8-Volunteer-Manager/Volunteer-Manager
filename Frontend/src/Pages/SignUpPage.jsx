@@ -505,7 +505,7 @@ function SignUpPage() {
 
                          <div className="col-md-12 mb-4">
                             
-                            <p className="fw-bold mb-1"> Prefered communication method</p>
+                            <p className="fw-bold mb-1"> Preferred communication method</p>
                             <div className="form-check">
                                 <input className="form-check-input" type="checkbox" id="checkSMS"
                                 name="receivesms" 
@@ -547,7 +547,7 @@ function SignUpPage() {
 
                         <div className="col-md-6" >
                             <label htmlFor="PhoneCarrier" className="form-label">Choose Your Phone Carrier</label>
-                            <CarrierDropdown dropdownChange={dropdownChange} receivesms={formValues.receivesms} carrier={formValues.carrier} />
+                            <CarrierDropdown dropdownChange={dropdownChange} receivesms={formValues.receivesms} carrier={formValues.carrier} isEditMode={true}/>
                             {formErrors.carrier && (
                             <span className="error">{formErrors.carrier}</span>
                             )}
