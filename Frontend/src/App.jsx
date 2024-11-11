@@ -105,10 +105,10 @@ function App() {
              <>
               {console.log("Volunteer view")}
                <Route path="/" element={<VolunteerNavigation onLogout={handleLogout} />}>
-                 <Route index element={<VolunteerDashboard />} />
+                 <Route index element={<VolunteerDashboard userData={userData}/>} />
                  
                  <Route path="/myProfile" element={<MyProfile userData={userData}/>} />
-                 <Route path="/adminEventList" element={<AdminEventList />} />
+                 <Route path="/contactUs" element={<ContactUs  />} />
                  
                  <Route path="*" element={<ErrorPage />} />
                </Route>
