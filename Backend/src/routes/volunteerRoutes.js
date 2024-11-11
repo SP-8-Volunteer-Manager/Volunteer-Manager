@@ -3,8 +3,10 @@ const router = express.Router();
 const volunteerController = require('../controller/volunteerController');
 
 router.get('/volunteers/details', volunteerController.getVolunteers);
+router.get('/volunteers/volunteerDetails/:volunteerID', volunteerController.getVolunteerDetails);
 
 router.patch('/volunteers/:id', volunteerController.updateVolunteerStatus); 
+
 
 router.get('/volunteers/new/count', volunteerController.getNewVolunteersCount);
 
