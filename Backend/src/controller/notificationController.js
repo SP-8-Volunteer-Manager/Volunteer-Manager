@@ -35,10 +35,12 @@ const carrierGateways = {
 const sendNotification = async (req, res) => {
     try {
         const { volunteers, message } = req.body;
+        console.log("volunteers", volunteers);
         if (!message) {
             return res.status(400).json({ error: "Message is required." });
         }
         const volunteerList = Array.isArray(volunteers) ? volunteers : [volunteers];
+        console.log("volunterr list", volunteerList);
         
         if (!volunteerList || volunteerList.length === 0 || !message) {
             return res.status(400).json({ error: "Volunteers array or object and message are required." });

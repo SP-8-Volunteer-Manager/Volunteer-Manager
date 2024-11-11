@@ -19,6 +19,31 @@ const getVolunteers = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+const getVolunteerDetails = async (req, res) => {
+    
+        const {volunteerID} = req.params;
+       
+    try {
+        const { data, error } = await supabase
+            .from('volunteer')
+            .select(`*,
+                shift_prefer(shift(day,time)),
+                task_prefer(task_type(type_name)),
+                User(email)
+                `)
+            .single()
+            .eq('id', volunteerID);
+            
+
+        if (error) {
+            throw error;
+        }
+        
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
 
 const updateVolunteerStatus = async (req, res) => {
     const { id } = req.params;
@@ -310,6 +335,7 @@ module.exports = {
     getTaskOptions,
     getMyProfile,
     updateMyProfile,
-    getUpcomingEventCount
+    getUpcomingEventCount,
+    getVolunteerDetails
 };
 

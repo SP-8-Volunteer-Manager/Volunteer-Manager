@@ -4,6 +4,7 @@ const express = require("express");
 require('dotenv').config();
 const cors = require("cors");
 
+
 const supabase = require('./config/supabaseClient'); // Import the Supabase client
 const app = express();
 const authRoutes = require('./routes/authRoutes');
@@ -28,6 +29,7 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
+
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminEventsListRoutes);
 app.use('/api/admin', volunteerRoutes);
@@ -39,17 +41,11 @@ app.use('/api/confirmation', confirmationRoutes)
 
 
 
+
 // Simple route to check if the server is running
 app.get('/', (req, res) => {
     res.send('Backend server with Supabase is running');
 });
-
-const path = require('path');
-
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'dist','index.html'));
-  });
-
 
 // API Route to Get Todos from Supabase
 /*app.listen(8080, () => {

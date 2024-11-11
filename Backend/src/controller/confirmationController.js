@@ -52,5 +52,42 @@ const confirmAvailability = async (req, res) => {
         res.status(500).json({ error: "Error confirming availability." });
     }
 };
+const getAvailableVolunteers = async (req, res) => {
+    const { taskId } = req.params;
+    if (!taskId || isNaN(taskId)) {
+        console.error("Invalid taskId:", taskId);
+        return res.status(400).json({ error: 'Invalid taskId' });
+    }
+    try {
+        const { data: confirmation, error: confirmationError } = await supabase
+            .from('volunteer_availability_confirmation')
+            .select(`id,
+                volunteer_id,
+                confirmed,
+                volunteer:volunteer_id (
+                    id,
+                    first_name,
+                    last_name
+                )`)
+            .eq('task_id', taskId);
+          //  .eq('confirmed', true);
 
-module.exports = { confirmAvailability };
+        if (confirmationError) {
+            console.error("Error checking for confirmation:", confirmationError);
+            return res.status(500).json({ error: 'Error checking for existing confirmation.' });
+        }
+
+        if (confirmation) {
+            // Case where confirmation exists
+            return res.status(200).json(confirmation);
+        } else {
+            // Case where no confirmation exists
+            return res.status(200).json({ message: 'No confirmation found.' });
+        }
+    } catch (err) {
+        console.error("Unexpected error:", err);
+        return res.status(500).json({ error: 'Unexpected error occurred.' });
+    }
+};
+
+module.exports = { confirmAvailability,  getAvailableVolunteers};

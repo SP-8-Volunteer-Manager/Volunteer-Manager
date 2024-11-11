@@ -32,26 +32,15 @@ const NotificationModal = ({ show, handleClose,  volunteers }) => {
         
         console.log("Sending notification:", message);
         try {
-          {/*  const { receive_phone: sms,
-                    receive_email: email,
-                    phone: phoneNumber,
-                    consent_for_sms: optInSms,
-                    consent_for_email: optInEmail, 
-                    carrier} = volunteer;
+          
+            await fetch(`${API_BASE_URL}/api/notification/send`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ volunteers, message })
+                    });
             
-             */} 
-       //     if (sms && optInSms) {
-        //        console.log("Request body:", { phoneNumber, carrier, message, optInSms });
-             
-        await fetch(`${API_BASE_URL}/api/notification/send`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ volunteers, message })
-                });
-           // }
-           
         } catch (error) {
             console.error("Error sending notification:", error);
         }

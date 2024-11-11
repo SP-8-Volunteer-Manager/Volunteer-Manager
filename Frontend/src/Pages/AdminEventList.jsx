@@ -28,7 +28,7 @@ function AdminEventList() {
         fetchEvents();
     }, []);
     
-    // Open the modal and load selected volunteer data
+    // Open the modal and load selected event data
     const handleViewInfoClick = (event) => {
         setPreviousScrollPosition(window.scrollY); // Save scroll position
         setSelectedEvent(event);
@@ -39,7 +39,7 @@ function AdminEventList() {
         setShowNewEventModal(true);
     };
 
-    // Close modal and reset selected volunteer
+    // Close modal and reset selected event
     const handleCloseModal = () => {
         setSelectedEvent(null);
         setShowModal(false);
@@ -80,7 +80,7 @@ function AdminEventList() {
                     {/* Display the event list */}
                     {events.length ==0 ? (
                     <tr>
-                        <td colSpan="5">No new volunteers found</td>
+                        <td colSpan="5">No events found</td>
                     </tr>
                     ) : (
                         events.map((event) => {
