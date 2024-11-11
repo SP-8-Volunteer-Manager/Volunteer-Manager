@@ -21,5 +21,10 @@ router.post('/volunteers/updateMyProfile', volunteerController.updateMyProfile);
 
 router.get('/volunteers/upcomingevent/count/:userid', volunteerController.getUpcomingEventCount);
 
+router.get('/volunteers/myupcomingevents/:userid', volunteerController.getMyUpcomingEvents);
+
+router.get('/volunteers/mycalendarevents/:userid', volunteerController.getMyCalendarEvents);
+
+
 
 module.exports = router; // export the router

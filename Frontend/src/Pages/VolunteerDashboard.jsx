@@ -2,6 +2,7 @@ import MyCalendar from "../Components/MyCalendar";
 import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import API_BASE_URL from '../config';
+import VolunteerCalendar from "../Components/VolunteerCalendar";
 
 function VolunteerDashboard({userData}) {
     const [UpcomingEvents, setUpEvents] = useState([]);
@@ -11,13 +12,15 @@ function VolunteerDashboard({userData}) {
         const fetchEvents = async () => {
             try{
                 
-                const response = await fetch(`${API_BASE_URL}/api/admin/upcomingevents`);
+                const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/myupcomingevents/${userData.userId}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                
+                //console.log("My Upcoming Events Data b4 setstate", data)
+                //console.log("Data length", data.length)
                 setUpEvents(data);
+                //console.log("My Upcoming Events Data after set state", UpcomingEvents)
             } catch (error) {
                 console.error(`Error: ${error}`);
             }
@@ -35,7 +38,7 @@ function VolunteerDashboard({userData}) {
             }
         };
 
-        //fetchEvents();
+        fetchEvents();
         fetchUpcomingEventsCount();
 
     }
@@ -61,7 +64,7 @@ function VolunteerDashboard({userData}) {
                     )}
             </div>
             <div className="col-lg-6 px-lg-5">
-                <MyCalendar />
+                <VolunteerCalendar userData={userData}/>
             </div>
            
         </div>
@@ -74,7 +77,7 @@ function VolunteerDashboard({userData}) {
                     <th scope="col">Description</th>
                     <th scope="col">Date</th>
                     <th scope="col">Time</th>
-                    <th scope="col">Volunteer</th>
+                    <th scope="col">Location</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -86,22 +89,13 @@ function VolunteerDashboard({userData}) {
                         </tr>
                     ) : (
                         UpcomingEvents.map((event) => {
-                            // Determine if the volunteer is assigned
-                            const volunteerAssigned = event.assignment && event.assignment.length > 0;
                             return(
-                            <tr key={event.id} >
-                                <td>{event.name}</td>
-                                <td>{event.description}</td>
+                            <tr key={event.assign_id} >
+                                <td>{event.task.name}</td>
+                                <td>{event.task.description}</td>
                                 <td>{event.start_date}</td>
                                 <td>{event.start_time}</td>
-                                <td>
-                                    {volunteerAssigned
-                                    ? `${event.assignment[0].volunteer.first_name} ${event.assignment[0].volunteer.last_name}`
-                                    :   <span style={{ color: 'red', fontWeight: 'bold' }}>
-                                        No volunteer assigned
-                                        </span>
-                                    }
-                                </td>
+                                <td>{event.task.location}</td>
                             </tr>
                         );
                     })
