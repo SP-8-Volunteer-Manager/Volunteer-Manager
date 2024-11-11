@@ -163,7 +163,7 @@ const getTaskOptions = async (req, res) => {
     }
 };
 
-const getVolunteer = async (req, res) => {
+const getMyProfile = async (req, res) => {
     //console.log(req.body)
     const {userid} = req.body;
     console.log("retrieving volunteer for userID " + userid)
@@ -171,9 +171,9 @@ const getVolunteer = async (req, res) => {
     try {
         const { data, error } = await supabase
             .from('volunteer')
-            .select(`id, first_name, last_name, phone, 
-                shift_prefer(shift(day,time)),
-                task_prefer(task_type(type_name)),
+            .select(`*,
+                shift_prefer(shift(id,day,time)),
+                task_prefer(task_type(id,type_name)),
                 User(email)
                 `)
                 .single()
@@ -192,67 +192,111 @@ const getVolunteer = async (req, res) => {
     }
 };
 
-// Assume this is in your Express.js backend route handler file
 const updateMyProfile = async (req, res) => {
     //const volunteerId = req.params.id;
     //console.log("Update Profile: " + volunteerId)
-  //  const { volunteerData, schedulePreferences, taskPreferences } = req.body;
+    const {  schedulePreferences, taskPreferences } = req.body;
     const { volunteerData } = req.body;
     console.log(volunteerData)
-
 
     try {
         // Update volunteer's basic information
         const { data: volunteerUpdate, error: volunteerError } = await supabase
             .from('volunteer')
             .update({
-                first_name: volunteerData.first_name,
-                last_name: volunteerData.last_name,
-                phone: volunteerData.phone,
+                first_name: volunteerData.firstName,
+                last_name: volunteerData.lastName,
+                phone: volunteerData.phoneNumber,
+                address: volunteerData.address,
+                city: volunteerData.city,
+                state: volunteerData.state,
+                zip_code: volunteerData.zip,
+                consent_for_sms: volunteerData.receivesms,
+                carrier: volunteerData.carrier,
+                receive_email: volunteerData.receiveemail,
+                receive_phone: volunteerData.receivesms,
                 
             })
             .eq('id', volunteerData.volunteerid);
 
         if (volunteerError) throw new Error(`Profile update failed: ${volunteerError.message}`);
 
-        // // Update schedule preferences (shift_prefer table)
-        // await supabase
-        //     .from('shift_prefer')
-        //     .delete()
-        //     .eq('volunteer_id', volunteerId);
+        // Update schedule preferences (shift_prefer table)
+        await supabase
+            .from('shift_prefer')
+            .delete()
+            .eq('volunteer_id', volunteerData.volunteerid);
 
-        // const scheduleUpdates = schedulePreferences.map(pref => ({
-        //     volunteer_id: volunteerId,
-        //     shift_id: pref.shift_id, 
-        // }));
+        const scheduleUpdates = schedulePreferences.map(pref => ({
+            volunteer_id: volunteerData.volunteerid,
+            shift_id: pref.shift_id, 
+        }));
 
-        // const { error: scheduleError } = await supabase
-        //     .from('shift_prefer')
-        //     .insert(scheduleUpdates);
+        const { error: scheduleError } = await supabase
+            .from('shift_prefer')
+            .insert(scheduleUpdates);
 
-        // if (scheduleError) throw new Error(`Schedule preferences update failed: ${scheduleError.message}`);
+         if (scheduleError) throw new Error(`Schedule preferences update failed: ${scheduleError.message}`);
 
         // // Update task preferences (task_prefer table)
-        // await supabase
-        //     .from('task_prefer')
-        //     .delete()
-        //     .eq('volunteer_id', volunteerId);
+        await supabase
+            .from('task_prefer')
+            .delete()
+            .eq('volunteer_id', volunteerData.volunteerid);
 
-        // const taskUpdates = taskPreferences.map(pref => ({
-        //     volunteer_id: volunteerId,
-        //     task_type_id: pref.task_type_id, // Using task_type_id based on your schema
-        // }));
+        const taskUpdates = taskPreferences.map(pref => ({
+            volunteer_id: volunteerData.volunteerid,
+            task_type_id: pref.task_type_id, 
+        }));
 
-        // const { error: taskError } = await supabase
-        //     .from('task_prefer')
-        //     .insert(taskUpdates);
+        const { error: taskError } = await supabase
+            .from('task_prefer')
+            .insert(taskUpdates);
 
-        // if (taskError) throw new Error(`Task preferences update failed: ${taskError.message}`);
+        if (taskError) throw new Error(`Task preferences update failed: ${taskError.message}`);
 
         res.status(200).json({ message: 'Profile updated successfully' });
     } catch (error) {
         console.error('Error updating profile info:', error);
         res.status(500).json({ error: error.message });
+    }
+};
+
+const getUpcomingEventCount = async (req, res) => {
+    try {
+        //console.log(req.params)
+        var params = req.params
+        const { userid } = req.params;
+        //console.log(typeof userid)
+       // console.log(userid)
+// find volunteerid from the vol table
+        const {data:vdata, error:verror} = await supabase 
+        .from('volunteer')
+        .select('id')
+        .eq('user_id', userid);
+
+
+        if (verror)
+        {
+            throw verror
+        }
+
+        //console.log(vdata)
+        var volid = vdata[0].id;
+
+        // 
+        const { data, error } = await supabase
+            .from('assignment')
+            .select('volunteer_id', { count: 'exact' })
+            .eq('volunteer_id', volid);
+
+        if (error) {
+            throw error;
+        }
+        res.status(200).json({ count: data.length }); // Send back the count
+    } catch (error) {
+        console.error('Error fetching new volunteers count:', error);
+        res.status(500).json({ error: 'Error fetching new volunteers count' });
     }
 };
 
@@ -264,7 +308,8 @@ module.exports = {
     updateVolunteer,
     getSchedulePreferences,
     getTaskOptions,
-    getVolunteer,
-    updateMyProfile
+    getMyProfile,
+    updateMyProfile,
+    getUpcomingEventCount
 };
 

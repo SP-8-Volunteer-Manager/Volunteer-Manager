@@ -83,7 +83,7 @@ function ContactUs() {
     };
 
     return (
-        <div className="container col-xl-10 col-xxl-8 px-3 mb-3">
+        <div className="container col-xl-10 col-xxl-8 px-3 mb-3 form-section">
             <div className="row align-items-center g-lg-5 py-0">
                 <div className="col-lg-6 text-center text-lg-start">
                     <h1 className="display-4 fw-bold lh-1 text-body-emphasis mb-3">Contact us</h1>

@@ -23,7 +23,7 @@ function VolunteerNavigation({ onLogout }) {
                                 <NavLink  className="nav-link rounded-0" to="myProfile">My Profile</NavLink >
                             </li>
                             <li className="nav-item">
-                                <NavLink  className="nav-link rounded-0" to="adminEventList">Contact Us</NavLink >
+                                <NavLink  className="nav-link rounded-0" to="contactUs">Contact Us</NavLink >
                             </li>
                             <li className="nav-item">
                                 <button className="btn btn-link nav-link text-start" onClick={onLogout}>Log out</button>

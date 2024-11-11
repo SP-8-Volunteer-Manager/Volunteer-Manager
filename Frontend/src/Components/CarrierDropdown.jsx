@@ -1,5 +1,7 @@
-function CarrierDropdown({dropdownChange, receivesms, carrier}) {
+function CarrierDropdown({dropdownChange, receivesms, carrier, isEditMode}) {
   const carriers = ["AT&T", "Boost Mobile", "Cricket Wireless", "Consumer Cellular", "FreedomPop", "H2O Wireless", "Mint Mobile", "Metro by T-Mobile", "Republic Wireless", "Simple Mobile", "Sprint", "Straight Talk", "T-Mobile", "Ting", "TracFone", "US Cellular", "Verizon", "Virgin Mobile", "Xfinity Mobile"];
+
+
 
   return (
     <select 
@@ -8,7 +10,7 @@ function CarrierDropdown({dropdownChange, receivesms, carrier}) {
       value={carrier}
       name="carrier" 
       onChange={dropdownChange} 
-      disabled={!receivesms}
+      disabled={!(isEditMode && receivesms)}
     >
       <option value="">Select Carrier</option>
       {carriers.map((c) => (

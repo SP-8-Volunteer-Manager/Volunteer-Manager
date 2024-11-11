@@ -3,9 +3,9 @@ import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import API_BASE_URL from '../config';
 
-function VolunteerDashboard() {
+function VolunteerDashboard({userData}) {
     const [UpcomingEvents, setUpEvents] = useState([]);
-    const [newVolunteersCount, setNewVolunteersCount] = useState(0);
+    const [upcomingEventsCount, setUpcomingEventsCount] = useState(0);
     
     useEffect(() => {
         const fetchEvents = async () => {
@@ -22,24 +22,24 @@ function VolunteerDashboard() {
                 console.error(`Error: ${error}`);
             }
         };
-        const fetchNewVolunteersCount = async () => {
+        const fetchUpcomingEventsCount = async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/new/count`);
+                const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/upcomingevent/count/${userData.userId}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                setNewVolunteersCount(data.count);
+                setUpcomingEventsCount(data.count);
             } catch (error) {
-                console.error(`Error fetching new volunteers count: ${error}`);
+                console.error(`Error fetching upcoming events count: ${error}`);
             }
         };
 
-        fetchEvents();
-        fetchNewVolunteersCount();
+        //fetchEvents();
+        fetchUpcomingEventsCount();
 
     }
-    , []);
+    , [userData.userId]);
             
 
 
@@ -52,13 +52,12 @@ function VolunteerDashboard() {
             
             <div className="col-lg-6 pt-5 text-center rounded-5" style={{backgroundColor: '#f0f6fd'}}>
                 <h2 className="fw-bold text-body-emphasis mb-3">Notifications</h2>
-                {newVolunteersCount > 0 ? (
+                {upcomingEventsCount > 0 ? (
                         <p className="lead">
-                            You have {newVolunteersCount} new volunteer(s). 
-                            <Link to="/volunteerList" className="btn btn-link">Review their registration!</Link>
+                            You have {upcomingEventsCount} upcoming event(s). 
                         </p>
                     ) : (
-                        <p className="lead">No new volunteers.</p>
+                        <p className="lead">You have no upcoming events.</p>
                     )}
             </div>
             <div className="col-lg-6 px-lg-5">
