@@ -119,27 +119,39 @@ const updateVolunteer = async (req, res) => {
         if (scheduleError) throw new Error(`Schedule preferences update failed: ${scheduleError.message}`);
 
         // Update task preferences (task_prefer table)
-        await supabase
-            .from('task_prefer')
-            .delete()
-            .eq('volunteer_id', volunteerId);
+        const { data: taskTypes, error: taskTypeError } = await supabase
+        .from('task_type')
+        .select('id, type_name');
 
-        const taskUpdates = taskPreferences.map(pref => ({
+    if (taskTypeError) throw new Error(`Failed to fetch task types: ${taskTypeError.message}`);
+
+    // Create a lookup object for type_name to id
+    const taskTypeMap = Object.fromEntries(taskTypes.map(task => [task.type_name, task.id]));
+
+    // Map taskPreferences to use task_type_id instead of task_type_name, with validation
+    const taskUpdates = taskPreferences
+        .map(pref => ({
             volunteer_id: volunteerId,
-            task_type_id: pref.task_type_id, // Using task_type_id based on your schema
-        }));
+            task_type_id: taskTypeMap[pref.type_name], // Convert name to ID using taskTypeMap
+        }))
+        .filter(update => update.task_type_id !== undefined); // Exclude entries with undefined task_type_id
 
-        const { error: taskError } = await supabase
-            .from('task_prefer')
-            .insert(taskUpdates);
-
-        if (taskError) throw new Error(`Task preferences update failed: ${taskError.message}`);
-
-        res.status(200).json({ message: 'Volunteer updated successfully' });
-    } catch (error) {
-        console.error('Error updating volunteer:', error);
-        res.status(500).json({ error: error.message });
+    if (taskUpdates.length === 0) {
+        throw new Error("No valid task types provided.");
     }
+
+    // Use upsert to insert or update entries in task_prefer table
+    const { error: taskError } = await supabase
+        .from('task_prefer')
+        .upsert(taskUpdates, { onConflict: ['volunteer_id', 'task_type_id'] });
+
+    if (taskError) throw new Error(`Task preferences update failed: ${taskError.message}`);
+
+    res.status(200).json({ message: 'Volunteer updated successfully' });
+} catch (error) {
+    console.error('Error updating volunteer:', error);
+    res.status(500).json({ error: error.message });
+}
 };
 
 

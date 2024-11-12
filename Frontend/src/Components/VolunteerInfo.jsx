@@ -112,7 +112,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                 shift_id: pref.value 
             })),
             taskPreferences: editableVolunteer["Task Preferences"].map(pref => ({
-                task_type_id: pref.value 
+                type_name: pref.label
             })),
         };
         try {
