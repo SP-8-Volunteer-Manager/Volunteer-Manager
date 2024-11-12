@@ -26,6 +26,7 @@ import ScrollToTop from './Components/ScrollToTop';
 import Footer from './Components/Footer'
 import VolunteerNavigation from './Components/VolunteerNavigation';
 import TaskConfirmationPage from './Pages/TaskConfirmationPage';
+import ResetPassword from './Components/ResetPassword';
 
 
 
@@ -49,26 +50,45 @@ function App() {
   };
   
 
-  const handleLogout = () => {
-    const confirmLogout = window.confirm("Are you sure you want to log out?");
+  const handleLogout = async() => {
+    const confirmLogout = window.confirm('Are you sure you want to log out?');
     if (confirmLogout) {
-      setIsLoggedIn(false); // Perform logout
-      //supabaseLogout();
-      navigate('/'); // Redirect to home page after logging out
+      try {
+        const token = localStorage.getItem('access_token'); // Get the token from localStorage
 
+        const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`, // Add the token to the Authorization header
+          },
+        });
+
+        if (response.ok) {
+          setIsLoggedIn(false);
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('user');
+          navigate('/'); // Redirect to home page after logging out
+        } else {
+          console.error('Error logging out:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error logging out:', error);
+      }
     }
   };
   
-  // const supabaseLogout = async() => {
-  //   const { error } = await supabase.auth.signOut()
-  //   console.log('supabase logout');
-  //   console.log(error);
-  //   const { data: { user } } = await supabase.auth.getUser()
-  //   console.log('supabase getuser');
-  //   console.log(user)
-  // }
-
   useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    const storedUser = localStorage.getItem('user');
+
+    if (token && storedUser) {
+      setIsLoggedIn(true);
+      setUserData(JSON.parse(storedUser));
+    } else {
+      setIsLoggedIn(false);
+      setUserData({});
+    }
     fetchAPI();
   },[]);
 
@@ -130,6 +150,7 @@ function App() {
               </Route>
               <Route path="/confirm/:taskId/:volunteerId" element={<TaskConfirmationPage />} />
               <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} /> 
+              <Route path="/update-password/" element={<ResetPassword />} />
             </>
             )
           )            

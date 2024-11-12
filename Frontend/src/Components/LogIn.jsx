@@ -51,21 +51,37 @@ function LogIn({ setIsLoggedIn, closeModal, reset, onResetDone, setUserData  }) 
                     }
                     return;
                 }
-                console.log('Login success response')
+                // Check if the response contains the access token
+               // Parse the response as JSON
                 const rdata = await response.json();
-                console.log(rdata)
-                const userData = rdata.user
-                console.log(userData)
-                //console.log(response);
-                //Setting user
-                setIsLoggedIn(true);
-                // console.log("setting user role:")
-                // console.log(userData.role)
-                setUserData(userData);
-                closeModal();
-                resetForm();
-                window.scrollTo(0, 0);
-                navigate('/');
+
+            // Check if the response contains the access token
+                if (rdata.accessToken) {
+                    
+                    // Store the access token in localStorage
+                    localStorage.setItem('access_token', rdata.accessToken);
+                    
+                    // Store user info
+                    localStorage.setItem('user', JSON.stringify(rdata.user));
+                    console.log('Login success response')
+                
+                
+                    const userData = rdata.user
+                  
+                
+                    //Setting user
+                    setIsLoggedIn(true);
+                
+                    setUserData(userData);
+                    closeModal();
+                    resetForm();
+                    window.scrollTo(0, 0);
+                    navigate('/');
+                } else {
+                    setError('No access token received');
+                }
+
+                
             } catch(error){
                 console.log(error);
                 setError(error.message);
