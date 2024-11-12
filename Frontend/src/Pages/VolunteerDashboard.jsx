@@ -50,7 +50,7 @@ function VolunteerDashboard({userData}) {
         
           
     <section>
-        <h1>This is volunteer view. IT is still a work in progress. Please login as an admin user to continue your work!</h1>    
+        <h3>Welcome {userData.username}!</h3>    
         <div className="row flex-lg-row align-items-stretch g-5 py-5 m-2">
             
             <div className="col-lg-6 pt-5 text-center rounded-5" style={{backgroundColor: '#f0f6fd'}}>

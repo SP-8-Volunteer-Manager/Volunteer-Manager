@@ -101,10 +101,13 @@ const rollback = async (user, volunteer, task, shift, userid, volid) => {
 
 //Signup Function
 const signup = async (req, res) => {
-    const { username, password, email } = req.body; /// user date
-    const {firstName, lastName,  address, phoneNumber, city, state, zip, carrier, receiveemail, receivesms} = req.body; //volunteer data
-    const {shiftpref} = req.body;  // shift data
-    const {taskpref} = req.body;   // task data
+    // const { username, password, email } = req.body; /// user date
+    // const {firstName, lastName,  address, phoneNumber, city, state, zip, carrier, receiveemail, receivesms} = req.body; //volunteer data
+    const { volunteerData } = req.body;
+    const {  schedulePreferences, taskPreferences } = req.body;
+    var userid, volid;
+    //console.log("Volunteer Data", volunteerData)
+
     // NOTE: This function will rollback in case of error
 
      try {
@@ -112,10 +115,10 @@ const signup = async (req, res) => {
        const { data: existingUser } = await supabase
          .from('User')
          .select('username') // Only select the username
-         .eq('username', username)
+         .eq('username', volunteerData.username)
          .single();
          console.log('---Signup--');
-        // console.log(existingUser)
+         //console.log(existingUser)
          if (existingUser) {
           console.log('Signup usercheck!!! How did the happen????');
           console.log(existingUser)
@@ -126,28 +129,43 @@ const signup = async (req, res) => {
        // Hash the password
        //console.log(bcrypt);
       console.log("Add User")
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(volunteerData.password, 10);
       // Add user to the database
+      //console.log("Just before user insert")
       const { data, error } = await supabase
         .from('User')
-        .insert([{ username, password_hash: hashedPassword, email, role: "volunteer" }])
+        .insert([{ username: volunteerData.username, password_hash: hashedPassword, email: volunteerData.email, role: "volunteer" }])
         .select();
-      // console.log(error)
+       //console.log(error)
 
       if (error != null) {
         return res.status(200).json({ message: 'Error adding user', error: error.message });
       }
       // get the id from the user table.
       //console.log(data);
-      let userid = data[0].id;
+      userid = data[0].id;
+      var useremail = data[0].email;
+      var userrole = data[0].role;
+      var userusername = data[0].username;
+
       console.log("Created user: " + userid)
 
 
 //----------------- insert into volunteer -------------------
     const { data:vdata, error: verror } = await supabase
         .from('volunteer')
-        .insert([{ user_id: userid, first_name: firstName, last_name: lastName, phone: phoneNumber, address: address, 
-          city: city, state: state, zip_code: zip, consent_for_sms: receivesms, carrier: carrier, receive_email: receiveemail, receive_phone: receivesms}])
+        .insert([{ user_id: userid, 
+          first_name: volunteerData.firstName, 
+          last_name: volunteerData.lastName, 
+          phone: volunteerData.phoneNumber, 
+          address: volunteerData.address, 
+          city: volunteerData.city, 
+          state: volunteerData.state, 
+          zip_code: volunteerData.zip, 
+          consent_for_sms: volunteerData.receivesms, 
+          carrier: volunteerData.carrier, 
+          receive_email: volunteerData.receiveemail, 
+          receive_phone: volunteerData.receivesms}])
         .select(); //state not working
        // get volunteer id
       if (verror != null) {
@@ -156,76 +174,44 @@ const signup = async (req, res) => {
         return res.status(200).json({ message: 'Error adding volunteer', error: verror.message });
       }
       // volunteerid get
-      let volid = vdata[0].id;
+      volid = vdata[0].id;
       console.log("Created volunteer: " + volid)
 
 
-// populate task_pref
     // ------------- insert tasks pref ------------------
   console.log("Creating task preferences")
-  for (let i = 0; i < taskpref.length; i++)
-    {
-        let taskname = taskpref[i];
-        const { data:tdata, error:terror } = await supabase
-        .from('task_type')
-        .select('*')
-        .eq('type_name', taskname)
-        .single();
-        if(!tdata){
-          console.log(terror);
+        const taskUpdates = taskPreferences.map(pref => ({
+            volunteer_id: volid,
+            task_type_id: pref.task_type_id, 
+        }));
+
+        const { error: taskError } = await supabase
+            .from('task_prefer')
+            .insert(taskUpdates);
+
+        if (taskError) 
+        {
           await rollback(true, true, true, false, userid, volid);
-          return res.status(200).json({ message: 'Read error, task_type table', error: terror.message });
-          }
-      //console.log(sdata)
-       //insert into task preference 
-      const { data: tdata2, error: terror2 } = await supabase
-          .from('task_prefer')
-          .insert([{ volunteer_id: volid, task_type_id: tdata.id }])
-          .select();
-      if(terror2 != null){
-        console.log(terror2);
-        await rollback(true, true, true, false, userid, volid);
-        return res.status(200).json({ message: 'Insert error, task preference', error: terror2.message });
+          return res.status(200).json({ message: 'Insert error, task preference', error: taskError.message });
         }
-    }
 
 // ----------------- insert shift_pref---------------------------
-// for each shiftPref array
-// look up shift_id  of day and time
-// isert (volid,shiftid)
+    console.log("Creating shift preferences")
+    const scheduleUpdates = schedulePreferences.map(pref => ({
+      volunteer_id: volid,
+      shift_id: pref.shift_id, 
+    }));
 
-console.log("Creating shift preferences")
-//console.log(shiftpref)
-      for (let i = 0; i < shiftpref.length; i++)
-      {
-          const { data:sdata, error:serror } = await supabase
-          .from('shift')
-          .select('*')
-          .match({day:shiftpref[i].day, time : shiftpref[i].time})
-          .single();
-          //console.log(sdata)
-          //console.log(serror)
-          if (serror != null){
-            console.log(serror);
-            await rollback(true, true, true, true, userid, volid);
-            return res.status(200).json({ message: 'Error inserting to shift_pref table', error: serror.message });
-            }
-        //console.log(sdata)
-        //console.log(`${sdata.id}  ${sdata.day} - ${sdata.time}`);
-         //insert into shift preference 
-        const { data: sdata2, error: serror2 } = await supabase
-            .from('shift_prefer')
-            .insert([{ volunteer_id: volid, shift_id: sdata.id }]);
+    const { error: scheduleError } = await supabase
+      .from('shift_prefer')
+      .insert(scheduleUpdates);
 
-        if (serror2 != null) {
-          console.log(serror2)
-          await rollback(true, true, true, true, userid, volid);
-          return res.status(200).json({ message: 'Insert error, shift preference', error: serror.message });
-          }
-      }
-
-
-      
+    if (scheduleError) 
+    {
+      await rollback(true, true, true, true, userid, volid);
+      return res.status(200).json({ message: 'Insert error, shift preference', error: scheduleError.message });
+    }
+    
     // ----------------- supabase sign up user with Supabase.auth 
     //-----------This code works once custom domain was created and integrated with supabase
     //  1. Create free domain with cloudns
@@ -233,11 +219,19 @@ console.log("Creating shift preferences")
     //  3. Verify the domain in cloudns
     //  4. Integrate resend with supabase by choosing domain and creating api key
     //  5. The code below will work after that
+    const rcdata = {userId: userid, username: userusername, email: useremail, role: userrole}
+    //console.log(rcdata)
+    //await rollback(true, true, true, true, userid, volid);
     const { data: authdata, error: autherror } = await supabase.auth.signUp({
-      email: email,
-      password: password,
+      email: volunteerData.email,
+      password: volunteerData.password,
+      options: {
+        data: rcdata
+      }
     })
- 
+    
+    
+    console.log(authdata)
     console.log(autherror)
     if (autherror) {
       return res.status(500).json({ message: 'Supabase signup error', error: autherror.message });
@@ -247,6 +241,7 @@ console.log("Creating shift preferences")
             
 
     } catch (error) {  // global catch
+      await rollback(true, true, true, true, userid, volid);
       return res.status(500).json({ message: "Global signup exception"});
     }
   };
@@ -362,7 +357,7 @@ const forgotPassword = async (req, res) => {
 
   try {
       // Supabase API call to send a password reset email
-     
+     console.log("Front end URL ", process.env.FRONTEND_URL)
       const { data, error } = await supabase.auth.resetPasswordForEmail(
         email,
         { redirectTo: `${process.env.FRONTEND_URL}/update-password` }

@@ -15,11 +15,12 @@ function EventInfoModal({ show, onHide, event }) {
     >
       <div className="modal-content">
         <div className="modal-header">
-          <h5 className="modal-title">{event?.name || 'Event Details'}</h5>
+          <h5 className="modal-title">Details For: {event?.title || 'Event Details'}</h5>
           <button type="button" className="btn-close" aria-label="Close" onClick={onHide}></button>
         </div>
         <div className="modal-body">
-          <p><strong>Date/Time:</strong> {event?.start?.toLocaleString()}</p>
+          <p><strong>Date:</strong> {event?.start?.toLocaleDateString()}</p>
+          <p><strong>Time:</strong> {event?.starttime}</p>
           <p><strong>Task type:</strong> {event?.task_type || 'No description available.'}</p>
           <p><strong>Description:</strong> {event?.description || 'No description available.'}</p>
           <p><strong>Location:</strong> {event?.location || 'No description available.'}</p>
