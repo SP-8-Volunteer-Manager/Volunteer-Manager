@@ -37,6 +37,7 @@ function MyCalendar() {
           title: event.name,
           start: localDate,
           end: localDate,
+          starttime: event.start_time,
           task_type: event.task_type?.type_name || 'N/A',
           description: event.description, 
           location: event.location,

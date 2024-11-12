@@ -1,44 +1,81 @@
 import React, { useState, useEffect } from "react";
 import StateDropdown from '../Components/StateDropdown';
 import CarrierDropdown from "../Components/CarrierDropdown";
-import ShiftCheckbox from "../Components/ShiftCheckbox";
-import TaskCheckbox from "../Components/TaskCheckbox";
 import API_BASE_URL from '../config';
+import Select from 'react-select';
 
 
 
 function SignUpPage() {
 
     const[usercheckerror, setUserCheckError] = useState('');
-    const[password, setPassword] = useState('');
     const[usermsg, setUserMsg] = useState('');
-    const[email, setEmail] = useState('');
+    const [scheduleOptions, setScheduleOptions] = useState([]);
+    const [taskOptions, setTaskOptions] = useState([]);
+    
 
     const intialValues = { username: "", password: "", confirmPassword: "",
          email: "", firstName: "", lastName: "", inputName: "", 
          address: "", city: "", state: "", zip: "",
          phoneNumber: "", carrier: "", receivesms: false, receiveemail: false, 
-         smalldog: false, bigdog: false, cat: false, onetimeevent: false,
          emailoptin: false,
          smsoptin: false,
-         MondayAM : false, 
-         TuesdayAM : false,  
-         WednesdayAM : false,  
-         ThursdayAM : false,  
-         FridayAM : false,  
-         SaturdayAM : false,  
-         SundayAM : false,  
-         MondayPM : false,  
-         TuesdayPM : false,  
-         WednesdayPM : false,  
-         ThursdayPM : false,  
-         FridayPM : false,  
-         SaturdayPM : false,  
-         SundayPM : false
+         schedPref:   [],
+        taskPref:   []
+         
     };
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+
+
+    // Fetch options for schedule and task preferences
+    useEffect(() => {
+        const fetchOptions = async () => {
+            try {
+                const scheduleResponse = await fetch(`${API_BASE_URL}/api/admin/scheduleOptions`);
+                if (!scheduleResponse.ok) {
+                    throw new Error(`Failed to fetch schedule options, status: ${scheduleResponse.status}`);
+                }
+                const scheduleData = await scheduleResponse.json();
+                //console.log('schedule data', scheduleData);
+                var schedTemp = scheduleData.map(option => ({
+                    key: option.id,
+                    value: option.id,
+                    label: `${option.day} ${option.time}`
+                }))
+                //console.log("Sched Temp", schedTemp)
+                setScheduleOptions(schedTemp);
+                //console.log("After fetch shift", scheduleOptions)
+                const taskResponse = await fetch(`${API_BASE_URL}/api/admin/taskOptions`);
+                if (!taskResponse.ok) {
+                    throw new Error(`Failed to fetch task options, status: ${taskResponse.status}`);
+                }
+                const taskData = await taskResponse.json();
+                var taskTemp = taskData.map(option => ({
+                    key: option.id,
+                    value: option.id,
+                    label: option.type_name
+                }))
+                setTaskOptions(taskTemp);
+                //console.log("Task Temp", taskTemp)
+                //console.log("After fetch task", taskOptions)
+            } catch (error) {
+                console.error('Error fetching options:', error);
+            }
+        };
+        fetchOptions();
+    }, []);
+
+    // Handle changes to multiple select dropdowns
+    const handleMultiSelectChange = (selectedOptions, field) => {
+        setFormValues(prev => ({
+            ...prev,
+            [field]: selectedOptions || []
+        }));
+    };
 
     const submit = () => {
         //console.log(formValues);
@@ -217,10 +254,6 @@ function SignUpPage() {
                 errors.receivesms = "Choose at least one communication method";
             }
 
-            if (values.smalldog === false && values.bigdog === false && values.cat === false && values.onetimeevent === false)
-            {
-                errors.onetimeevent = "Task preference is required";
-            }
 
             //zip must be numeric and 5
             if (values.zip)
@@ -231,24 +264,14 @@ function SignUpPage() {
                 }
             }
 
-            if ( // am shift
-                values.MondayAM === false && 
-                values.TuesdayAM === false && 
-                values.WednesdayAM === false && 
-                values.ThursdayAM === false && 
-                values.FridayAM === false && 
-                values.SaturdayAM === false && 
-                values.SundayAM === false && 
-                // pm shift
-                values.MondayPM === false && 
-                values.TuesdayPM === false && 
-                values.WednesdayPM === false && 
-                values.ThursdayPM === false && 
-                values.FridayPM === false && 
-                values.SaturdayPM === false && 
-                values.SundayPM === false
-                ) {
-                    errors.SundayPM = "Shift preference is required";
+            if (values.schedPref.length == 0)
+            {
+                errors.schedPref = "Shift preference is required";
+            }
+        
+            if (values.taskPref.length == 0)
+            {
+                errors.taskPref = "Task preference is required";
             }
             
             if(errors)
@@ -266,32 +289,8 @@ function SignUpPage() {
         }
       }, [formErrors]);
     function makeFormData() {
-        var shiftData =[]
-        if (formValues.MondayAM == true) shiftData.push({day:'Monday', time:'AM'});
-        if (formValues.TuesdayAM == true) shiftData.push({day:'Tuesday', time:'AM'});
-        if (formValues.WednesdayAM == true) shiftData.push({day:'Wednesday', time:'AM'});
-        if (formValues.ThursdayAM == true) shiftData.push({day:'Thursday', time:'AM'});
-        if (formValues.FridayAM == true) shiftData.push({day:'Friday', time:'AM'});
-        if (formValues.SaturdayAM == true) shiftData.push({day:'Saturday', time:'AM'});
-        if (formValues.SundayAM == true) shiftData.push({day:'Sunday', time:'AM'});
-
-        if (formValues.MondayPM == true) shiftData.push({day:'Monday', time:'PM'});
-        if (formValues.TuesdayPM == true) shiftData.push({day:'Tuesday', time:'PM'});
-        if (formValues.WednesdayPM == true) shiftData.push({day:'Wednesday', time:'PM'});
-        if (formValues.ThursdayPM == true) shiftData.push({day:'Thursday', time:'PM'});
-        if (formValues.FridayPM == true) shiftData.push({day:'Friday', time:'PM'});
-        if (formValues.SaturdayPM == true) shiftData.push({day:'Saturday', time:'PM'});
-        if (formValues.SundayPM == true) shiftData.push({day:'Sunday', time:'PM'});
-       
-        var taskData =[];
-        if (formValues.smalldog == true) taskData.push("Small Dog");
-        if (formValues.bigdog == true) taskData.push("Big Dog");
-        if (formValues.cat == true) taskData.push("Cat");
-        if (formValues.onetimeevent == true) taskData.push("Event");
-
-
-       // console.log(shiftData);
        var signupData = {
+        volunteerData: {
             username:formValues.username,
             password:formValues.password,
             email:formValues.email,
@@ -304,9 +303,14 @@ function SignUpPage() {
             phoneNumber:formValues.phoneNumber,
             carrier:formValues.carrier,
             receivesms:formValues.receivesms,
-            receiveemail:formValues.receiveemail,
-            taskpref:taskData,
-            shiftpref:shiftData};
+            receiveemail:formValues.receiveemail
+        },
+        schedulePreferences: formValues["schedPref"].map(pref => ({
+            shift_id: pref.value 
+        })),
+        taskPreferences: formValues["taskPref"].map(pref => ({
+            task_type_id: pref.value 
+        }))};
            // console.log(signupData)
         return signupData;
     }
@@ -314,6 +318,7 @@ function SignUpPage() {
        //  phoneNumber: "", carrier: "", receivesms: false, receiveemail: false, smalldog: false, bigdog: false, cat: false, onetimeevent: false,
     const handleSignup = async () => {
             try{
+                setLoading(true);
                 const signupData = makeFormData();
                 console.log(JSON.stringify(signupData));
                 //console.log(JSON.stringify(formValues));
@@ -343,6 +348,9 @@ function SignUpPage() {
                 console.log("Catch Block Error: ")
                 console.log(error)
                 throw error;
+            }
+            finally {
+                setLoading(false);
             }
     };
 
@@ -576,40 +584,35 @@ function SignUpPage() {
                         <hr className="mt-5"/>
 
 
-                        <p className="fw-bold my-3">Date/Time Preference:</p>
-                        <p className="fw-bold my-3">Morning</p>
-                        <ShiftCheckbox day="Monday" time="AM" checkboxChange={checkboxChange}/>
-                        <ShiftCheckbox day="Tuesday" time="AM" checkboxChange={checkboxChange}/>
-                        <ShiftCheckbox day="Wednesday" time="AM" checkboxChange={checkboxChange}/>
-                        <ShiftCheckbox day="Thursday" time="AM" checkboxChange={checkboxChange}/>
-                        <ShiftCheckbox day="Friday" time="AM" checkboxChange={checkboxChange}/>
-                        <ShiftCheckbox day="Saturday" time="AM" checkboxChange={checkboxChange}/>
-                        <ShiftCheckbox day="Sunday" time="AM" checkboxChange={checkboxChange}/>
-                        
+                         {/* schedPref */}
+                    <div className="col-12">
+                        <label className="form-label">Schedule Preferences</label>
+                        <Select
+                            isMulti
+                            options={scheduleOptions}
+                            value={formValues["schedPref"]}
+                            onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, "schedPref")}
                             
-                        <p className="fw-bold my-3">Afternoon</p>
-                        <ShiftCheckbox day="Monday" time="PM" checkboxChange={checkboxChange}/>
-                        <ShiftCheckbox day="Tuesday" time="PM" checkboxChange={checkboxChange}/>
-                        <ShiftCheckbox day="Wednesday" time="PM" checkboxChange={checkboxChange}/>
-                        <ShiftCheckbox day="Thursday" time="PM" checkboxChange={checkboxChange}/>
-                        <ShiftCheckbox day="Friday" time="PM" checkboxChange={checkboxChange}/>
-                        <ShiftCheckbox day="Saturday" time="PM" checkboxChange={checkboxChange}/>
-                        <ShiftCheckbox day="Sunday" time="PM" checkboxChange={checkboxChange}/>
-                        {formErrors.SundayPM && (
-                            <span className="error">{formErrors.SundayPM}</span>
+                        />
+                        {formErrors.schedPref && (
+                            <span className="text-danger">{formErrors.schedPref}</span>
                             )}
+                    </div>
 
-                        <hr className="mt-5"/>
-
-                        <p className="fw-bold my-3">Task Preference:</p>
-                        <TaskCheckbox task_type="smalldog" label="Small Dogs" checkboxChange={checkboxChange}/>
-                        <TaskCheckbox task_type="bigdog" label="Big Dogs" checkboxChange={checkboxChange}/>             
-                        <TaskCheckbox task_type="cat" label="Cats" checkboxChange={checkboxChange}/>             
-                        <TaskCheckbox task_type="onetimeevent" label="One-time events" checkboxChange={checkboxChange}/>             
-
-                        {formErrors.onetimeevent && (
-                            <span className="error">{formErrors.onetimeevent}</span>
+                        {/* Task Preferences */}
+                    <div className="col-12">
+                        <label style={{marginTop: '10px'}} className="form-label">Task Preferences</label>
+                        <Select
+                            isMulti
+                            options={taskOptions}
+                            value={formValues["taskPref"]}
+                            onChange={(selectedOptions) => handleMultiSelectChange(selectedOptions, "taskPref")}
+                            
+                        />
+                        {formErrors.taskPref && (
+                            <span className="text-danger">{formErrors.taskPref}</span>
                             )}
+                    </div>
                         <hr className="mt-5"/>
 
                         <div>
@@ -637,9 +640,15 @@ function SignUpPage() {
                                 </div>
                             </div>
                             <div className="col-12 my-3">
-                                <button type="submit" className="btn btn-primary">Sign Up</button>
+                                <button type="submit" 
+                                className="btn btn-primary"
+                                disabled={loading}
+                                >Sign Up</button>
                             </div>
                             <span className="error">{usermsg}</span>
+                            {loading ? (<p>Working...</p>) : ''}
+                                                        
+
                         </div> 
                     </form>
                 </div>
