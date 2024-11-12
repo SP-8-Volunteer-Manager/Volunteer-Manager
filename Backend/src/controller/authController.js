@@ -237,7 +237,7 @@ console.log("Creating shift preferences")
       email: email,
       password: password,
     })
-    console.log(authdata)
+ 
     console.log(autherror)
     if (autherror) {
       return res.status(500).json({ message: 'Supabase signup error', error: autherror.message });
@@ -276,35 +276,97 @@ console.log("Creating shift preferences")
       }
       // login to supabase
       em = user.email;
-      const { data:authdata, error:autherror } = await supabase.auth.signInWithPassword({
+      const { data:authData, error:authError } = await supabase.auth.signInWithPassword({
         email: user.email,
         password: password
-      })
-    //console.log(authdata)
-    //console.log(autherror)
-    const rcdata = {userId: user.id, username: user.username, email: user.email, role: user.role}
+      });
+      if (authError) {
+        return res.status(401).json({ message: 'Error signing in with Supabase', error: authError.message });
+      }
+    
+    const rcdata = {
+      userId: user.id, 
+      username: user.username, 
+      email: user.email, 
+      role: user.role,
+     
+    }
+   
+    // Access the access_token from the session
+    const accessToken = authData?.session?.access_token;
+    if (accessToken) {
+      
+      // res.cookie('supabase_session', accessToken, {
+      //   httpOnly: true, // This makes the cookie inaccessible from JS (helps with XSS attacks)
+      //   secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
+      //   maxAge: 60 * 60 * 1000, // Cookie expiration (1 hour)
+      //   sameSite: 'Strict' // For preventing CSRF attacks
+      // });
+
+
+
     //console.log(rcdata)
-    res.status(200).json({ message: 'Login successful', user: rcdata /*, token */ });
+      res.status(200).json({
+            message: 'Login successful',
+            accessToken: accessToken, // Sending the access token to the frontend
+            user: rcdata
+        });
+    }
     } catch (error) {
       res.status(500).json({ message: 'Error logging in', error: error.message });
     }
   };
 
-
+  const logout = async (req, res) => {
+   
+    try {
+      
+      const token = req.headers['authorization']?.split(' ')[1]; // Extract token from the Authorization header
+      
+      if (!token) {
+        return res.status(401).json({ message: 'Unauthorized: No token provided' });
+      }
+      const { data: { user }, error } = await supabase.auth.getUser(token);
+      
+      if (error) {
+        console.error("Error fetching user:", error.message);
+        return res.status(401).json({ message: 'Invalid or expired token' });
+      }
+      
+      if (!user) {
+        console.error("User not found for token:", token);
+        return res.status(401).json({ message: 'No user found for the provided token' });
+      }
+  
+      
+      // If the user is authenticated, log them out
+      const { error: logoutError } = await supabase.auth.signOut();
+      
+      if (logoutError) {
+        return res.status(500).json({ message: 'Error logginddg out', error: logoutError.message });
+      }
+      return res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+      return res.status(500).json({ message: 'Error logginaag out', error: error.message });
+    }
+  };
   // Function to send a password reset email
-const resetPassword = async (req, res) => {
+const forgotPassword = async (req, res) => {
   
   const { email } = req.body;
   
 
-  if (!email) {
-      return res.status(400).json({ error: 'Email is required' });
-  }
+  if (!email || !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+    return res.status(400).json({ error: 'Valid email is required.' });
+}
 
   try {
       // Supabase API call to send a password reset email
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
-      
+     
+      const { data, error } = await supabase.auth.resetPasswordForEmail(
+        email,
+        { redirectTo: `${process.env.FRONTEND_URL}/update-password` }
+      )
       if (error) {
           return res.status(400).json({ error: 'Failed to send password reset email. Please try again.' });
       }
@@ -315,10 +377,68 @@ const resetPassword = async (req, res) => {
       return res.status(500).json({ error: 'Internal server error.' });
   }
 };
+
+// Update password using the reset token
+const updatePassword = async (req, res) => {
+  const accessToken = req.headers['authorization']?.split(' ')[1]; // Extract token from the Authorization header
+  const { newPassword  } = req.body;
+  // Set the accessToken to Supabase's auth client
+
+
+  if (!accessToken || !newPassword) {
+      return res.status(400).json({ error: 'Token and new password are required' });
+  }
+
+  try {
+    const supabaseAdmin = require('@supabase/supabase-js').createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+    const { data: session, error: sessionError } = await supabase.auth.getUser(accessToken);
+    console.log("session",session);
+
+
+    if (sessionError || !session) {
+      return res.status(400).json({ error: 'Invalid session or token' });
+    }
+    const userId = session.user.id;
+    const email = session.user.email;
+    // Update the password in Supabase Auth
+    const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+      password: newPassword,
+    });
+    if (authError) {
+      console.log(authError);
+      return res.status(400).json({ error: 'Failed to update password in Supabase Auth. Please try again.' });
+    }
+    // Update the hashed password in the "User" table
+    const { data: userData, error: userError } = await supabase
+      .from('User')
+      .update({ password_hash: hashedPassword })  
+      .eq('email', email); 
+
+    if (userError) {
+      console.log(userError);
+      return res.status(400).json({ error: 'Failed to update password in the User table. Please try again.' });
+    }
+
+    return res.status(200).json({ message: 'Password has been successfully reset.' });
+  } catch (err) {
+    console.error('Error resetting password:', err);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+
+};
   
   module.exports = {
     checkuserexists,
     signup,
     login,
-    resetPassword
+    logout,
+    forgotPassword,
+    updatePassword    
   };

@@ -10,9 +10,12 @@ router.post('/signup', authController.signup);
 
 // Route for user login
 router.post('/login', authController.login);
+// Route for user logout
+router.post('/logout', authController.logout);
 
 // Route for password reset
-router.post('/forgot-password', authController.resetPassword)
+router.post('/forgot-password', authController.forgotPassword)
+router.post('/updatePassword',authController.updatePassword)
 
 //router.post('/post_signup', authController.post_signup);
 //router.post('/post_login', authController.post_login);
