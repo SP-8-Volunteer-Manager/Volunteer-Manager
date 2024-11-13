@@ -22,11 +22,13 @@ function MyCalendar() {
   const [eventModalOpen, setEventModalOpen] = useState(false);
   const [eventsModalOpen, setEventsModalOpen] = useState(false);
   const [eventsForSelectedDay, setEventsForSelectedDay] = useState([]);
+
+
   
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/admin/events`);
+        const response = await fetch(`${API_BASE_URL}/api/admin/events/true`);
         const data = await response.json();
         
         // Map data to the required format for BigCalendar

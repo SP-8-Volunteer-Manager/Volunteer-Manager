@@ -22,12 +22,15 @@ function AdminEventList() {
     const [currentAllPage, setCurrentAllPage] = useState(1);
     const allEventsPerPage = 10;
 
+    const [showAll, setShowAll] = useState(false);
+
     const [reloadKey, setReloadKey] = useState(0);
     //Fetch the event data from the backend
     useEffect(() => {
         const fetchEvents = async () => {
             try{
-                const response = await fetch(`${API_BASE_URL}/api/admin/events`);
+                //console.log("Fethcing events", showAll)
+                const response = await fetch(`${API_BASE_URL}/api/admin/events/${showAll}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -39,7 +42,7 @@ function AdminEventList() {
             }
         };
         fetchEvents();
-    }, [reloadKey]);
+    }, [reloadKey, showAll]);
 
 
     // Filter volunteers based on the filter criteria
@@ -108,14 +111,25 @@ function AdminEventList() {
         window.scrollTo(0, previousScrollPosition); // Scroll to saved position
     };
 
-    const handleNewEventCloseModal = () => {
+    const handleNewEventCloseModal = (taskId) => {
         setShowNewEventModal(false);
-        setReloadKey((prevKey) => prevKey + 1);
+        //console.log(taskId)
+        if (taskId > 0){
+            //If new event created then reload page or else do nothing
+            setReloadKey((prevKey) => prevKey + 1);
+        }
     };
 
     const handlePageChange = (page) => {
             setCurrentAllPage(page);
     };
+
+    const handleCheckboxChange = (event) => {
+        //console.log("Values", event.target.value)
+        //console.log("Name", event.target.name)
+        const { name, checked } = event.target;
+        setShowAll(checked);
+      };
 
     return (
         
@@ -187,6 +201,19 @@ function AdminEventList() {
                         /> 
                      </div> 
                 </div>
+
+                    <div className="form-check">
+                        <input className="form-check-input" 
+                        title="When Checked Includes One Month Back"
+                        type="checkbox" 
+                        id="showall"
+                        name="showall" 
+                        value={showAll} 
+                        onChange={handleCheckboxChange}/>
+                        <label className="form-check-label" htmlFor="showall"
+                        title="When Checked Includes One Month Back"
+                        >Show All</label>
+                    </div>
             <table className="table">
                 <thead>
                     <tr>

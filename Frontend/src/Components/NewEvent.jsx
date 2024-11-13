@@ -21,7 +21,7 @@ const NewEvent = ({ show, handleClose }) => {
     const [taskFreq, setTaskFreq] = useState(null);
     const [volunteers, setVolunteers] = useState([]);
     const [taskCreated, setTaskCreated] = useState(false);
-    const [taskId, setTaskId] = useState(null);
+    const [taskId, setTaskId] = useState(-1);
     const [assignedVolunteer, setAssignedVolunteer] = useState('');
     const [isVolunteerAssigned, setIsVolunteerAssigned] = useState(false);
     const [notificationSent, setNotificationSent] = useState(false);
@@ -91,8 +91,8 @@ const NewEvent = ({ show, handleClose }) => {
         setNotificationSent(false);
         setAssignedVolunteer('');
         setIsVolunteerAssigned(false);
-        setTaskId(null);
-        handleClose(); 
+        handleClose(taskId); //Passing taskid back to parent to check if event was craeted
+        setTaskId(-1);
         
     };
 
@@ -176,7 +176,7 @@ const NewEvent = ({ show, handleClose }) => {
                     
                     setTaskCreated(true);
 
-                    setTaskId(result.task[0].id); 
+                    setTaskId(result.task[0].id);
                     setUserMsg(result.message || 'Event saved successfully!');
                 }
             } else{
@@ -195,7 +195,7 @@ const NewEvent = ({ show, handleClose }) => {
 
     const handleAssignVolunteer = async () => {
        
-        if (!taskId || assignedVolunteer === '0') 
+        if (taskId < 0 || assignedVolunteer === '0') 
             {
                 setUserMsg('Please create a task first');
                 return;
