@@ -2,6 +2,9 @@ import React, {useEffect, useState} from 'react';
 import EventInfo from '../Components/EventInfo';
 import API_BASE_URL from '../config';
 import NewEvent from '../Components/NewEvent';
+import { Pagination } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+
 
 //display the task list
 function AdminEventList() {
@@ -10,6 +13,16 @@ function AdminEventList() {
     const [showModal, setShowModal] = useState(false); // Track modal visibility
     const [showNewEventModal, setShowNewEventModal] = useState(false); // Track modal visibility
     const [previousScrollPosition, setPreviousScrollPosition] = useState(0); 
+
+    const [nameFilter, setNameFilter] = useState('');
+    const [taskFilter, setTaskFilter] = useState('');
+    const [locFilter, setLocFilter] = useState('');
+    const [volFilter, setVolFilter] = useState('')
+
+    const [currentAllPage, setCurrentAllPage] = useState(1);
+    const allEventsPerPage = 10;
+
+    const [reloadKey, setReloadKey] = useState(0);
     //Fetch the event data from the backend
     useEffect(() => {
         const fetchEvents = async () => {
@@ -19,14 +32,63 @@ function AdminEventList() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log(data);
+                console.log("Events length", data.length);
                 setEvents(data);
             } catch (error) {
                 console.error(`Error: ${error}`);
             }
         };
         fetchEvents();
-    }, []);
+    }, [reloadKey]);
+
+
+    // Filter volunteers based on the filter criteria
+    const filterEvents = (eventsList) => {
+        if (!nameFilter 
+            && !taskFilter 
+            && !locFilter 
+            && !volFilter
+            ) {
+            return eventsList;
+        }
+        return eventsList.filter(ev => {
+            const eventName = `${ev.name}`.toLowerCase();
+            const matchesName = eventName.includes(nameFilter.toLowerCase());
+
+            const taskName = `${ev.task_type.type_name}`.toLowerCase();
+            const matchesTask = taskName.includes(taskFilter.toLowerCase());
+
+            const eventLoc = `${ev.location}`.toLowerCase();
+            const matchesLoc = eventLoc.includes(locFilter.toLowerCase());
+
+             // Check if a volunteer is assigned
+            const hasVolunteer = ev.assignment && ev.assignment[0] && ev.assignment[0].volunteer;
+            const eventVol = hasVolunteer
+            ? `${ev.assignment[0].volunteer.first_name} ${ev.assignment[0].volunteer.last_name}`.toLowerCase()
+            : 'no volunteer assigned';
+
+        const matchesVol = eventVol.includes(volFilter.toLowerCase());
+    
+            return matchesName 
+            && matchesTask 
+            && matchesLoc
+            && matchesVol
+            ;
+        });
+    };
+
+    const filteredAllEvents = filterEvents(events);
+   
+    // Pagination for all volunteers section
+    const indexOfLastEvent = currentAllPage * allEventsPerPage;
+    const indexOfFirstEvent = indexOfLastEvent - allEventsPerPage;
+    const currentEvents = filteredAllEvents.slice(indexOfFirstEvent, indexOfLastEvent);
+    const totalAllPages = Math.ceil(filteredAllEvents.length / allEventsPerPage);
+
+    // console.log("First Event Index", indexOfFirstEvent)
+    // console.log("Last Event Index", indexOfLastEvent)
+    // console.log("Current Events", currentEvents)
+    // console.log("Total Pages", totalAllPages)
     
     // Open the modal and load selected event data
     const handleViewInfoClick = (event) => {
@@ -48,11 +110,16 @@ function AdminEventList() {
 
     const handleNewEventCloseModal = () => {
         setShowNewEventModal(false);
+        setReloadKey((prevKey) => prevKey + 1);
+    };
+
+    const handlePageChange = (page) => {
+            setCurrentAllPage(page);
     };
 
     return (
         
-          
+   
     <section>
         <div className="container">
         <div>
@@ -62,6 +129,64 @@ function AdminEventList() {
                 className="btn btn-primary"
                 onClick={() => handleNewEventClick()}>New event</button>
             </div>
+            {/* Pagination for All Events */}
+            <Pagination>
+                <Pagination.First onClick={() => handlePageChange(1)} disabled={currentAllPage === 1} />
+                <Pagination.Prev onClick={() => handlePageChange(currentAllPage - 1)} disabled={currentAllPage === 1} />
+                {[...Array(totalAllPages).keys()].map((page) => (
+                    <Pagination.Item
+                        key={page + 1}
+                        active={page + 1 === currentAllPage}
+                        onClick={() => handlePageChange(page + 1)}
+                    >
+                        {page + 1}
+                    </Pagination.Item>
+                ))}
+                <Pagination.Next onClick={() => handlePageChange(currentAllPage + 1)} disabled={currentAllPage === totalAllPages} />
+                <Pagination.Last onClick={() => handlePageChange(totalAllPages)} disabled={currentAllPage === totalAllPages} />
+            </Pagination>
+            <div className="row mb-4">
+                    <div className="col-md-3">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Filter by Name"
+                            value={nameFilter}
+                            onChange={(e) => setNameFilter(e.target.value)}
+                        />
+                    </div>
+                    
+                     
+                    <div className="col-md-3">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Filter by Task Type"
+                            value={taskFilter}
+                            onChange={(e) => setTaskFilter(e.target.value)}
+                        />
+                    </div>
+                    
+                    <div className="col-md-3">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Filter by Location"
+                            value={locFilter}
+                            onChange={(e) => setLocFilter(e.target.value)}
+                        />
+                    </div>
+                    
+                    <div className="col-md-3">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Filter by Volunteer"
+                            value={volFilter}
+                            onChange={(e) => setVolFilter(e.target.value)}
+                        /> 
+                     </div> 
+                </div>
             <table className="table">
                 <thead>
                     <tr>
@@ -78,12 +203,12 @@ function AdminEventList() {
                 </thead>
                 <tbody>
                     {/* Display the event list */}
-                    {events.length ==0 ? (
+                    {currentEvents.length ==0 ? (
                     <tr>
                         <td colSpan="5">No events found</td>
                     </tr>
                     ) : (
-                        events.map((event) => {
+                        currentEvents.map((event) => {
                             // Determine if the volunteer is assigned
                             const volunteerAssigned = event.assignment && event.assignment.length > 0;
                         return (
@@ -120,6 +245,7 @@ function AdminEventList() {
                 </tbody>
                 </table>
 
+            
         </div>
         </div>
         {/* EventInfo component */}
@@ -134,7 +260,7 @@ function AdminEventList() {
         handleClose={handleNewEventCloseModal}
         />
     </section>
-   
+
         
     );
 };

@@ -428,6 +428,85 @@ const updatePassword = async (req, res) => {
   }
 
 };
+
+const createadminuser = async (req, res) => {
+  const { volunteerData } = req.body;
+  var userid, volid;
+  //console.log("Volunteer Data", volunteerData)
+
+  // NOTE: This function will rollback in case of error
+
+   try {
+     // Check if user already exists, as a double check
+     const { data: existingUser } = await supabase
+       .from('User')
+       .select('username') // Only select the username
+       .eq('username', volunteerData.username)
+       .single();
+       console.log('---Signup--');
+       //console.log(existingUser)
+       if (existingUser) {
+        console.log('Signup usercheck!!! How did the happen????');
+        console.log(existingUser)
+        return res.status(200).json({ error:"Y", message: 'Signup username already exists'});
+      }
+
+// ------------- Local user add outine ------
+     // Hash the password
+     //console.log(bcrypt);
+    console.log("Add User")
+    const hashedPassword = await bcrypt.hash(volunteerData.password, 10);
+    // Add user to the database
+    //console.log("Just before user insert")
+    const { data, error } = await supabase
+      .from('User')
+      .insert([{ username: volunteerData.username, password_hash: hashedPassword, email: volunteerData.email, role: "admin" }])
+      .select();
+     //console.log(error)
+
+    if (error != null) {
+      return res.status(200).json({ message: 'Error adding user', error: error.message });
+    }
+    // get the id from the user table.
+    //console.log(data);
+    userid = data[0].id;
+    var useremail = data[0].email;
+    var userrole = data[0].role;
+    var userusername = data[0].username;
+
+    console.log("Created Admin user: " + userid)
+  
+  // ----------------- supabase sign up user with Supabase.auth 
+  //-----------This code works once custom domain was created and integrated with supabase
+  //  1. Create free domain with cloudns
+  //  2. Create an account with resend and configure cloudns with information from resend
+  //  3. Verify the domain in cloudns
+  //  4. Integrate resend with supabase by choosing domain and creating api key
+  //  5. The code below will work after that
+  const rcdata = {userId: userid, username: userusername, email: useremail, role: userrole}
+  //console.log(rcdata)
+  const { data: authdata, error: autherror } = await supabase.auth.signUp({
+    email: volunteerData.email,
+    password: volunteerData.password,
+    options: {
+      data: rcdata
+    }
+  })
+  
+  
+  console.log(authdata)
+  console.log(autherror)
+  if (autherror) {
+    return res.status(500).json({ message: 'Supabase signup error', error: autherror.message });
+  }
+  
+    return res.status(200).json({message: "Admin User Created. Please check your email for verification link", error: "N"});
+          
+
+  } catch (error) {  // global catch
+    return res.status(500).json({ message: "Global create admin exception"});
+  }
+};
   
   module.exports = {
     checkuserexists,
@@ -435,5 +514,6 @@ const updatePassword = async (req, res) => {
     login,
     logout,
     forgotPassword,
-    updatePassword    
+    updatePassword,
+    createadminuser    
   };

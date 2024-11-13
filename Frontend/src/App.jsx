@@ -17,6 +17,7 @@ import VolunteerDashboard from './Pages/VolunteerDashboard';
 import MyProfile from './Pages/MyProfile';
 import VolunteerList from './Pages/VolunteerList';
 import AdminEventList from './Pages/AdminEventList';
+import CreateAdminUser from './Pages/CreateAdminUser';
 
 
 import Navigation from './Components/Navigation'
@@ -44,6 +45,13 @@ function App() {
       console.log("---app.jsx fetchapi--")
       const response = await axios.get(`${API_BASE_URL}/`);
       console.log(response.data); // Check the response data
+
+      // UserSetup
+      // const rcdata = {userId: 155, username: "gbd", email: "georgerbd@gmailbrt.com", role: "volunteer"};
+      // setUserData(rcdata)
+      // setIsLoggedIn(true)
+      
+
     } catch (error) {
       console.error("Error fetching data from backend:", error); // Log any errors
     }
@@ -107,10 +115,11 @@ function App() {
               {console.log("Admin view")}
             
               <Route path="/" element={<LoggedInNavigation onLogout={handleLogout} />}>
-                <Route index element={<AdminDashboard />} />
+                <Route index element={<AdminDashboard userData={userData}/>} />
                 
                 <Route path="/volunteerList" element={<VolunteerList />} />
                 <Route path="/adminEventList" element={<AdminEventList />} />
+                <Route path="/createAdminUser" element={<CreateAdminUser />} />
                 
                 <Route path="*" element={<ErrorPage />} />
               </Route>
