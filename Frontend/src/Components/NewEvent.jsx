@@ -90,6 +90,7 @@ const NewEvent = ({ show, handleClose }) => {
         setTaskCreated(false);
         setNotificationSent(false);
         setAssignedVolunteer('');
+        setIsVolunteerAssigned(false);
         setTaskId(null);
         handleClose(); 
         
@@ -121,6 +122,9 @@ const NewEvent = ({ show, handleClose }) => {
         }
         setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
     };
+
+
+
     const handleSave = async (e) => {
         e.preventDefault();
         setErrors({});
@@ -171,7 +175,7 @@ const NewEvent = ({ show, handleClose }) => {
                 if (result.task) {
                     
                     setTaskCreated(true);
-                
+
                     setTaskId(result.task[0].id); 
                     setUserMsg(result.message || 'Event saved successfully!');
                 }
@@ -191,7 +195,11 @@ const NewEvent = ({ show, handleClose }) => {
 
     const handleAssignVolunteer = async () => {
        
-        if (!taskId || assignedVolunteer === '0') {return;}
+        if (!taskId || assignedVolunteer === '0') 
+            {
+                setUserMsg('Please create a task first');
+                return;
+            }
         const volunteerIdInt = typeof assignedVolunteer === 'string' ? parseInt(assignedVolunteer, 10) : assignedVolunteer;
         console.log("taskID, volunteerId", taskId," ", volunteerIdInt)
         try {
@@ -352,6 +360,7 @@ const NewEvent = ({ show, handleClose }) => {
                             className={`datetimepicker ${errors.startDate ? 'is-invalid' : ''}`} 
                             selected={startDate}
                             onChange={(date) => setStartDate(date)} 
+                            minDate={new Date()}
                             id="date" 
                             dateFormat="yyyy/MM/dd"
                             required
@@ -368,6 +377,8 @@ const NewEvent = ({ show, handleClose }) => {
                             showTimeSelect
                             showTimeSelectOnly
                             timeIntervals={30}
+                            minTime={new Date(0, 0, 0, 6, 0)} 
+                            maxTime={new Date(0, 0, 0, 21, 0)} 
                             id="time"
                             dateFormat="h:mm aa"
                             required

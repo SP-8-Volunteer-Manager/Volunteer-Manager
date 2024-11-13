@@ -7,6 +7,7 @@ router.post('/checkuserexists', authController.checkuserexists);
 
 // Route for user signup
 router.post('/signup', authController.signup);
+router.post('/createadminuser', authController.createadminuser);
 
 // Route for user login
 router.post('/login', authController.login);

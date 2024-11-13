@@ -26,6 +26,9 @@ function LoggedInNavigation({ onLogout }) {
                                 <NavLink  className="nav-link rounded-0" to="adminEventList">Events</NavLink >
                             </li>
                             <li className="nav-item">
+                                <NavLink  className="nav-link rounded-0" to="createAdminUser">Create Admin User</NavLink >
+                            </li>
+                            <li className="nav-item">
                                 <button className="btn btn-link nav-link text-start" onClick={onLogout}>Log out</button>
                             </li>
                         </ul>

@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import API_BASE_URL from '../config';
 
-function AdminDashboard() {
+function AdminDashboard({userData}) {
     const [UpcomingEvents, setUpEvents] = useState([]);
     const [newVolunteersCount, setNewVolunteersCount] = useState(0);
     
@@ -47,7 +47,7 @@ function AdminDashboard() {
         
           
     <section>
-        <h1>Hello Jack!</h1>    
+        <h2>Hello {userData.username} ({userData.role})!</h2>    
         <div className="row flex-lg-row align-items-stretch g-5 py-5 m-2">
             
             <div className="col-lg-6 pt-5 text-center rounded-5" style={{backgroundColor: '#f0f6fd'}}>
