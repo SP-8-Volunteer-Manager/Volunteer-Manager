@@ -44,7 +44,7 @@ const getUpcomingEvents = async (req, res) => {
             .from("task") 
             .select(`
                 *,
-                assignment(volunteer(first_name, last_name))
+                assignment(volunteer(id, first_name, last_name))
             `)
             .gte('start_date', today.toISOString())
             .lte('start_date', next7Days.toISOString());  
