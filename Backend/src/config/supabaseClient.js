@@ -16,6 +16,13 @@ if (!supabaseUrl || !supabaseServiceKey) {
 
 
 // Initialize Supabase client
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const supabase = createClient(supabaseUrl, supabaseServiceKey,{
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true
+    },   
+  }
+  );
 
 module.exports = supabase; // Export the Supabase client

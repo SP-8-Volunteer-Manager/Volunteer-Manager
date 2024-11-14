@@ -7,13 +7,14 @@ router.post('/checkuserexists', authController.checkuserexists);
 
 // Route for user signup
 router.post('/signup', authController.signup);
-router.post('/createadminuser', authController.createadminuser);
+router.post('/createadminuser', authController.createAdminUser);
 
 // Route for user login
 router.post('/login', authController.login);
 // Route for user logout
 router.post('/logout', authController.logout);
 
+router.post('/refreshToken', authController.refreshToken);
 // Route for password reset
 router.post('/forgot-password', authController.forgotPassword)
 router.post('/updatePassword',authController.updatePassword)

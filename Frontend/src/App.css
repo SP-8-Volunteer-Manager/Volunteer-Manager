@@ -57,12 +57,14 @@ body{
   background-color: #7ae884;
   margin: 0 2px; /*  margin between dots */
 }
-
-.table .description-column {
-  max-width: 200px; /* Set a maximum width for the column */
-  overflow-wrap: break-word; /* Allow words to break and wrap */
-  white-space: normal; /* Allow normal whitespace behavior */
+.event-dot-red {
+  width: 8px; /* Size of the dot in the calendar */
+  height: 8px;
+  border-radius: 50%;
+  background-color: #e84b4b; /* Red color for unassigned events */
+  margin: 0 2px; /* Margin between dots */
 }
+
 
 .logo {
   height: 6em;

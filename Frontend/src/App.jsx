@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios';
 import { Routes, Route} from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode";
 import API_BASE_URL from './config'; 
 
 import './App.css'
@@ -56,7 +57,17 @@ function App() {
       console.error("Error fetching data from backend:", error); // Log any errors
     }
   };
-  
+
+
+  const isTokenExpired = (token) => {
+    try {
+      const decodedToken = jwtDecode(token);
+      return decodedToken.exp * 1000 < Date.now(); //convert the expiration time from seconds to milliseconds and compare with current time in milliseconds.
+    } catch (error) {
+      console.error("Invalid token:", error);
+      return true; 
+    }
+  };
 
   const handleLogout = async() => {
     const confirmLogout = window.confirm('Are you sure you want to log out?');
@@ -75,6 +86,7 @@ function App() {
         if (response.ok) {
           setIsLoggedIn(false);
           localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token')
           localStorage.removeItem('user');
           navigate('/'); // Redirect to home page after logging out
         } else {
@@ -85,18 +97,54 @@ function App() {
       }
     }
   };
-  
-  useEffect(() => {
+  const checkAndRefreshToken = async () => {
     const token = localStorage.getItem('access_token');
     const storedUser = localStorage.getItem('user');
 
     if (token && storedUser) {
       setIsLoggedIn(true);
       setUserData(JSON.parse(storedUser));
+      if (!token || isTokenExpired(token)) {
+        console.log("Token expired, attempting to refresh...");
+        const refreshToken = localStorage.getItem("refresh_token");
+        if (!refreshToken) {
+            console.error("Refresh failed: Refresh token is undefined or empty.");
+            return;
+        }
+    
+        const response = await fetch(`${API_BASE_URL}/api/auth/refreshToken`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ refreshToken }) // Send refresh_token in the body
+        });
+        if (!response.ok) {
+          throw new Error('Failed to refresh token');
+        }
+        const data = await response.json();
+        if (data?.accessToken && data?.refreshToken) {
+            localStorage.setItem("access_token", data.accessToken);
+            localStorage.setItem("refresh_token", data.refreshToken);
+            console.log("Token successfully refreshed.");
+        } else {
+            console.error("Token refresh failed: Invalid response from Supabase.");
+            setIsLoggedIn(false);
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token')
+            localStorage.removeItem('user');
+            navigate('/'); // Redirect to home page after logging out
+        }
+      }  
     } else {
       setIsLoggedIn(false);
       setUserData({});
     }
+    
+    
+  };
+  useEffect(() => {
+    checkAndRefreshToken();
     fetchAPI();
   },[]);
 

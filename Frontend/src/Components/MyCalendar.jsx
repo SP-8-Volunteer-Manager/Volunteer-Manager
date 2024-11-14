@@ -34,12 +34,18 @@ function MyCalendar() {
         // Map data to the required format for BigCalendar
         const formattedEvents = data.map(event => {
           const localDate = new Date(event.start_date + 'T00:00:00')
+
+          const [hour, minute] = event.start_time.split(':');
+          const date = new Date();
+          date.setHours(hour, minute);
+          const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+
           return {
           
           title: event.name,
           start: localDate,
           end: localDate,
-          starttime: event.start_time,
+          starttime: time,
           task_type: event.task_type?.type_name || 'N/A',
           description: event.description, 
           location: event.location,
@@ -85,7 +91,10 @@ function MyCalendar() {
     return (
       <div className="event-dot-container">
         {eventsForDate.map((event, index) => (
-          <div key={index} className="event-dot" />
+          <div 
+            key={index} 
+            className={event.volunteer === 'No volunteer assigned' ? 'event-dot-red' : 'event-dot'}
+          />
         ))}
       </div>
     );

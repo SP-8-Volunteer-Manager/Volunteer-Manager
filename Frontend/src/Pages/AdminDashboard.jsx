@@ -71,11 +71,11 @@ function AdminDashboard({userData}) {
             <table className="table">
                 <thead>
                     <tr>
-                    <th scope="col">Task/Event</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Time</th>
-                    <th scope="col">Volunteer</th>
+                    <th scope="col" className="col-3">Task/Event</th>
+                    <th scope="col" className="col-4">Description</th>
+                    <th scope="col" className="col-1 text-nowrap">Date</th>
+                    <th scope="col" className="col-1 text-nowrap">Time</th>
+                    <th scope="col" className="col-3">Volunteer</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -87,6 +87,10 @@ function AdminDashboard({userData}) {
                         </tr>
                     ) : (
                         UpcomingEvents.map((event) => {
+                            const [hour, minute] = event.start_time.split(':');
+                            const date = new Date();
+                            date.setHours(hour, minute);
+                            const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
                             // Determine if the volunteer is assigned
                             const volunteerAssigned = event.assignment && event.assignment.length > 0;
                             return(
@@ -94,7 +98,7 @@ function AdminDashboard({userData}) {
                                 <td>{event.name}</td>
                                 <td>{event.description}</td>
                                 <td>{event.start_date}</td>
-                                <td>{event.start_time}</td>
+                                <td>{time}</td>
                                 <td>
                                     {volunteerAssigned
                                     ? `${event.assignment[0].volunteer.first_name} ${event.assignment[0].volunteer.last_name}`

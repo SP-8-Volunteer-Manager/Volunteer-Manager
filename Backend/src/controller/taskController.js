@@ -156,12 +156,16 @@ const createMessageForVolunteers = async (task)  => {
     });
 
     // Convert start_time to 12-hour format with AM/PM
-    const time = new Date(`1970-01-01T${start_time}Z`).toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-        timeZone: "UTC"
-    });
+    const [hour, minute] = start_time.split(':');
+    const date = new Date();
+    date.setHours(hour, minute);
+    const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    // const time = new Date(`1970-01-01T${start_time}Z`).toLocaleTimeString("en-US", {
+    //     hour: "numeric",
+    //     minute: "2-digit",
+    //     hour12: true,
+    //     timeZone: "UTC"
+    // });
 
     console.log("task: ", task);
     // Generate a default message using task information

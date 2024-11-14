@@ -304,12 +304,12 @@ const VolunteerList=() => {
             <table className="table">
                 <thead>
                     <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Phone number</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Schedule Preferences</th>
-                    <th scope="col">Task Preferences</th>
-                    <th scope="col">Action</th>
+                    <th scope="col" className="col-2">Name</th>
+                    <th scope="col" className="col-1 text-nowrap">Phone number</th>
+                    <th scope="col" className="col-1 text-nowrap">Email</th>
+                    <th scope="col" className="col-2">Schedule Preferences</th>
+                    <th scope="col" className="col-2">Task Preferences</th>
+                    <th scope="col" className="col-1 text-nowrap">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -321,8 +321,8 @@ const VolunteerList=() => {
                     currentAllVolunteers.map((volunteer) => (
                             <tr key={volunteer.id}>
                             <td>{volunteer.first_name} {volunteer.last_name}</td>
-                            <td>{volunteer.phone}</td>
-                            <td>{volunteer.User.email}</td>
+                            <td className="text-nowrap">{volunteer.phone}</td>
+                            <td className="text-nowrap">{volunteer.User.email}</td>
                             <td>
                                 {volunteer.shift_prefer && volunteer.shift_prefer.length > 0 ? (
                                     <ul>
@@ -349,7 +349,7 @@ const VolunteerList=() => {
                                     'No tasks preferred'
                                 )}
                             </td>
-                            <td>
+                            <td className="text-nowrap">
                                 <button 
                                     type="button" 
                                     className="btn btn-primary"

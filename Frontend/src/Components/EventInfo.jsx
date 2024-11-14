@@ -145,13 +145,17 @@ const EventInfo = ({ event, show, handleClose }) => {
             day: "2-digit"
         });
     
+        const [hour, minute] = event.start_time.split(':');
+          const date = new Date();
+          date.setHours(hour, minute);
+          const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
         // Convert start_time to 12-hour format with AM/PM
-        const time = new Date(`1970-01-01T${event.start_time}Z`).toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: true,
-            timeZone: "UTC"
-        });
+        // const time = new Date(`1970-01-01T${event.start_time}Z`).toLocaleTimeString("en-US", {
+        //     hour: "numeric",
+        //     minute: "2-digit",
+        //     hour12: true,
+        //     timeZone: "UTC"
+        // });
     
         console.log("selected volunteer", selectedVolunteer);
         const message = `
@@ -241,7 +245,10 @@ const EventInfo = ({ event, show, handleClose }) => {
         setShowAvailableVolunteers((prev) => !prev);
     };
 
-
+    const [hour, minute] = editableEvent.time.split(':');
+    const date = new Date();
+    date.setHours(hour, minute);
+    const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     return (
         <>
         <Modal show={show} onHide={handleClose} className="modal-dialog">
@@ -304,8 +311,8 @@ const EventInfo = ({ event, show, handleClose }) => {
                         <input
                             type="text"
                             className="form-control"
-                            name="day"
-                            value={editableEvent.time || ''}
+                            name="time"
+                            value={time || ''}
                             disabled={!isEditMode}
                             
                             onChange={handleChange}
