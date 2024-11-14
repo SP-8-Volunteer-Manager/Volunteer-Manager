@@ -98,7 +98,7 @@ function VolunteerDashboard({userData}) {
                                 <td>{event.task.name}</td>
                                 <td>{event.task.description}</td>
                                 <td>{event.start_date}</td>
-                                <td>{event.time}</td>
+                                <td>{time}</td>
                                 <td>{event.task.location}</td>
                             </tr>
                         );
