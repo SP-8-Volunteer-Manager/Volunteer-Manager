@@ -144,12 +144,12 @@ const EventInfo = ({ event, show, handleClose }) => {
             month: "2-digit",
             day: "2-digit"
         });
-    
+      // Convert start_time to 12-hour format with AM/PM
         const [hour, minute] = event.start_time.split(':');
           const date = new Date();
           date.setHours(hour, minute);
           const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-        // Convert start_time to 12-hour format with AM/PM
+      
         // const time = new Date(`1970-01-01T${event.start_time}Z`).toLocaleTimeString("en-US", {
         //     hour: "numeric",
         //     minute: "2-digit",

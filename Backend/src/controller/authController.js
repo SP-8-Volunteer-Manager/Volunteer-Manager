@@ -326,6 +326,7 @@ const signup = async (req, res) => {
             refresh_token: refreshToken,
         });
   
+  
         if (error || !data?.session) {
           
             return res.status(401).json({ error: 'Token refresh failed. Please log in again.' });

@@ -42,7 +42,10 @@ const TaskConfirmationPage = () => {
     };
 
     if (loading) return <p>Loading task details...</p>;
-
+    const [hour, minute] = task.start_time.split(':');
+    const date = new Date();
+    date.setHours(hour, minute);
+    const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     return (
         <div className="container">
             {task ? (
@@ -51,7 +54,7 @@ const TaskConfirmationPage = () => {
                     <p><strong>Task:</strong> {task.name}</p>
                     <p><strong>Location:</strong> {task.location}</p>
                     <p><strong>Date:</strong> {task.start_date}</p>
-                    <p><strong>Time:</strong> {task.start_time}</p>
+                    <p><strong>Time:</strong> {time}</p>
                     <p><strong>Description:</strong> {task.description}</p>
                     {confirmationStatus ? (
                         <p>{confirmationStatus}</p>

@@ -203,7 +203,7 @@ const getTaskOptions = async (req, res) => {
 const getMyProfile = async (req, res) => {
     //console.log(req.body)
     const {userid} = req.body;
-    console.log("retrieving volunteer for userID " + userid)
+   // console.log("retrieving volunteer for userID " + userid)
 
     try {
         const { data, error } = await supabase
