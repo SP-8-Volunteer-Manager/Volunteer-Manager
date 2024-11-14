@@ -69,49 +69,65 @@ function App() {
     }
   };
 
-  const handleLogout = async() => {
-    const confirmLogout = window.confirm('Are you sure you want to log out?');
-    if (confirmLogout) {
-      try {
-        const token = localStorage.getItem('access_token'); // Get the token from localStorage
+  const handleLogout = () => {
+    checkAndRefreshToken();
+    logout();
+  }
 
-        const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`, // Add the token to the Authorization header
-          },
-        });
+  const logout = async() => {
+    const token = localStorage.getItem('access_token');
+    
+    if(token && !isTokenExpired(token)){
+      const confirmLogout = window.confirm('Are you sure you want to log out?');
+      if (confirmLogout) {
+        try {
 
-        if (response.ok) {
-          setIsLoggedIn(false);
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token')
-          localStorage.removeItem('user');
-          navigate('/'); // Redirect to home page after logging out
-        } else {
-          console.error('Error logging out:', response.statusText);
+          const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`, // Add the token to the Authorization header
+            },
+          });
+
+          if (response.ok) {
+            setIsLoggedIn(false);
+            setUserData({});
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token')
+            localStorage.removeItem('user');
+            navigate('/'); // Redirect to home page after logging out
+          } else {
+            console.error('Error logging out:', response.statusText);
+          }
+        } catch (error) {
+          console.error('Error logging out:', error);
         }
-      } catch (error) {
-        console.error('Error logging out:', error);
       }
+    } else {
+      setIsLoggedIn(false);
+      setUserData({});
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token')
+      localStorage.removeItem('user');
+      navigate('/'); // Redirect to home page after logging out
     }
+    
   };
+
   const checkAndRefreshToken = async () => {
     const token = localStorage.getItem('access_token');
-    const storedUser = localStorage.getItem('user');
-
-    if (token && storedUser) {
-      setIsLoggedIn(true);
-      setUserData(JSON.parse(storedUser));
-      if (!token || isTokenExpired(token)) {
-        console.log("Token expired, attempting to refresh...");
-        const refreshToken = localStorage.getItem("refresh_token");
-        if (!refreshToken) {
-            console.error("Refresh failed: Refresh token is undefined or empty.");
-            return;
-        }
-    
+    const refreshToken = localStorage.getItem("refresh_token");
+  
+    if (!token || isTokenExpired(token)) {
+      console.log("Token expired, attempting to refresh.");
+      
+      if (!refreshToken) {
+          console.error("Refresh failed: Refresh token is undefined or empty.");
+          logout();  
+          return;
+      }
+      try{
         const response = await fetch(`${API_BASE_URL}/api/auth/refreshToken`, {
           method: 'POST',
           headers: {
@@ -119,9 +135,9 @@ function App() {
           },
           body: JSON.stringify({ refreshToken }) // Send refresh_token in the body
         });
-        if (!response.ok) {
-          throw new Error('Failed to refresh token');
-        }
+        // if (!response.ok) {
+        //   throw new Error('Failed to refresh token');
+        // }
         const data = await response.json();
         if (data?.accessToken && data?.refreshToken) {
             localStorage.setItem("access_token", data.accessToken);
@@ -129,24 +145,37 @@ function App() {
             console.log("Token successfully refreshed.");
         } else {
             console.error("Token refresh failed: Invalid response from Supabase.");
-            setIsLoggedIn(false);
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token')
-            localStorage.removeItem('user');
-            navigate('/'); // Redirect to home page after logging out
+            logout(); 
+            
         }
-      }  
-    } else {
-      setIsLoggedIn(false);
-      setUserData({});
-    }
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        logout();
+      }
+    }  
     
     
   };
+
   useEffect(() => {
-    checkAndRefreshToken();
-    fetchAPI();
+    const token = localStorage.getItem('access_token');
+    const storedUser = localStorage.getItem('user');
+    if (token && storedUser) {
+      setIsLoggedIn(true);
+      setUserData(JSON.parse(storedUser));
+    } else {
+      setIsLoggedIn(false);
+      setUserData({});
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user');
+    }
+    if (isLoggedIn) {
+      checkAndRefreshToken();
+    }
+    fetchAPI();    
   },[]);
+  
 
   return (
     <>

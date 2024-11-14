@@ -30,8 +30,6 @@ function LogIn({ setIsLoggedIn, closeModal, reset, onResetDone, setUserData  }) 
         }
     }, [reset, onResetDone]);
 
- 
-   // http://localhost:8080/api/auth/login
     const handleLogin = async () => {
         
         if(username && password){
