@@ -89,12 +89,16 @@ function VolunteerDashboard({userData}) {
                         </tr>
                     ) : (
                         UpcomingEvents.map((event) => {
+                            const [hour, minute] = event.start_time.split(':');
+                            const date = new Date();
+                            date.setHours(hour, minute);
+                            const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
                             return(
                             <tr key={event.assign_id} >
                                 <td>{event.task.name}</td>
                                 <td>{event.task.description}</td>
                                 <td>{event.start_date}</td>
-                                <td>{event.start_time}</td>
+                                <td>{event.time}</td>
                                 <td>{event.task.location}</td>
                             </tr>
                         );

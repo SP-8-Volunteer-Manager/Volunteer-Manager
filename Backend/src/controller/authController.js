@@ -1,3 +1,4 @@
+const e = require('express');
 const supabase = require('../config/supabaseClient');
 //const bcrypt = require('bcrypt');
 const bcrypt = require('bcryptjs');
@@ -289,6 +290,7 @@ const signup = async (req, res) => {
    
     // Access the access_token from the session
     const accessToken = authData?.session?.access_token;
+    const refreshToken = authData?.session?.refresh_token;
     if (accessToken) {
       
       // res.cookie('supabase_session', accessToken, {
@@ -304,6 +306,7 @@ const signup = async (req, res) => {
       res.status(200).json({
             message: 'Login successful',
             accessToken: accessToken, // Sending the access token to the frontend
+            refreshToken: refreshToken,
             user: rcdata
         });
     }
@@ -311,6 +314,32 @@ const signup = async (req, res) => {
       res.status(500).json({ message: 'Error logging in', error: error.message });
     }
   };
+  const refreshToken = async (req, res) => {
+     const { refreshToken } = req.body;     
+
+    if (!refreshToken) {
+        return res.status(400).json({ error: 'Refresh token is required.' });
+    }
+
+    try {
+        const { data, error } = await supabase.auth.refreshSession({
+            refresh_token: refreshToken,
+        });
+  
+        if (error || !data?.session) {
+          
+            return res.status(401).json({ error: 'Token refresh failed. Please log in again.' });
+        }
+
+        res.json({
+            accessToken: data.session.access_token,
+            refreshToken: data.session.refresh_token,
+        });
+    } catch (err) {
+        console.error('Token refresh error:', err);
+        res.status(500).json({ error: 'Internal server error.' });
+    }
+};
 
   const logout = async (req, res) => {
    
@@ -357,7 +386,6 @@ const forgotPassword = async (req, res) => {
 
   try {
       // Supabase API call to send a password reset email
-     console.log("Front end URL ", process.env.FRONTEND_URL)
       const { data, error } = await supabase.auth.resetPasswordForEmail(
         email,
         { redirectTo: `${process.env.FRONTEND_URL}/update-password` }
@@ -394,7 +422,7 @@ const updatePassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     
     const { data: session, error: sessionError } = await supabase.auth.getUser(accessToken);
-    console.log("session",session);
+   
 
 
     if (sessionError || !session) {
@@ -429,7 +457,7 @@ const updatePassword = async (req, res) => {
 
 };
 
-const createadminuser = async (req, res) => {
+const createAdminUser = async (req, res) => {
   const { volunteerData } = req.body;
   var userid, volid;
   //console.log("Volunteer Data", volunteerData)
@@ -515,5 +543,6 @@ const createadminuser = async (req, res) => {
     logout,
     forgotPassword,
     updatePassword,
-    createadminuser    
+    createAdminUser,
+    refreshToken  
   };

@@ -20,7 +20,7 @@ function AdminEventList() {
     const [volFilter, setVolFilter] = useState('')
 
     const [currentAllPage, setCurrentAllPage] = useState(1);
-    const allEventsPerPage = 10;
+    const allEventsPerPage = 20;
 
     const [showAll, setShowAll] = useState(false);
 
@@ -144,21 +144,7 @@ function AdminEventList() {
                 onClick={() => handleNewEventClick()}>New event</button>
             </div>
             {/* Pagination for All Events */}
-            <Pagination>
-                <Pagination.First onClick={() => handlePageChange(1)} disabled={currentAllPage === 1} />
-                <Pagination.Prev onClick={() => handlePageChange(currentAllPage - 1)} disabled={currentAllPage === 1} />
-                {[...Array(totalAllPages).keys()].map((page) => (
-                    <Pagination.Item
-                        key={page + 1}
-                        active={page + 1 === currentAllPage}
-                        onClick={() => handlePageChange(page + 1)}
-                    >
-                        {page + 1}
-                    </Pagination.Item>
-                ))}
-                <Pagination.Next onClick={() => handlePageChange(currentAllPage + 1)} disabled={currentAllPage === totalAllPages} />
-                <Pagination.Last onClick={() => handlePageChange(totalAllPages)} disabled={currentAllPage === totalAllPages} />
-            </Pagination>
+            
             <div className="row mb-4">
                     <div className="col-md-3">
                         <input
@@ -218,14 +204,14 @@ function AdminEventList() {
                 <thead>
                     <tr>
                 
-                    <th scope="col">Task Name</th>
-                    <th scope="col" className="description-column"> Description</th>
-                    <th scope="col">Task Type</th>
-                    <th scope="col">Location</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Time</th>
-                    <th scope="col">Volunteer</th>
-                    <th scope="col">Action</th>
+                    <th scope="col" className="col-2">Task Name</th>
+                    <th scope="col" className="col-2"> Description</th>
+                    <th scope="col" className="col-1">Task Type</th>
+                    <th scope="col" className="col-2">Location</th>
+                    <th scope="col" className="col-1 text-nowrap">Date</th>
+                    <th scope="col" className="col-1 text-nowrap">Time</th>
+                    <th scope="col" className="col-2">Volunteer</th>
+                    <th scope="col" className="col-1 text-nowrap">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -236,17 +222,21 @@ function AdminEventList() {
                     </tr>
                     ) : (
                         currentEvents.map((event) => {
+                            const [hour, minute] = event.start_time.split(':');
+                            const date = new Date();
+                            date.setHours(hour, minute);
+                            const formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
                             // Determine if the volunteer is assigned
                             const volunteerAssigned = event.assignment && event.assignment.length > 0;
                         return (
                             <tr key={event.id}>
-                                <td>{event.name}</td>
-                                <td className="description-column">{event.description}</td>
-                                <td>{event.task_type.type_name}</td>
-                                <td>{event.location}</td>
-                                <td>{event.start_date}</td>
-                                <td>{event.start_time}</td>
-                                <td>
+                                <td className="col-2">{event.name}</td>
+                                <td className="col-2">{event.description}</td>
+                                <td className="col-1">{event.task_type.type_name}</td>
+                                <td className="col-2">{event.location}</td>
+                                <td className="col-1 text-nowrap">{event.start_date}</td>
+                                <td className="col-1 text-nowrap">{formattedTime}</td>
+                                <td className="col-2">
                                         {volunteerAssigned
                                         ? `${event.assignment[0].volunteer.first_name} ${event.assignment[0].volunteer.last_name}`
                                         :   <span style={{ color: 'red', fontWeight: 'bold' }}>
@@ -254,7 +244,7 @@ function AdminEventList() {
                                             </span>
                                         }
                                     </td>
-                                <td>
+                                <td className="col-1 text-nowrap">
                                     <button 
                                         type="button" 
                                         className="btn btn-primary" 
@@ -274,6 +264,21 @@ function AdminEventList() {
 
             
         </div>
+        <Pagination>
+                <Pagination.First onClick={() => handlePageChange(1)} disabled={currentAllPage === 1} />
+                <Pagination.Prev onClick={() => handlePageChange(currentAllPage - 1)} disabled={currentAllPage === 1} />
+                {[...Array(totalAllPages).keys()].map((page) => (
+                    <Pagination.Item
+                        key={page + 1}
+                        active={page + 1 === currentAllPage}
+                        onClick={() => handlePageChange(page + 1)}
+                    >
+                        {page + 1}
+                    </Pagination.Item>
+                ))}
+                <Pagination.Next onClick={() => handlePageChange(currentAllPage + 1)} disabled={currentAllPage === totalAllPages} />
+                <Pagination.Last onClick={() => handlePageChange(totalAllPages)} disabled={currentAllPage === totalAllPages} />
+            </Pagination>
         </div>
         {/* EventInfo component */}
         <EventInfo

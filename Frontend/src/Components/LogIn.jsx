@@ -60,9 +60,12 @@ function LogIn({ setIsLoggedIn, closeModal, reset, onResetDone, setUserData  }) 
                     
                     // Store the access token in localStorage
                     localStorage.setItem('access_token', rdata.accessToken);
+
+                    localStorage.setItem('refresh_token', rdata.refreshToken);
                     
                     // Store user info
                     localStorage.setItem('user', JSON.stringify(rdata.user));
+                  
                     console.log('Login success response')
                 
                 
