@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 
 
 function VolunteerEventInfoModal({ show, onHide, event }) {
+  
   return (
     <Modal
       show={show}
