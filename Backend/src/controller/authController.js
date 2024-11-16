@@ -103,7 +103,7 @@ const rollback = async (user, volunteer, task, shift, userid, volid) => {
 //Signup Function
 const signup = async (req, res) => {
     // const { username, password, email } = req.body; /// user date
-    // const {firstName, lastName,  address, phoneNumber, city, state, zip, carrier, receiveemail, receivesms} = req.body; //volunteer data
+    // const {firstName, lastName,  address, phoneNumber, city, state, zip, receiveemail, receivesms} = req.body; //volunteer data
     const { volunteerData } = req.body;
     const {  schedulePreferences, taskPreferences } = req.body;
     var userid, volid;
@@ -130,12 +130,14 @@ const signup = async (req, res) => {
        // Hash the password
        //console.log(bcrypt);
       console.log("Add User")
-      const hashedPassword = await bcrypt.hash(volunteerData.password, 10);
+      //const hashedPassword = await bcrypt.hash(volunteerData.password, 10);
       // Add user to the database
       //console.log("Just before user insert")
       const { data, error } = await supabase
         .from('User')
-        .insert([{ username: volunteerData.username, password_hash: hashedPassword, email: volunteerData.email, role: "volunteer" }])
+        .insert([{ username: volunteerData.username,
+           //password_hash: hashedPassword, 
+           email: volunteerData.email, role: "volunteer" }])
         .select();
        //console.log(error)
 
@@ -164,7 +166,7 @@ const signup = async (req, res) => {
           state: volunteerData.state, 
           zip_code: volunteerData.zip, 
           consent_for_sms: volunteerData.receivesms, 
-          carrier: volunteerData.carrier, 
+          carrier: '',
           receive_email: volunteerData.receiveemail, 
           receive_phone: volunteerData.receivesms}])
         .select(); //state not working
@@ -256,7 +258,7 @@ const signup = async (req, res) => {
       // Retrieve the user by username
       const { data: user, error: fetchError } = await supabase
         .from('User')
-        .select('id, username, email, password_hash, role')
+        .select('id, username, email, role')
         .eq('username', username)
         .single();
 
@@ -265,11 +267,11 @@ const signup = async (req, res) => {
       }
 
       // Compare the password with the hashed password stored in the database
-      const isMatch = await bcrypt.compare(password, user.password_hash);
+      // const isMatch = await bcrypt.compare(password, user.password_hash);
 
-      if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid email or password' });
-      }
+      // if (!isMatch) {
+      //   return res.status(401).json({ message: 'Invalid email or password' });
+      // }
       // login to supabase
       em = user.email;
       const { data:authData, error:authError } = await supabase.auth.signInWithPassword({
@@ -420,7 +422,7 @@ const updatePassword = async (req, res) => {
     );
 
     // Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    //const hashedPassword = await bcrypt.hash(newPassword, 10);
     
     const { data: session, error: sessionError } = await supabase.auth.getUser(accessToken);
    
@@ -439,16 +441,16 @@ const updatePassword = async (req, res) => {
       console.log(authError);
       return res.status(400).json({ error: 'Failed to update password in Supabase Auth. Please try again.' });
     }
-    // Update the hashed password in the "User" table
-    const { data: userData, error: userError } = await supabase
-      .from('User')
-      .update({ password_hash: hashedPassword })  
-      .eq('email', email); 
+    // Update the hashed password in the "User" table. Using supabase so removed it
+    // const { data: userData, error: userError } = await supabase
+    //   .from('User')
+    //   .update({ password_hash: hashedPassword })  
+    //   .eq('email', email); 
 
-    if (userError) {
-      console.log(userError);
-      return res.status(400).json({ error: 'Failed to update password in the User table. Please try again.' });
-    }
+    // if (userError) {
+    //   console.log(userError);
+    //   return res.status(400).json({ error: 'Failed to update password in the User table. Please try again.' });
+    // }
 
     return res.status(200).json({ message: 'Password has been successfully reset.' });
   } catch (err) {
@@ -484,12 +486,14 @@ const createAdminUser = async (req, res) => {
      // Hash the password
      //console.log(bcrypt);
     console.log("Add User")
-    const hashedPassword = await bcrypt.hash(volunteerData.password, 10);
+    //const hashedPassword = await bcrypt.hash(volunteerData.password, 10);
     // Add user to the database
     //console.log("Just before user insert")
     const { data, error } = await supabase
       .from('User')
-      .insert([{ username: volunteerData.username, password_hash: hashedPassword, email: volunteerData.email, role: "admin" }])
+      .insert([{ username: volunteerData.username, 
+        //password_hash: hashedPassword, 
+        email: volunteerData.email, role: "admin" }])
       .select();
      //console.log(error)
 

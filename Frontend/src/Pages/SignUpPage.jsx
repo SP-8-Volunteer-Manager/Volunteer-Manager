@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import StateDropdown from '../Components/StateDropdown';
-import CarrierDropdown from "../Components/CarrierDropdown";
+
 import API_BASE_URL from '../config';
 import Select from 'react-select';
 
@@ -17,7 +17,9 @@ function SignUpPage() {
     const intialValues = { username: "", password: "", confirmPassword: "",
          email: "", firstName: "", lastName: "", inputName: "", 
          address: "", city: "", state: "", zip: "",
-         phoneNumber: "", carrier: "", receivesms: false, receiveemail: false, 
+         phoneNumber: "", 
+         
+         receivesms: false, receiveemail: false, 
          emailoptin: false,
          smsoptin: false,
          schedPref:   [],
@@ -121,7 +123,7 @@ function SignUpPage() {
         setFormValues({
             ...formValues,
             [name]: checked,
-            ...(name === 'receivesms' && !checked ? { smsoptin: false, carrier: '' } : {}),
+            ...(name === 'receivesms' && !checked ? { smsoptin: false } : {}),
             ...(name === 'receiveemail' && !checked ? { emailoptin: false } : {}),
         });
     };
@@ -184,13 +186,7 @@ function SignUpPage() {
                 errors.phoneNumber = "Phone number required for sms notifications";
             }
 
-        if (values.receivesms === true)
-        {
-            if (!values.carrier)
-            {
-                errors.carrier = "Please choose a phone carrier";
-            }
-        }
+        
 
         
         if (values.receiveemail === false && values.receivesms === false)
@@ -208,24 +204,7 @@ function SignUpPage() {
             errors.emailoptin = "Email Opt-in required";
         }
 
-        {/* do not need it. Automaticaly changes the calues of opt-in checkboxes
-        depending on the value of prefer communication method checkboxes
-
-        if (values.receivesms === false && values.carrier)
-        {
-            errors.carrier = "Reset Carrier Dropdown to \'Select Carrier\'";
-        }
-
-        if (values.receiveemail === false && values.emailoptin === true)
-        {
-            errors.emailoptin = "Uncheck email opt in";
-        }
-
-        if (values.receivesms === false && values.smsoptin === true)
-        {
-            errors.smsoptin = "Uncheck sms opt in";
-        }
-        */}
+        
 
         if (!values.password) {
           errors.password = "Password is required";
@@ -301,7 +280,7 @@ function SignUpPage() {
             state:formValues.state,
             zip:formValues.zip,
             phoneNumber:formValues.phoneNumber,
-            carrier:formValues.carrier,
+            
             receivesms:formValues.receivesms,
             receiveemail:formValues.receiveemail
         },
@@ -315,7 +294,7 @@ function SignUpPage() {
         return signupData;
     }
        // username: "", password: "", confirmPassword: "", email: "", firstName: "", lastName: "", inputName: "", address: "", city: "", state: "", zip: "",
-       //  phoneNumber: "", carrier: "", receivesms: false, receiveemail: false, smalldog: false, bigdog: false, cat: false, onetimeevent: false,
+       //  phoneNumber: "",  receivesms: false, receiveemail: false, smalldog: false, bigdog: false, cat: false, onetimeevent: false,
     const handleSignup = async () => {
             try{
                 setLoading(true);
@@ -553,13 +532,7 @@ function SignUpPage() {
                         </div>
 
 
-                        <div className="col-md-6" >
-                            <label htmlFor="PhoneCarrier" className="form-label">Choose Your Phone Carrier</label>
-                            <CarrierDropdown dropdownChange={dropdownChange} receivesms={formValues.receivesms} carrier={formValues.carrier} isEditMode={true}/>
-                            {formErrors.carrier && (
-                            <span className="error">{formErrors.carrier}</span>
-                            )}
-                        </div>
+                        
 
                         <div className="col-md-6">
                             <div className="form-check">
