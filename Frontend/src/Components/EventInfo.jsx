@@ -94,13 +94,40 @@ const EventInfo = ({ event, show, handleClose }) => {
             [name]: value
         }));
     };
-    const toggleEditMode = () => {
+    const toggleEditMode = async () => {
         if (isEditMode) {
-          
-            console.log('Saving event info:', editableEvent);
+            // Save event details to the backend
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/events/${event.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: editableEvent.name,
+                        description: editableEvent.description,
+                        taskType: editableEvent.taskType, // Ensure taskType is passed correctly
+                        day: editableEvent.day,
+                        time: editableEvent.time,
+                        location: editableEvent.location,
+                    }),
+                });
+    
+                if (response.ok) {
+                    const updatedEvent = await response.json();
+                    alert('Event updated successfully!');
+                    // Update the UI if necessary
+                } else {
+                    throw new Error('Failed to update event.');
+                }
+            } catch (error) {
+                console.error('Error updating event:', error);
+                alert('Error updating event. Please try again.');
+            }
         }
         setIsEditMode(!isEditMode);
     };
+    
 
     // Handle assigning a volunteer
     const handleAssignVolunteer = async () => {
