@@ -58,6 +58,32 @@ const getUpcomingEvents = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+const updateEvent = async (req, res) => {
+    try {
+        const { id } = req.params; // Event ID
+        const { name, description, taskType, day, time, location } = req.body;
+
+        // Update the task in the database
+        const { data, error } = await pool
+            .from('task')
+            .update({
+                name,
+                description,
+                task_type_id: taskType, // Assuming taskType is the ID
+                start_date: day,
+                start_time: time,
+                location,
+            })
+            .eq('id', id);
+
+        if (error) throw error;
+
+        res.status(200).json({ message: 'Event updated successfully', data });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
 
 
-module.exports = { getEventLists, getUpcomingEvents }; // export the controller functions
+
+module.exports = { getEventLists, getUpcomingEvents,updateEvent }; // export the controller functions
