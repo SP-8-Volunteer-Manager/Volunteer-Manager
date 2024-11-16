@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import StateDropdown from '../Components/StateDropdown';
-import CarrierDropdown from "../Components/CarrierDropdown";
 import { Button } from 'react-bootstrap';
 import Select from 'react-select';
 import API_BASE_URL from '../config';
@@ -26,7 +25,6 @@ function MyProfile({userData}) {
         email: '',
         receiveemail: false,
         receivesms: false,
-        carrier: '',
         schedPref: [],
         taskPref: []
       });
@@ -124,7 +122,6 @@ function MyProfile({userData}) {
             useremail: data.User?.email || '',  // Optional chaining to avoid error if User is undefined
             receiveemail: data.receive_email || false,
             receivesms: data.receive_phone || false,
-            carrier: data.carrier || '',
             volunteerid: data.id,
             schedPref: data.shift_prefer ? data.shift_prefer.map(shift => ({
                                  value: shift.shift.id,
@@ -189,7 +186,7 @@ function MyProfile({userData}) {
         setFormValues({
             ...formValues,
             [name]: checked,
-            ...(name === 'receivesms' && !checked ? { smsoptin: false, carrier: '' } : {}),
+            ...(name === 'receivesms' && !checked ? { smsoptin: false } : {}),
             ...(name === 'receiveemail' && !checked ? { emailoptin: false } : {}),
         });
     };
@@ -227,13 +224,7 @@ function MyProfile({userData}) {
                 errors.phoneNumber = "Phone number required for sms notifications";
             }
 
-        if (values.receivesms === true)
-        {
-            if (!values.carrier)
-            {
-                errors.carrier = "Please choose a phone carrier";
-            }
-        }
+        
 
         
         if (values.receiveemail === false && values.receivesms === false)
@@ -296,7 +287,6 @@ function MyProfile({userData}) {
                 zip:formValues.zip,
                 volunteerid: formValues.volunteerid,
                 phoneNumber:formValues.phoneNumber,
-                carrier:formValues.carrier,
                 receivesms:formValues.receivesms,
                 receiveemail:formValues.receiveemail                
             },
@@ -477,17 +467,6 @@ function MyProfile({userData}) {
                             )}
                             </div>
                         </div>
-
-
-                        <div className="col-md-6" >
-                            <label htmlFor="PhoneCarrier" className="form-label">Choose Your Phone Carrier</label>
-                            <CarrierDropdown dropdownChange={dropdownChange} isEditMode={isEditMode} 
-                                receivesms={formValues.receivesms} carrier={formValues.carrier}/>
-                            {formErrors.carrier && (
-                            <span className="text-danger">{formErrors.carrier}</span>
-                            )}
-                        </div>
-
                         <div className="col-md-6">
                             <div className="form-check">
                                 <p className="fw-bold mb-1"> Opt in to email notifications</p>
