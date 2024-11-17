@@ -2,9 +2,12 @@ import MyCalendar from "../Components/MyCalendar";
 import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import API_BASE_URL from '../config';
+import EventInfo from "../Components/EventInfo";
 
 function AdminDashboard({userData}) {
     const [UpcomingEvents, setUpEvents] = useState([]);
+    const [eventModalOpen, setEventModalOpen] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
     const [newVolunteersCount, setNewVolunteersCount] = useState(0);
     
     useEffect(() => {
@@ -41,7 +44,16 @@ function AdminDashboard({userData}) {
     }
     , []);
             
-
+    const openEventModal = (event) => {
+        setSelectedEvent(event); 
+        setEventModalOpen(true);
+      };
+    
+      const closeEventModal = () => {
+        setEventModalOpen(false);
+        setSelectedEvent(null); 
+      };
+    
 
     return (
         
@@ -94,7 +106,7 @@ function AdminDashboard({userData}) {
                             // Determine if the volunteer is assigned
                             const volunteerAssigned = event.assignment && event.assignment.length > 0;
                             return(
-                            <tr key={event.id} >
+                            <tr  key={event.id} onClick={() => openEventModal(event)} style={{ cursor: 'pointer' }}>
                                 <td>{event.name}</td>
                                 <td>{event.description}</td>
                                 <td>{event.start_date}</td>
@@ -117,7 +129,12 @@ function AdminDashboard({userData}) {
                 </table>
 
         </div>
-
+    {/* Event Info Modal */}
+    <EventInfo
+        event={selectedEvent}
+        show={eventModalOpen}
+        handleClose={closeEventModal}
+      />
     </section>
    
         

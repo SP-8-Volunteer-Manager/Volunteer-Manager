@@ -10,7 +10,7 @@ function EventInfoModal({ show, onHide, event }) {
     <Modal
       show={show}
       onHide={onHide}
-      className="modal-dialog modal-lg"
+      className="modal modal-lg"
       
       style={{ content: { padding: '0', border: 'none', inset: '0' } }}
     >

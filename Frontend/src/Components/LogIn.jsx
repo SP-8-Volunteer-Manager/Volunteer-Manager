@@ -107,8 +107,8 @@ function LogIn({ setIsLoggedIn, closeModal, reset, onResetDone, setUserData  }) 
     return (
        
            <>
-          
-                <form>
+            
+                <form className={`${modalIsOpen ? 'pointer-events-none modal-backdrop fade' : ''}`}>
                     
                     <div className="form-floating mb-3">
                         <input type="text" className="form-control rounded-3" id="floatingInput" 

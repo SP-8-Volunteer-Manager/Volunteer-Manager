@@ -146,7 +146,7 @@ function MyCalendar() {
           show={modalIsOpen}
           onHide={closeModal}
          
-          className="modal-dialog modal-xl"
+          className={`modal modal-xl ${eventModalOpen ||  eventsModalOpen ? 'pointer-events-none modal-backdrop fade' : ''}`}
           
           style={{ content: { padding: '0', border: 'none', inset: '0' } }}
         >
@@ -168,7 +168,7 @@ function MyCalendar() {
                 events={events} // Show all events
                 startAccessor="start"
                 endAccessor="end"
-                style={{ height: '500px', margin: '20px'}} 
+                style={{ height: '500px', margin: '10px'}} 
                 defaultDate={selectedDate} // Set the selected date as the default date
                 views={['month']} // Limit views to month
                 odayPropGetter={dayPropGetter}
@@ -186,7 +186,8 @@ function MyCalendar() {
       <Modal
         show={eventsModalOpen}
         onHide={closeEventsModal}
-        className="modal-dialog modal-lg"
+        className={`modal modal-lg ${eventModalOpen ? 'pointer-events-none modal-backdrop fade' : ''}`}
+          
       >
         <div className="modal-content">
           <div className="modal-header">
@@ -207,6 +208,7 @@ function MyCalendar() {
           </div>
         </div>
       </Modal>
+      {eventsModalOpen && <div className="modal-backdrop fade show"></div>}
 
       <EventInfoModal
         show={eventModalOpen}
