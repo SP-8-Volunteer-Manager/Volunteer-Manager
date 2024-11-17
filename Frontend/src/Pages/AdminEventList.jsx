@@ -190,6 +190,7 @@ function AdminEventList() {
                             </label>
                         </div>
                     </div>
+                </div>
             <table className="table">
                 <thead>
                     <tr>
@@ -218,6 +219,7 @@ function AdminEventList() {
                             const formattedTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
                             // Determine if the volunteer is assigned
                             const volunteerAssigned = event.assignment && event.assignment.length > 0;
+                   
                         return (
                             <tr key={event.id}>
                                 <td className="col-2">{event.name}</td>
@@ -250,10 +252,10 @@ function AdminEventList() {
                
                     
                 </tbody>
-                </table>
+            </table>
 
             
-        </div>
+        
         <Pagination>
                 <Pagination.First onClick={() => handlePageChange(1)} disabled={currentAllPage === 1} />
                 <Pagination.Prev onClick={() => handlePageChange(currentAllPage - 1)} disabled={currentAllPage === 1} />

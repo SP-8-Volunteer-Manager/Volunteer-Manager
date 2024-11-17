@@ -1,7 +1,9 @@
 const supabase = require('../config/supabaseClient');
+const cron = require("node-cron");
 const { Resend } = require('resend');
 const { sendEmail } = require('./notificationController'); 
 const { sendSMS } = require('./notificationController'); 
+
 
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -101,6 +103,87 @@ const createTask = async (req, res) => {
     }
 
 };
+
+const updateRecurringTasks = () => {
+    
+    // the task will run every day at midnight
+    cron.schedule("0 0 * * *", async () => {
+      console.log("Updating recurring tasks");
+      try {
+        // Fetch recurring tasks
+        const { data: recurringTasks, error } = await supabase
+          .from("task")
+          .select("*")
+          .eq("is_recurring", true);
+  
+        if (error) throw error;
+  
+        if (recurringTasks && recurringTasks.length > 0) {
+            for (const task of recurringTasks) {
+                const nextStartDate = new Date(task.start_date);
+                nextStartDate.setDate(nextStartDate.getDate() + 7);
+                const formattedNextStartDate = nextStartDate.toISOString().split("T")[0];
+
+
+                const formattedToday = today.toISOString().split("T")[0];
+                if (formattedNextStartDate < formattedToday) {
+                    console.log(`Next start date ${formattedNextStartDate} is in the past. Skipping.`);
+                    continue; 
+                }
+
+                const twoWeeksFromNow = new Date();
+                twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+                const formattedTwoWeeksFromNow = twoWeeksFromNow.toISOString().split("T")[0];
+                
+                
+                if (formattedNextStartDate > formattedTwoWeeksFromNow) {
+                    console.log(`Task for ${formattedNextStartDate} is beyond the 2-week window. Skipping.`);
+                    continue; 
+                  }
+        
+                // Check if a task with the same fields already exists
+                const { data: existingTask, error: checkError } = await supabase
+                    .from("task")
+                    .select("id")
+                    .eq("start_date", formattedNextStartDate)
+                    .eq("start_time", task.start_time)
+                    .eq("task_type_id", task.task_type_id)
+                    .eq("location", task.location)
+                    .eq("shift_id", task.shift_id)
+                    .eq("name", task.name)
+                    .eq("description", task.description)
+                    .eq("is_recurring", task.is_recurring);
+
+                if (checkError) throw checkError;
+
+                if (existingTask && existingTask.length > 0) {
+                    console.log(`Task with start_date ${formattedNextStartDate} already exists. Skipping.`);
+                    continue; // Skip inserting if the task already exists
+                }
+
+                const { id, ...taskWithoutId } = task;
+
+                const newTask = {
+                    ...taskWithoutId,
+                    start_date: formattedNextStartDate,
+                };
+        
+                  // Insert the new task
+                  const { error: insertError } = await supabase.from("task").insert(newTask);
+        
+                  if (insertError) throw insertError;
+        
+                  console.log(`Recurring task for ${formattedNextStartDate} duplicated successfully!`);
+            }
+        } else {
+          console.log("No recurring tasks found.");
+        }
+      } catch (err) {
+        console.error("Error duplicating recurring tasks:", err);
+      }
+    });
+  };
+
 // Assign a volunteer to a task
 const assignVolunteerToTask = async (req, res)  => {
     const { taskId, 
@@ -307,5 +390,6 @@ module.exports =  {
     createTask,
     notifyMatchingVolunteers,
     assignVolunteerToTask,
-    getTaskDetails
+    getTaskDetails,
+    updateRecurringTasks
 };

@@ -4,9 +4,9 @@ const telnyx = require('telnyx')(process.env.TELNYX_API_KEY, {
     apiVersion: 'v2', 
     maxNetworkRetries: 1,
     timeout: 10000,
-    telemetry: false, // Disables telemetry if active
+    telemetry: false, 
     headers: {
-        'Telnyx-SDK-Version': 'custom' // Custom header to reduce debug output
+        'Telnyx-SDK-Version': 'custom' 
     }
 });
 const { htmlToText } = require('html-to-text');
@@ -19,17 +19,6 @@ const supabase = require('../config/supabaseClient');
 const { Resend } = require('resend');
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-
-
-const carrierGateways = {
-    "Verizon": "vtext.com",
-    "AT&T": "txt.att.net",
-    "Metro by T-Mobile": "tmomail.net",
-    "Sprint": "messaging.sprintpcs.com",
-    "US Cellular": "email.uscc.net",
-    "Virgin Mobile": "vmobl.com"
-   
-};
 
 
 const sendNotification = async (req, res) => {

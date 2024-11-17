@@ -127,10 +127,10 @@ function MyProfile({userData}) {
                                  value: shift.shift.id,
                                  label: `${shift.shift.day} ${shift.shift.time}`
                              })) : [],
-                     taskPref: data.task_prefer ? data.task_prefer.map(task => ({
-                                 value: task.task_type.id,
-                                 label: task.task_type.type_name
-                             })) : []
+            taskPref: data.task_prefer ? data.task_prefer.map(task => ({
+                        value: task.task_type.id,
+                        label: task.task_type.type_name
+                    })) : []
         });
         //console.log(formValues)
     }

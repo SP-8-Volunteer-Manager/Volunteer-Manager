@@ -9,26 +9,80 @@ const EventInfo = ({ event, show, handleClose }) => {
        
         name: '',
         description: '',
-        taskType: '',
+        taskType: null,
         day: '',
         time: '',
-        location: ''
+        location: '',
+        volunteer: null
         
     });
 
     const [showAvailableVolunteers, setShowAvailableVolunteers] = useState(false);
     const [availableVolunteers, setAvailableVolunteers] = useState([]); 
-    const[isVolunteerAssigned, setIsVolunteerAssigned] =useState(false);
+    const [isVolunteerAssigned, setIsVolunteerAssigned] =useState(false);
     const [volunteerAssigned, setVolunteerAssigned] = useState(null);
     const [notificationSent, setNotificationSent] = useState(false); 
     const [selectedVolunteer, setSelectedVolunteer] = useState(null); 
+    const [volunteers, setVolunteers] = useState([]);
+    const [taskTypes, setTaskTypes] = useState([]);
+    const [shifts, setShifts] = useState([]);
    
   
     const handleModalClose = () => {
+        setIsEditMode(false);
         handleClose(); 
     };
 
-   
+    useEffect(() => {
+        const fetchTaskTypes = async () => {
+            try {
+               
+                const response = await fetch(`${API_BASE_URL}/api/task/taskTypes`);
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                
+                const data = await response.json();
+                setTaskTypes(data);
+            } catch (error) {
+                console.error("Error fetching task types:", error);
+            }
+        };
+        const fetchShifts = async () => {
+            try {
+               
+                const response = await fetch(`${API_BASE_URL}/api/task/shift`);
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }            
+                const data = await response.json();
+                setShifts(data);
+            } catch (error) {
+                console.error("Error fetching task types:", error);
+            }
+        };
+
+        const fetchVolunteers = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/details`);
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                const data = await response.json();
+                setVolunteers(data);
+            } catch (error) {
+                console.error("Error fetching volunteers:", error);
+            }
+        };
+
+        if (show) {
+            fetchTaskTypes();
+            fetchShifts();
+            fetchVolunteers();
+        }
+        
+    }, [show]);
+
     
     useEffect(() => {
        
@@ -39,29 +93,33 @@ const EventInfo = ({ event, show, handleClose }) => {
                 
                 name: event.name,
                 description: event.description,
-                taskType: event.task_type.type_name,
+                taskType: event.task_type,
                 day: event.start_date,
                 time: event.start_time,
-                location: event.location
-
-                
+                isRecurring: event.is_recurring,
+                location: event.location,
+                volunteer: (event.assignment && event.assignment.length > 0)?event.assignment[0].volunteer:null 
             });
-            console.log("Event ID:", event.id); 
-            console.log("assignment ",event.assignment);
+        
           
             if(event.assignment && event.assignment.length > 0){
-                setVolunteerAssigned(event.assignment[0].volunteer); // Check if a volunteer is assigned
+                console.log("event assignment ", event.assignment),
+                console.log("vol ", event.assignment[0].volunteer),
+                setVolunteerAssigned(event.assignment[0].volunteer); 
+                setSelectedVolunteer(event.assignment[0].volunteer);
                 setIsVolunteerAssigned(true);
             }
             else {
                 setVolunteerAssigned(null);
+                setSelectedVolunteer(null);
                 setIsVolunteerAssigned(false);
                 fetchAvailableVolunteers(event.id);
             }
             
-                     
-            console.log("Init assigned volunteer", volunteerAssigned);
+           
         }
+                  
+        console.log("Init assigned volunteer", volunteerAssigned);
     }, [event]);
     if (!event) return null; // Avoid rendering if no event is selected
 
@@ -95,6 +153,7 @@ const EventInfo = ({ event, show, handleClose }) => {
         }));
     };
     const toggleEditMode = async () => {
+        console.log("task type", editableEvent.taskType);
         if (isEditMode) {
             // Save event details to the backend
             try {
@@ -106,7 +165,7 @@ const EventInfo = ({ event, show, handleClose }) => {
                     body: JSON.stringify({
                         name: editableEvent.name,
                         description: editableEvent.description,
-                        taskType: editableEvent.taskType, // Ensure taskType is passed correctly
+                        taskType: editableEvent.taskType.id,
                         day: editableEvent.day,
                         time: editableEvent.time,
                         location: editableEvent.location,
@@ -153,6 +212,7 @@ const EventInfo = ({ event, show, handleClose }) => {
                 const updatedEvent = await response.json();
              //   const volunteer = selectedVolunteer.volunteer;
                 setVolunteerAssigned(selectedVolunteer); 
+             
                 setIsVolunteerAssigned(true);
                 
                 handleNotifyVolunteer();
@@ -218,6 +278,12 @@ const EventInfo = ({ event, show, handleClose }) => {
                 }
                 
     }
+    const handleSelectChange = (e, field) => {
+        setEditableEvent(prev => ({
+            ...prev,
+            [field]: e || ''
+        }));
+    };
     const handleVolunteerSelection = async (e) => {
         const selectedId = parseInt(e.target.value, 10);
         console.log("selected id",selectedId); 
@@ -276,9 +342,11 @@ const EventInfo = ({ event, show, handleClose }) => {
     const date = new Date();
     date.setHours(hour, minute);
     const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+  
     return (
+  
         <>
-        <Modal show={show} onHide={handleClose} className="modal-dialog">
+        <Modal show={show} onHide={handleModalClose} className="modal">
             <Modal.Header closeButton>
                 <Modal.Title>Event Details</Modal.Title>
             </Modal.Header>
@@ -310,16 +378,26 @@ const EventInfo = ({ event, show, handleClose }) => {
                         />
                     </div>
                     <div className="form-group">
+                        
                         <label>Task type</label>
-                        <input
-                            type="text"
-                            className="form-control"
+                        <select
+                           
+                            className="form-select"
                             name="taskType" 
-                            value={editableEvent.taskType || ''}
+                            value={editableEvent.taskType ?editableEvent.taskType.id : ''}
+                           
                             disabled={!isEditMode}
                             
-                            onChange={handleChange}
-                        />
+                            onChange={(e) => handleSelectChange(e, "taskType")}
+                           
+                        >
+                         <option value="0"> -- select an option -- </option>
+                            {taskTypes.map((taskType) => (
+                                <option key={taskType.id} value={taskType.id}>
+                                    {taskType.type_name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                     <div className="form-group">
                         <label>Day</label>
@@ -345,6 +423,47 @@ const EventInfo = ({ event, show, handleClose }) => {
                             onChange={handleChange}
                         />
                     </div>
+                    <div className="radio-group">
+                        <label>Task Frequency</label>
+                        <div>
+                            <label className="form-check-label" htmlFor="eventFrequency1">
+                            <input
+                                id="eventFrequency1"
+                                type="radio"
+                                name="eventFrequency"
+                                value="oneTime"
+                                className="radio-new-task"
+                                checked={editableEvent.isRecurring === false}
+                                disabled={!isEditMode}
+                                onChange={() =>
+                                    setEditableEvent((prev) => ({
+                                        ...prev,
+                                        isRecurring: false, 
+                                    }))
+                                }
+                            />
+                            One-Time Task
+                            </label>
+                            <label className="form-check-label" htmlFor="eventFrequency2">
+                            <input
+                                id="eventFrequency2"
+                                type="radio"
+                                name="eventFrequency"
+                                value="recurring"
+                                className="radio-new-task"
+                                checked={editableEvent.isRecurring === true}
+                                disabled={!isEditMode}
+                                onChange={() =>
+                                    setEditableEvent((prev) => ({
+                                        ...prev,
+                                        isRecurring: true, 
+                                    }))
+                                }
+                            />
+                            Recurring Task
+                            </label>
+                        </div>
+                        </div>
                     <div className="form-group">
                         <label>Location</label>
                         <input
@@ -358,12 +477,24 @@ const EventInfo = ({ event, show, handleClose }) => {
                         />
                     </div>
                     <div className="form-group">
-                        <label>Assigned Volunteer</label>
-                        {volunteerAssigned ? (
-                            <p>{volunteerAssigned.first_name} {volunteerAssigned.last_name}</p>
-                        ) : (
-                            <p>No volunteer assigned</p>
-                        )}
+                        <label htmlFor="assignedVolunteer" className="form-label">Assigned Volunteer</label>
+                        <select
+                            id="assignedVolunteer" 
+                            className="form-select"
+                            value={selectedVolunteer?selectedVolunteer.id :""}
+                            onChange={handleVolunteerSelection} 
+                            disabled={!isEditMode}
+                        >
+                            <option value="">-- Select a Volunteer --</option>
+                            {volunteers.map(volunteer => (
+                                <option key={volunteer.id} value={volunteer.id}>
+                                    {volunteer.first_name} {volunteer.last_name}
+                                </option>
+                            ))}
+                        </select>
+                
+                        
+                     
                     </div>
                     <div className="form-group">
                         

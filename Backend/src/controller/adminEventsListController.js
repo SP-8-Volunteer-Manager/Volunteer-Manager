@@ -17,8 +17,8 @@ const getEventLists = async (req, res) => {
         const { data, error } = await pool
             .from('task')
             .select(`*,
-                assignment(volunteer(first_name, last_name)),
-                task_type(type_name)
+                assignment(volunteer(id, first_name, last_name)),
+                task_type(id, type_name)
                 `)
                 .gte('start_date', cutoffdate.toLocaleString())
                 .order('start_date', { ascending: true })
