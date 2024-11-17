@@ -47,12 +47,6 @@ function App() {
       const response = await axios.get(`${API_BASE_URL}/`);
       console.log(response.data); // Check the response data
 
-      // UserSetup
-      // const rcdata = {userId: 155, username: "gbd", email: "georgerbd@gmailbrt.com", role: "volunteer"};
-      // setUserData(rcdata)
-      // setIsLoggedIn(true)
-      
-
     } catch (error) {
       console.error("Error fetching data from backend:", error); // Log any errors
     }
@@ -180,78 +174,78 @@ function App() {
   return (
     <>
       
-        <div className="d-flex flex-column min-vh-100">
-          <ScrollToTop />
-         {/*} <div className="d-flex flex-grow-1"> {/* Ensure content area can grow */}
-          <Routes>
-          { // outer bracket
-            isLoggedIn && userData.role == "admin" ?
-           (
-            // Routes for logged-in admin users
-            <>
-              {console.log("Admin view")}
-            
-              <Route path="/" element={<LoggedInNavigation onLogout={handleLogout} />}>
-                <Route index element={<AdminDashboard userData={userData}/>} />
-                
-                <Route path="/volunteerList" element={<VolunteerList />} />
-                <Route path="/adminEventList" element={<AdminEventList />} />
-                <Route path="/createAdminUser" element={<CreateAdminUser />} />
-                
-                <Route path="*" element={<ErrorPage />} />
-              </Route>
-            </>
+      <div className="d-flex flex-column min-vh-100">
+        <ScrollToTop />
+        {/*} <div className="d-flex flex-grow-1"> {/* Ensure content area can grow */}
+        <Routes>
+        { 
+          isLoggedIn && userData.role == "admin" ?
+          (
+          // Routes for logged-in admin users
+          <>
+            {console.log("Admin view")}
+          
+            <Route path="/" element={<LoggedInNavigation onLogout={handleLogout} />}>
+              <Route index element={<AdminDashboard userData={userData}/>} />
+              
+              <Route path="/volunteerList" element={<VolunteerList />} />
+              <Route path="/adminEventList" element={<AdminEventList />} />
+              <Route path="/createAdminUser" element={<CreateAdminUser />} />
+              
+              <Route path="*" element={<ErrorPage />} />
+            </Route>
+          </>
           ) 
           :     //else
-          ( // nested ternary
+          ( 
             isLoggedIn && userData.role == "volunteer" ?
             (
-             
-             // Routes for logged-in volunteer users
-             <>
-              {console.log("Volunteer view")}
-               <Route path="/" element={<VolunteerNavigation onLogout={handleLogout} />}>
-                 <Route index element={<VolunteerDashboard userData={userData}/>} />
-                 
-                 <Route path="/myProfile" element={<MyProfile userData={userData}/>} />
-                 <Route path="/contactUs" element={<ContactUs  />} />
-                 
-                 <Route path="*" element={<ErrorPage />} />
-               </Route>
-             </>
+            
+            // Routes for logged-in volunteer users
+              <>
+                {console.log("Volunteer view")}
+                <Route path="/" element={<VolunteerNavigation onLogout={handleLogout} />}>
+                  <Route index element={<VolunteerDashboard userData={userData}/>} />
+                  
+                  <Route path="/myProfile" element={<MyProfile userData={userData}/>} />
+                  <Route path="/contactUs" element={<ContactUs  />} />
+                  
+                  <Route path="*" element={<ErrorPage />} />
+                </Route>
+              </>
             )
-          :
-          (
-            // Routes for guests (not logged in)
-            <>
-              {console.log("Not logged in view")}
-            <Route path="/" element={<Navigation />}>
-                <Route index element={<Home setIsLoggedIn={setIsLoggedIn} setUserData={setUserData}/>} />
-                <Route path="aboutUs" element={<AboutUs />} />
-                <Route path="myPortal"  element={<MyPortal setIsLoggedIn={setIsLoggedIn} setUserData={setUserData}/>}  />
-                <Route path="contactUs" element={<ContactUs />} />
-                <Route path="/signUp" element={<SignUpPage />} />
-                <Route path="*" element={<ErrorPage />} />
-                
-              </Route>
-              <Route path="/confirm/:taskId/:volunteerId" element={<TaskConfirmationPage />} />
-              <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} /> 
-              <Route path="/update-password/" element={<ResetPassword />} />
-            </>
+            :
+            (
+              // Routes for guests (not logged in)
+              <>
+                {console.log("Not logged in view")}
+                <Route path="/" element={<Navigation />}>
+                  <Route index element={<Home setIsLoggedIn={setIsLoggedIn} setUserData={setUserData}/>} />
+                  <Route path="aboutUs" element={<AboutUs />} />
+                  <Route path="myPortal"  element={<MyPortal setIsLoggedIn={setIsLoggedIn} setUserData={setUserData}/>}  />
+                  <Route path="contactUs" element={<ContactUs />} />
+                  <Route path="/signUp" element={<SignUpPage />} />
+                  <Route path="*" element={<ErrorPage />} />
+                  
+                </Route>
+                <Route path="/confirm/:taskId/:volunteerId" element={<TaskConfirmationPage />} />
+                <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} /> 
+                <Route path="/updatePassword/" element={<ResetPassword />} />
+              </>
             )
           )            
-            
-            } // outer bracket
-
-          </Routes>
-          </div>
-          <div className="mt-auto">
-            <Footer />
-          </div>
+          
+        } 
+          
+        </Routes>
+      </div>
+      <div className="mt-auto">
+        <Footer />
+      </div>
     </>
-      )
-    };
+  )
+};
     
-    export default App
+export default App
   
 
