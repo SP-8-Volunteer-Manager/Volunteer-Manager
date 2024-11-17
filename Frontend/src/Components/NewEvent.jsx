@@ -311,7 +311,7 @@ const NewEvent = ({ show, handleClose }) => {
                                 name="taskFreq"
                                 id="taskFreq1"
                                 value="false"
-                                className={`form-check-input ${errors.taskFreq ? 'is-invalid' : ''}`}
+                                className={`radio-new-task ${errors.taskFreq ? 'is-invalid' : ''}`}
                                 onChange={handleChange}
                                 checked={taskFreq === false}
                                                        
@@ -377,8 +377,8 @@ const NewEvent = ({ show, handleClose }) => {
                             showTimeSelect
                             showTimeSelectOnly
                             timeIntervals={30}
-                            minTime={new Date(0, 0, 0, 6, 0)} 
-                            maxTime={new Date(0, 0, 0, 21, 0)} 
+                          //  minTime={new Date(0, 0, 0, 6, 0)} 
+                          //  maxTime={new Date(0, 0, 0, 21, 0)} 
                             id="time"
                             dateFormat="h:mm aa"
                             required

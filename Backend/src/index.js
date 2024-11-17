@@ -5,6 +5,8 @@ require('dotenv').config();
 const cors = require("cors");
 
 
+
+
 const supabase = require('./config/supabaseClient'); // Import the Supabase client
 const app = express();
 const authRoutes = require('./routes/authRoutes');
@@ -14,8 +16,9 @@ const adminEventsListRoutes = require('./routes/adminEventsListRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const confirmationRoutes = require('./routes/confirmationRoutes');
+const { updateRecurringTasks } = require("./controller/taskController"); 
 
-
+updateRecurringTasks();
 const corsOptions = {
     origin: [process.env.FRONTEND_URL, process.env.FRONTEND_URL_DNS,'http://localhost:5173'], 
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Include necessary methods

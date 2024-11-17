@@ -6,9 +6,9 @@ import Logo from '../assets/logo.png'
 function LoggedInNavigation({ onLogout }) {
     return (
         <section className="container-fluid p-0 d-flex flex-column flex-grow-1">
-            <div className="row flex-grow-1">
+            <div className="row flex-grow-1  mx-0">
                 <div className="col-12 col-md-3 col-lg-2 p-0 ">
-                    <div className="d-flex flex-column flex-shrink-0 navigation rounded-0 mx-1" style={{minHeight: '100%' }}>
+                    <div className="d-flex flex-column flex-shrink-0 navigation rounded-0 mx-0" style={{minHeight: '100%' }}>
                         <div className='text-center py-3'>
                             <img src={Logo} style={{width: '70%'}} alt="logo" ></img>
                         </div>
