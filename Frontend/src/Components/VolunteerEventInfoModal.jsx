@@ -1,17 +1,61 @@
-import React from 'react';
 import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-
+import React, { useState, useEffect } from "react";
+import API_BASE_URL from '../config';
 
 
 function VolunteerEventInfoModal({ show, onHide, event }) {
   
+  console.log("event", event)
+  const [showCancel, setShowCancel] = useState(true);
+  const [userMsg, setUserMsg] = useState('');
+  const [reloadFlag, setReloadFlag] = useState(false);
+  const [isCancelDisabled, setIsCancelDisabled] = useState(false);
+
+
+  useEffect(() => {
+    const eventdate = event?.start?.toLocaleDateString();
+    const currDate = new Date().toLocaleDateString();
+
+    if (eventdate < currDate) {
+      setShowCancel(false);
+    } else {
+      setShowCancel(true);
+    }
+  }, [event]);
+
+  // Update reloadFlag in the cancelEvent function
+const cancelEvent = async () => {
+  const confirmCancel = window.confirm('Are you sure you want to cancel this event?');
+  if (confirmCancel) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/cancelevent/${event.taskid}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setReloadFlag(true); // Update state instead of a local variable
+      setUserMsg(data.message);
+      setIsCancelDisabled(true)
+    } catch (error) {
+      console.error('Error canceling event:', error);
+      setUserMsg('Error Canceling Event');
+    }
+  }
+};
+
+  const handleClose = () => {
+    setUserMsg('');
+    onHide(reloadFlag); // Pass the state value
+    setIsCancelDisabled(false);
+    setReloadFlag(false); // Reset the flag after passing it
+  };
+
 
   function convertMilitaryTo12Hour(time) {
     if (!time) return 'N/A';
 
-    // Split the input time string into hours, minutes, and seconds
-    let [hours, minutes, seconds] = time.split(":").map(Number);
+    // Split the input time string into hours and minutes
+    let [hours, minutes] = time.split(":").map(Number);
   
     // Determine if the time is AM or PM
     const suffix = hours >= 12 ? "PM" : "AM";
@@ -47,8 +91,15 @@ function VolunteerEventInfoModal({ show, onHide, event }) {
           <p><strong>Location:</strong> {event?.location || 'No description available.'}</p>
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={onHide}>Close</button>
+        <div className="mt-3">
+            <span className="text-danger">{userMsg}</span>
         </div>
+          {showCancel  && (<button type="button" className="btn btn-primary" onClick={cancelEvent}
+          disabled={isCancelDisabled}
+          >Cancel Availability</button>  )}
+          <button type="button" className="btn btn-secondary" onClick={handleClose}>Close</button>
+        </div>
+        
       </div>
     </Modal>
   );

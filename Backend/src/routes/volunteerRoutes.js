@@ -25,6 +25,7 @@ router.get('/volunteers/myupcomingevents/:userid', volunteerController.getMyUpco
 
 router.get('/volunteers/mycalendarevents/:userid', volunteerController.getMyCalendarEvents);
 
+router.get('/volunteers/cancelevent/:taskid', volunteerController.cancelEvent);
 
 
 module.exports = router; // export the router
