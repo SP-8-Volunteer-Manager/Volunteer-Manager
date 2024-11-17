@@ -352,7 +352,7 @@ const EventInfo = ({ event, show, handleClose }) => {
             </Modal.Header>
             <Modal.Body>
                 <form>
-                    <div className="form-group">
+                    <div className="form-group my-2">
                         <label>Name</label>
                         <input
                             type="text"
@@ -365,10 +365,9 @@ const EventInfo = ({ event, show, handleClose }) => {
                             disabled={!isEditMode}
                        />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group my-2">
                         <label>Description</label>
-                        <input
-                            type="text"
+                        <textarea
                             className="form-control"
                             name="description"
                             value={editableEvent.description}
@@ -377,53 +376,57 @@ const EventInfo = ({ event, show, handleClose }) => {
                             onChange={handleChange}
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group my-2">
                         
-                        <label>Task type</label>
-                        <select
-                           
-                            className="form-select"
-                            name="taskType" 
-                            value={editableEvent.taskType ?editableEvent.taskType.id : ''}
-                           
-                            disabled={!isEditMode}
+                        <label htmlFor="taskType">Task type </label>
+                            <select
+                                id="taskType"
+                                className="form-select"
+                                name="taskType" 
+                                value={editableEvent.taskType ?editableEvent.taskType.id : ''}
                             
-                            onChange={(e) => handleSelectChange(e, "taskType")}
-                           
-                        >
-                         <option value="0"> -- select an option -- </option>
-                            {taskTypes.map((taskType) => (
-                                <option key={taskType.id} value={taskType.id}>
-                                    {taskType.type_name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="form-group">
-                        <label>Day</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            name="day"
-                            value={editableEvent.day || ''}
-                            disabled={!isEditMode}
+                                disabled={!isEditMode}
+                                
+                                onChange={(e) => handleSelectChange(e, "taskType")}
                             
-                            onChange={handleChange}
-                        />
+                            >
+                                {taskTypes.map((taskType) => (
+                                    <option key={taskType.id} value={taskType.id}>
+                                        {taskType.type_name}
+                                    </option>
+                                ))}
+                            </select>
+                       
                     </div>
-                    <div className="form-group">
-                        <label>Time</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            name="time"
-                            value={time || ''}
-                            disabled={!isEditMode}
-                            
-                            onChange={handleChange}
-                        />
+                    <div className="form-group my-2">
+                        <label htmlFor="taskDay" className="form-label">Day
+                            <input
+                                id="taskDay"
+                                type="text"
+                                className="form-control"
+                                name="day"
+                                value={editableEvent.day || ''}
+                                disabled={!isEditMode}
+                                
+                                onChange={handleChange}
+                            />
+                        </label>
                     </div>
-                    <div className="radio-group">
+                    <div className="form-group my-2">
+                        <label htmlFor="taskTime" className="form-label">Time
+                            <input
+                                id="taskTime"
+                                type="text"
+                                className="form-control"
+                                name="time"
+                                value={time || ''}
+                                disabled={!isEditMode}
+                                
+                                onChange={handleChange}
+                            />
+                        </label>
+                    </div>
+                    <div className="radio-group my-2">
                         <label>Task Frequency</label>
                         <div>
                             <label className="form-check-label" htmlFor="eventFrequency1">
@@ -464,39 +467,42 @@ const EventInfo = ({ event, show, handleClose }) => {
                             </label>
                         </div>
                         </div>
-                    <div className="form-group">
-                        <label>Location</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            name="location"
-                            value={editableEvent.location || ''}
-                            disabled={!isEditMode}
-                            
-                            onChange={handleChange}
-                        />
+                    <div className="form-group my-2">
+                        <label htmlFor="taskLocation">Location</label>
+                            <input
+                                id="taskLocation"
+                                type="text"
+                                className="form-control"
+                                name="location"
+                                value={editableEvent.location || ''}
+                                disabled={!isEditMode}
+                                
+                                onChange={handleChange}
+                            />
+                        
                     </div>
-                    <div className="form-group">
-                        <label htmlFor="assignedVolunteer" className="form-label">Assigned Volunteer</label>
-                        <select
-                            id="assignedVolunteer" 
-                            className="form-select"
-                            value={selectedVolunteer?selectedVolunteer.id :""}
-                            onChange={handleVolunteerSelection} 
-                            disabled={!isEditMode}
-                        >
-                            <option value="">-- Select a Volunteer --</option>
-                            {volunteers.map(volunteer => (
-                                <option key={volunteer.id} value={volunteer.id}>
-                                    {volunteer.first_name} {volunteer.last_name}
-                                </option>
-                            ))}
-                        </select>
+                    <div className="form-group my-2">
+                        <label htmlFor="assignedVolunteer" className="form-label"> Assigned Volunteer
+                            <select
+                                id="assignedVolunteer" 
+                                className="form-select"
+                                value={selectedVolunteer?selectedVolunteer.id :""}
+                                onChange={handleVolunteerSelection} 
+                                disabled={!isEditMode}
+                            >
+                                <option value="">-- Select a Volunteer --</option>
+                                {volunteers.map(volunteer => (
+                                    <option key={volunteer.id} value={volunteer.id}>
+                                        {volunteer.first_name} {volunteer.last_name}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
                 
                         
                      
                     </div>
-                    <div className="form-group">
+                    <div className="form-group my-2">
                         
                         {availableVolunteers.length === 0 ? (
                             <Button

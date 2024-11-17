@@ -1,6 +1,5 @@
 const e = require('express');
 const supabase = require('../config/supabaseClient');
-//const bcrypt = require('bcrypt');
 const bcrypt = require('bcryptjs');
 
 //Validate Password Function
@@ -391,7 +390,7 @@ const forgotPassword = async (req, res) => {
       // Supabase API call to send a password reset email
       const { data, error } = await supabase.auth.resetPasswordForEmail(
         email,
-        { redirectTo: `${process.env.FRONTEND_URL}/update-password` }
+        { redirectTo: `${process.env.FRONTEND_URL}/updatePassword` }
       )
       if (error) {
           return res.status(400).json({ error: 'Failed to send password reset email. Please try again.' });

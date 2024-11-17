@@ -124,7 +124,7 @@ const updateRecurringTasks = () => {
                 nextStartDate.setDate(nextStartDate.getDate() + 7);
                 const formattedNextStartDate = nextStartDate.toISOString().split("T")[0];
 
-
+                const today = new Date();
                 const formattedToday = today.toISOString().split("T")[0];
                 if (formattedNextStartDate < formattedToday) {
                     console.log(`Next start date ${formattedNextStartDate} is in the past. Skipping.`);
