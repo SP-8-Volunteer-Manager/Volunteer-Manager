@@ -13,7 +13,7 @@ import API_BASE_URL from '../config';
 const localizer = momentLocalizer(moment);
 
 
-function VolunteerCalendar({userData}) {
+function VolunteerCalendar({userData, reloadKey, setReloadKey}) {
   const [date, setDate] = useState(new Date());
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -22,6 +22,9 @@ function VolunteerCalendar({userData}) {
   const [eventModalOpen, setEventModalOpen] = useState(false);
   const [eventsModalOpen, setEventsModalOpen] = useState(false);
   const [eventsForSelectedDay, setEventsForSelectedDay] = useState([]);
+
+  //const [reloadKey, setReloadKey] = useState(0);
+
   
   useEffect(() => {
     const fetchEvents = async () => {
@@ -29,13 +32,13 @@ function VolunteerCalendar({userData}) {
         const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/mycalendarevents/${userData.userId}`);
         const data = await response.json();
         
-        //console.log("Data in frontend", data)
+        console.log("Data in frontend", data)
 
         // Map data to the required format for BigCalendar
         const formattedEvents = data.map(event => {
           const localDate = new Date(event.task.start_date + 'T00:00:00')
           return {
-          
+          taskid: event.task.id,
           title: event.task.name,
           start: localDate,
           end: localDate,
@@ -55,7 +58,7 @@ function VolunteerCalendar({userData}) {
 
     fetchEvents();
     //console.log({events});
-  }, [userData.userId]);
+  }, [userData.userId, reloadKey]);
 
   const onChange = (newDate) => {
       setDate(newDate);
@@ -101,14 +104,19 @@ function VolunteerCalendar({userData}) {
   };
   
   const openEventModal = (event) => {
+    console.log("Opening Event Modal with Event:", event);
     setSelectedEvent(event);
     //console.log("Open Event Modal event data", event)
     setEventModalOpen(true); // Open event details modal
   };
 
-  const closeEventModal = () => {
+  const closeEventModal = (reloadFlag) => {
+    if (reloadFlag) {
+      setReloadKey((prevKey) => prevKey + 1); // Notify parent to reload
+      setEventsModalOpen(false);
+    }
     setEventModalOpen(false);
-    setSelectedEvent(null); // Clear the selected event
+    setSelectedEvent(null);
   };
 
   const dayPropGetter = (date) => {

@@ -415,6 +415,38 @@ const getMyCalendarEvents = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+const cancelEvent = async (req, res) => {
+    try {
+        const { taskid } = req.params;
+        //console.log("getMyCalendarEvents")
+
+        
+        const {data: tdata, error: terror} = await supabase 
+        .from('assignment')
+        .delete()
+        .eq('task_id', taskid);
+
+        if (terror)
+        {
+            throw terror
+        }
+        
+        const { data: vacdata, error: vacerror } = await supabase
+            .from('volunteer_availability_confirmation')
+            .delete()
+            .eq('task_id', taskid);
+
+        if (vacerror) {
+            throw vacerror;
+        }
+
+        //console.log("Data after query", data)
+        res.status(200).json({message: "Task successfully canceled"});
+    } catch (error) {
+        res.status(400).json({ message: "Error canceling task" });
+    }
+};
    
 module.exports = { 
     getVolunteers,
@@ -428,6 +460,7 @@ module.exports = {
     getUpcomingEventCount,
     getMyUpcomingEvents,
     getMyCalendarEvents,
-    getVolunteerDetails
+    getVolunteerDetails,
+    cancelEvent
 };
 

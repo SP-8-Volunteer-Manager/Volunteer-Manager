@@ -7,24 +7,23 @@ import VolunteerCalendar from "../Components/VolunteerCalendar";
 function VolunteerDashboard({userData}) {
     const [UpcomingEvents, setUpEvents] = useState([]);
     const [upcomingEventsCount, setUpcomingEventsCount] = useState(0);
+    const [reloadKey, setReloadKey] = useState(0);
+
     
     useEffect(() => {
         const fetchEvents = async () => {
-            try{
-                
+            try {
                 const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/myupcomingevents/${userData.userId}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                //console.log("My Upcoming Events Data b4 setstate", data)
-                //console.log("Data length", data.length)
                 setUpEvents(data);
-                //console.log("My Upcoming Events Data after set state", UpcomingEvents)
             } catch (error) {
                 console.error(`Error: ${error}`);
             }
         };
+    
         const fetchUpcomingEventsCount = async () => {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/upcomingevent/count/${userData.userId}`);
@@ -37,12 +36,10 @@ function VolunteerDashboard({userData}) {
                 console.error(`Error fetching upcoming events count: ${error}`);
             }
         };
-
+    
         fetchEvents();
         fetchUpcomingEventsCount();
-
-    }
-    , [userData.userId]);
+    }, [userData.userId, reloadKey]); // Depend on reloadKey
             
 
 
@@ -64,7 +61,9 @@ function VolunteerDashboard({userData}) {
                     )}
             </div>
             <div className="col-lg-6 px-lg-5">
-                <VolunteerCalendar userData={userData}/>
+                <VolunteerCalendar userData={userData} 
+                reloadKey={reloadKey}
+                setReloadKey={setReloadKey}/>
             </div>
            
         </div>
