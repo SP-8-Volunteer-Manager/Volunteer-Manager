@@ -46,6 +46,7 @@ function VolunteerCalendar({userData, reloadKey, setReloadKey}) {
           task_type: event.task.task_type.type_name || 'N/A',
           description: event.task.description, 
           location: event.task.location,
+          volid: event.volunteer_id
         }
       });
         setEvents(formattedEvents);
@@ -104,7 +105,7 @@ function VolunteerCalendar({userData, reloadKey, setReloadKey}) {
   };
   
   const openEventModal = (event) => {
-    console.log("Opening Event Modal with Event:", event);
+    //console.log("Opening Event Modal with Event:", event);
     setSelectedEvent(event);
     //console.log("Open Event Modal event data", event)
     setEventModalOpen(true); // Open event details modal
@@ -195,7 +196,7 @@ function VolunteerCalendar({userData, reloadKey, setReloadKey}) {
           <div className="modal-body">
             <ul>
               {eventsForSelectedDay.map((event, index) => (
-                <li key={index} onClick={() => openEventModal(event)}>
+                <li key={index} style={{ cursor: 'pointer' }} onClick={() => openEventModal(event)}>
                   {event.title}
                 </li>
               ))}

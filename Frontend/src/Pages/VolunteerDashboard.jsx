@@ -1,13 +1,15 @@
-import MyCalendar from "../Components/MyCalendar";
 import React, {useEffect, useState} from 'react';
-import { Link } from 'react-router-dom';
 import API_BASE_URL from '../config';
 import VolunteerCalendar from "../Components/VolunteerCalendar";
+import VolunteerEventInfoModal from "../Components/VolunteerEventInfoModal";
 
 function VolunteerDashboard({userData}) {
     const [UpcomingEvents, setUpEvents] = useState([]);
     const [upcomingEventsCount, setUpcomingEventsCount] = useState(0);
     const [reloadKey, setReloadKey] = useState(0);
+
+    const [eventModalOpen, setEventModalOpen] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
 
     
     useEffect(() => {
@@ -18,7 +20,22 @@ function VolunteerDashboard({userData}) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                setUpEvents(data);
+                const formattedEvents = data.map(event => {
+                    const localDate = new Date(event.task.start_date + 'T00:00:00')
+                    return {
+                    taskid: event.task.id,
+                    title: event.task.name,
+                    start: localDate,
+                    end: localDate,
+                    starttime: event.task.start_time,
+                    task_type: event.task.task_type.type_name || 'N/A',
+                    description: event.task.description, 
+                    location: event.task.location,
+                    volid: event.volunteer_id
+                  }
+                });
+                setUpEvents(formattedEvents);
+                //console.log("Upcoming Formatted Events", formattedEvents)
             } catch (error) {
                 console.error(`Error: ${error}`);
             }
@@ -41,7 +58,20 @@ function VolunteerDashboard({userData}) {
         fetchUpcomingEventsCount();
     }, [userData.userId, reloadKey]); // Depend on reloadKey
             
-
+    const openEventModal = (event) => {
+        //console.log("before open event modal", event)
+        setSelectedEvent(event); 
+        setEventModalOpen(true);
+      };
+    
+      const closeEventModal = (reloadFlag = false) => {
+        setEventModalOpen(false);
+        setSelectedEvent(null);
+      
+        if (reloadFlag) {
+          setReloadKey((prev) => prev + 1); // Increment reloadKey to trigger a refresh
+        }
+      };
 
     return (
         
@@ -80,35 +110,41 @@ function VolunteerDashboard({userData}) {
                     </tr>
                 </thead>
                 <tbody>
-                    
-                    {/* Display the event list */}
-                    {UpcomingEvents.length ==0 ? (
-                        <tr>
-                            <td colSpan="5">No upcoming events</td>
-                        </tr>
-                    ) : (
-                        UpcomingEvents.map((event) => {
-                            const [hour, minute] = event.start_time.split(':');
-                            const date = new Date();
-                            date.setHours(hour, minute);
-                            const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-                            return(
-                            <tr key={event.assign_id} >
-                                <td>{event.task.name}</td>
-                                <td>{event.task.description}</td>
-                                <td>{event.start_date}</td>
-                                <td>{time}</td>
-                                <td>{event.task.location}</td>
-                            </tr>
-                        );
-                    })
-                )}
-                    
-                    
-                </tbody>
+    {UpcomingEvents.length === 0 ? (
+        <tr>
+            <td colSpan="5">No upcoming events</td>
+        </tr>
+    ) : (
+        UpcomingEvents.map((event) => {
+            //console.log("Event being rendered:", event); 
+            const [hour, minute] = event.starttime.split(':');
+            const time = new Date();
+            time.setHours(hour, minute);
+            const formattedTime = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+            return (
+                <tr key={event.taskid} onClick={() => openEventModal(event)} style={{ cursor: 'pointer' }}>
+                    <td>{event.title}</td>
+                    <td>{event.description}</td>
+                    <td>{event.start.toLocaleDateString()}</td>
+                    <td>{formattedTime}</td> 
+                    <td>{event.location}</td> 
+                </tr>
+            );
+        })
+    )}
+</tbody>
+
                 </table>
 
         </div>
+
+    {/* Vol Event Info Modal */}
+    <VolunteerEventInfoModal
+        event={selectedEvent}
+        show={eventModalOpen}
+        onHide={closeEventModal}
+        //handleClose={closeEventModal}
+      />
 
     </section>
    

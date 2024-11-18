@@ -365,7 +365,7 @@ const getMyUpcomingEvents = async (req, res) => {
         //retrieve events for the next seven days 
         const { data, error } = await supabase
             .from('assignment')
-            .select('assign_id, start_date, start_time, task(name,description,location)')
+            .select('assign_id, start_date, start_time, volunteer_id, task(*,task_type(type_name))')
             .eq('volunteer_id', volid)
             .gte('start_date', today.toISOString())
             .lte('start_date', next7Days.toISOString())
@@ -402,7 +402,7 @@ const getMyCalendarEvents = async (req, res) => {
         
         const { data, error } = await supabase
             .from('assignment')
-            .select('task(*,task_type(type_name))')
+            .select('volunteer_id,task(*,task_type(type_name))')
             .eq('volunteer_id', volid);
 
         if (error) {
@@ -416,16 +416,20 @@ const getMyCalendarEvents = async (req, res) => {
     }
 };
 
-const cancelEvent = async (req, res) => {
+const cancelAvailability = async (req, res) => {
     try {
         const { taskid } = req.params;
+        const { volid } = req.params;
         //console.log("getMyCalendarEvents")
 
+        //console.log("taskid cancelavailability", taskid)
+        //console.log("volid cancelavailability", volid)
         
         const {data: tdata, error: terror} = await supabase 
         .from('assignment')
         .delete()
-        .eq('task_id', taskid);
+        .eq('task_id', taskid)
+        .eq('volunteer_id', volid);
 
         if (terror)
         {
@@ -435,7 +439,8 @@ const cancelEvent = async (req, res) => {
         const { data: vacdata, error: vacerror } = await supabase
             .from('volunteer_availability_confirmation')
             .delete()
-            .eq('task_id', taskid);
+            .eq('task_id', taskid)
+            .eq('volunteer_id', volid);
 
         if (vacerror) {
             throw vacerror;
@@ -461,6 +466,6 @@ module.exports = {
     getMyUpcomingEvents,
     getMyCalendarEvents,
     getVolunteerDetails,
-    cancelEvent
+    cancelAvailability
 };
 

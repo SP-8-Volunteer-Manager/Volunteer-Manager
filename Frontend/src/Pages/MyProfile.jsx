@@ -107,10 +107,7 @@ function MyProfile({userData}) {
          fetchVolunteer();
      }, [userData.userId]);
 
-    function populateProfileData(data)
-    {
-        //console.log(data)
-        //console.log(data.first_name)
+     function populateProfileData(data) {
         setFormValues({
             firstName: data.first_name || '',
             lastName: data.last_name || '',
@@ -119,20 +116,23 @@ function MyProfile({userData}) {
             state: data.state || '',
             zip: data.zip_code || '',
             phoneNumber: data.phone || '',
-            useremail: data.User?.email || '',  // Optional chaining to avoid error if User is undefined
+            useremail: data.User?.email || '',  // Ensure fallback
             receiveemail: data.receive_email || false,
             receivesms: data.receive_phone || false,
-            volunteerid: data.id,
-            schedPref: data.shift_prefer ? data.shift_prefer.map(shift => ({
-                                 value: shift.shift.id,
-                                 label: `${shift.shift.day} ${shift.shift.time}`
-                             })) : [],
-            taskPref: data.task_prefer ? data.task_prefer.map(task => ({
-                        value: task.task_type.id,
-                        label: task.task_type.type_name
-                    })) : []
+            volunteerid: data.id || '',
+            schedPref: data.shift_prefer 
+                ? data.shift_prefer.map(shift => ({
+                      value: shift.shift.id,
+                      label: `${shift.shift.day} ${shift.shift.time}`
+                  }))
+                : [], // Fallback to empty array
+            taskPref: data.task_prefer 
+                ? data.task_prefer.map(task => ({
+                      value: task.task_type.id,
+                      label: task.task_type.type_name
+                  }))
+                : [] // Fallback to empty array
         });
-        //console.log(formValues)
     }
     
       //input change handler
