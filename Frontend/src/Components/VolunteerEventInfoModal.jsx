@@ -5,7 +5,6 @@ import API_BASE_URL from '../config';
 
 function VolunteerEventInfoModal({ show, onHide, event }) {
   
-  console.log("event", event)
   const [showCancel, setShowCancel] = useState(true);
   const [userMsg, setUserMsg] = useState('');
   const [reloadFlag, setReloadFlag] = useState(false);
@@ -24,11 +23,11 @@ function VolunteerEventInfoModal({ show, onHide, event }) {
   }, [event]);
 
   // Update reloadFlag in the cancelEvent function
-const cancelEvent = async () => {
-  const confirmCancel = window.confirm('Are you sure you want to cancel this event?');
+const cancelEventAvailability = async () => {
+  const confirmCancel = window.confirm('Are you sure you want to cancel availability for this event?');
   if (confirmCancel) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/cancelevent/${event.taskid}`);
+      const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/cancelavailability/${event.taskid}/${event.volid}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -37,8 +36,8 @@ const cancelEvent = async () => {
       setUserMsg(data.message);
       setIsCancelDisabled(true)
     } catch (error) {
-      console.error('Error canceling event:', error);
-      setUserMsg('Error Canceling Event');
+      console.error('Error canceling event availability:', error);
+      setUserMsg('Error Canceling Event Availability');
     }
   }
 };
@@ -94,7 +93,7 @@ const cancelEvent = async () => {
         <div className="mt-3">
             <span className="text-danger">{userMsg}</span>
         </div>
-          {showCancel  && (<button type="button" className="btn btn-primary" onClick={cancelEvent}
+          {showCancel  && (<button type="button" className="btn btn-primary" onClick={cancelEventAvailability}
           disabled={isCancelDisabled}
           >Cancel Availability</button>  )}
           <button type="button" className="btn btn-secondary" onClick={handleClose}>Close</button>
