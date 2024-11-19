@@ -19,7 +19,7 @@ import MyProfile from './Pages/MyProfile';
 import VolunteerList from './Pages/VolunteerList';
 import AdminEventList from './Pages/AdminEventList';
 import CreateAdminUser from './Pages/CreateAdminUser';
-
+import OptOut from './Pages/OptOut';
 
 import Navigation from './Components/Navigation'
 import Login from './Components/LogIn'
@@ -231,6 +231,7 @@ function App() {
                 <Route path="/confirm/:taskId/:volunteerId" element={<TaskConfirmationPage />} />
                 <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} /> 
                 <Route path="/updatePassword/" element={<ResetPassword />} />
+                <Route path="/optOut/:volunteerId" element={<OptOut />} />
               </>
             )
           )            

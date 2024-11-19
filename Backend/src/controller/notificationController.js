@@ -51,11 +51,11 @@ const sendNotification = async (req, res) => {
             const promises = [];
 
             if (sms && optInSms && phoneNumber && carrier) {
-                promises.push(sendSMS(phoneNumber, message));
+                promises.push(sendSMS(volunteer, phoneNumber, message));
                 
             }
             if (email) {
-                promises.push(sendEmail(email_address, message));
+                promises.push(sendEmail(volunteer, email_address, message));
             } 
             
             
@@ -81,10 +81,9 @@ const sendNotification = async (req, res) => {
     }
 };
 
-const sendSMS = async (phoneNumber, message) => {
+const sendSMS = async (volunteer, phoneNumber, message) => {
     try {
-
-       
+        
       //  const telnyx = await loadTelnyx(); 
         if (!telnyx.messages) {
             console.error('Telnyx client is not properly initialized.');
@@ -97,10 +96,15 @@ const sendSMS = async (phoneNumber, message) => {
         const plainText = htmlToText(message, {
             wordwrap: null
         });
+        const optOutMessage = `To opt out of notifications, visit: ${process.env.FRONTEND_URL}/optOut/${volunteer.id}`;
+        const finalMessage = `
+        ${plainText}
+        ${optOutMessage}
+        `.trim();
         const response = await telnyx.messages.create({
             from: process.env.TELNYX_PHONE_NUMBER,
             to: phone,
-            text: plainText, 
+            text: finalMessage, 
         });
         //.then(function(response){
         //    const message = response.data; // asynchronously handled
@@ -115,73 +119,25 @@ const sendSMS = async (phoneNumber, message) => {
     }
 };
 
-// const sendSMS = async (phoneNumber, message, carrier) => {
-//     const carrierGateway = carrierGateways[carrier];
-//     if (!carrierGateway) {
-//         console.error(`No gateway found for carrier: ${carrier}`);
-//         return;
-//     }
-
-//     recipient = `${phoneNumber}@${carrierGateway}`;
-
-//     console.log(`Sending SMS to ${recipient}: ${message}`);
-
-//     const notification = {
-//         from: `VolunteerManager<${process.env.SENDER_EMAIL}>`,
-//         to: [recipient],
-//         subject: 'Volunteer Notification',
-//         html: message,
-//         text: message.replace(/<[^>]*>/g, '')
-//     };
-
-
-//     // Send sns using Resend
-//     try {
-//         await resend.emails.send(notification);
-//         console.log(`Notification sent to: ${recipient}`);
-//     } catch (error) {
-//         console.error(`Error sending email to ${recipient}:`, error);
-//     }
-
-{/*
-const nodemailer = require('nodemailer');
-try{
-    const transporter = nodemailer.createTransport({
-        service: 'gmail', 
-        auth: {
-            user: process.env.EMAIL_USER, 
-            pass: process.env.EMAIL_PASS  
-        }
-    });
-    
-    await transporter.sendMail({
-        from: process.env.EMAIL_USER,,
-        to: [recipient],
-        subject: 'Volunteer Notification',
-        html: message,
-        text: message.replace(/<[^>]*>/g, '')
-    });
-    console.log(`Notification sent to: ${recipient}`);
-} catch (err) {
-    console.error(`Error sending email to ${recipient}:`, err.message);
-}
-    */}
-
-//};
-
-
-const sendEmail = async (recipientEmail, message) => {
+const sendEmail = async (volunteer, recipientEmail, message) => {
     
     console.log(`Sending Email to ${recipientEmail}: ${message}`);
     console.log("message:", message)
-    const plainText = htmlToText(message, {
+    const optOutMessage = `
+        <p>If you no longer wish to receive notifications, you can <a href="${process.env.FRONTEND_URL}/optOut/${volunteer.id}">opt out here</a>.</p>
+    `;
+    const finalMessage = `
+        ${message}
+        ${optOutMessage}
+    `;
+    const plainText = htmlToText(finalMessage, {
         wordwrap: null
     });
     const notification = {
         from: `VolunteerManager<${process.env.SENDER_EMAIL}>`,
         to: [recipientEmail],
         subject: 'Volunteer Notification',
-        html: message,
+        html: finalMessage,
         text: plainText
     };
 
@@ -194,49 +150,26 @@ const sendEmail = async (recipientEmail, message) => {
     }
 
 };
-{/*}
-const sendSMSToVolunteer = ( phoneNumber, carrier,  message, optInSms) => {
-  //  try {
-   //     const { phoneNumber, carrier, message, optInSms } = req.body;
-        console.log("phone",phoneNumber)
-        if (!phoneNumber || !message || !carrier) {
-            console.error("Missing fields:", { phoneNumber, message, carrier });
-            return res.status(400).json({ error: "Volunteer ID, message, and carrier are required." });
-        }
-        if (!optInSms) {
-            return res.status(403).json({ error: "User has not opted in for SMS notifications." });
-        }
-        const carrierGateway = carrierGateways[carrier];
-        const emailToSMSAddress = `${phoneNumber}@${carrierGateway}`;
-        console.log("Email to SMS address:", emailToSMSAddress);
+const optOut = async (req, res) => {
+    const { volunteerId, receivePhone, receiveEmail } = req.body;
 
-{/*
-        transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: emailToSMSAddress,
-            subject: 'Volunteer Notification',
-            text: message,
-        }, (error, info) => {
-            if (error) {
-                console.error("Error sending SMS:", error);
-                return done(err);
-            } else {
-                console.log("Sending to SMS address:", emailToSMSAddress);
-                console.log("SMS sent:", info.response);
-                done();
-            }
-        });
-*/}
+    try {
+        const { error } = await supabase
+            .from("volunteer")
+            .update({ receive_phone: receivePhone, receive_email: receiveEmail, consent_for_sms: receivePhone })
+            .eq("id", volunteerId);
+        if (error) throw error;
 
-//     res.status(200).json({ message: "SMS notification sent successfully!" });
-// } catch (err) {
-//     console.error("Error:", err.message);
-//     res.status(500).json({ error: "An unexpected error occurred." });
-// }
-//};
+        res.status(200).json({ message: "You have successfully changes notifications preferences." });
+    } catch (err) {
+        console.error("Error updating notifications preferences:", err);
+        res.status(500).json({ error: "An error occurred while processing your opt-out request." });
+    }
+};
 
 
 module.exports =  { sendNotification,
     sendEmail,
-    sendSMS
+    sendSMS,
+    optOut
 }

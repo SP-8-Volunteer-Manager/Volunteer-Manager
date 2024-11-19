@@ -250,7 +250,7 @@ const createMessageForVolunteers = async (task)  => {
     //     timeZone: "UTC"
     // });
 
-    console.log("task: ", task);
+   
     // Generate a default message using task information
     const defaultMessage = `
         <p><strong>Task Alert: ${name}</strong></p>
@@ -322,9 +322,11 @@ const notifyMatchingVolunteers = async (req, res)  => {
 };
 
 const sendMessageToVolunteers = async (volunteers, taskId, message) => {
+    
     try {
         // Loop through each volunteer and send a notification with their specific message
         const notificationPromises = volunteers.map(async (volunteer) => {
+
             const taskLink = `${process.env.FRONTEND_URL}/confirm/${taskId}/${volunteer.id}`;
             const personalizedMessage = `${message}<p><a href="${taskLink}">Click here to confirm your availability</a></p>`;
 
@@ -347,7 +349,7 @@ const sendDirectNotification = async (volunteer, message) => {
         if (volunteer.receive_phone && volunteer.consent_for_sms) {
             const { phone, carrier } = volunteer;
             console.log(`Sending SMS to ${volunteer.first_name} ${volunteer.last_name} at ${phone} via ${carrier}`);
-            await sendSMS(phone, message);
+            await sendSMS(volunteer, phone, message);
         }
         //volunteer.receive_email has to be added
        
