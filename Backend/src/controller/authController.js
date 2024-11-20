@@ -165,7 +165,7 @@ const signup = async (req, res) => {
           state: volunteerData.state, 
           zip_code: volunteerData.zip, 
           consent_for_sms: volunteerData.receivesms, 
-          carrier: '',
+        //  carrier: '',
           receive_email: volunteerData.receiveemail, 
           receive_phone: volunteerData.receivesms}])
         .select(); //state not working

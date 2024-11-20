@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import API_BASE_URL from '../config';
@@ -6,10 +6,53 @@ import Navigation from '../Components/Navigation'
 
 const OptOut = () => {
     const { volunteerId } = useParams();
-    const [receivePhone, setReceivePhone] = useState(true);
-    const [receiveEmail, setReceiveEmail] = useState(true);
+    const [receivePhone, setReceivePhone] = useState();
+    const [receiveEmail, setReceiveEmail] = useState();
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [volunteer, setVolunteer] = useState(null);
 
+
+    useEffect(() => {
+        
+         const fetchVolunteer = async () => {
+             try{
+                 const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/volunteerDetails/${volunteerId}`);
+                 if (!response.ok) {
+                 
+                     throw new Error(`HTTP error! status: ${response.status}`);
+                 }
+                 const data = await response.json();
+                 
+                 console.log('Fetched volunteer data:', data);
+                 setReceivePhone(data?.receive_phone && data?.consent_for_sms);
+                 setReceiveEmail(data.receive_email)
+                 setVolunteer(data);
+                 
+             } catch (error) {
+       
+                 console.error(`Error: ${error}`);
+             }
+         };
+         fetchVolunteer();
+         console.log("v1",volunteer);
+         
+     }, [volunteerId]);
+
+    //  useEffect(() => {
+    //     console.log("v2",volunteer);
+         
+    //     if (volunteer.receive_email){
+    //         setReceiveEmail(true);
+    //      } else {
+    //         setReceiveEmail(false);
+    //      }
+    //      if (volunteer.receive_phone && consent_for_sms){
+    //         setReceivePhone(true);
+    //      } else {
+    //         setReceivePhone(false);
+    //      }
+    //  },[]);
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -51,7 +94,8 @@ const OptOut = () => {
         await updateOptOutPreferences();
         setShowConfirmModal(false);
     };
-
+    console.log("v3",volunteer);
+         
     return (
         <>
         < Navigation />

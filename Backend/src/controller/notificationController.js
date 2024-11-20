@@ -43,14 +43,14 @@ const sendNotification = async (req, res) => {
                 phone: phoneNumber,
                 consent_for_sms: optInSms,
            //     consent_for_email: optInEmail, 
-                carrier,
+          //      carrier,
                 first_name: firstName,
                 last_name: lastName
             } = volunteer;
 
             const promises = [];
 
-            if (sms && optInSms && phoneNumber && carrier) {
+            if (sms && optInSms && phoneNumber) {
                 promises.push(sendSMS(volunteer, phoneNumber, message));
                 
             }

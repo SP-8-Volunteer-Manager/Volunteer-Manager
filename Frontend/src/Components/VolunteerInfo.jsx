@@ -20,6 +20,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
     const [taskOptions, setTaskOptions] = useState([]);
 
     const handleModalClose = () => {
+        setIsEditMode(false);
         handleClose();
         setShowNotificationModal(false);
     };
@@ -28,7 +29,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
     useEffect(() => {
         const fetchOptions = async () => {
             try {
-                const scheduleResponse = await fetch(`${API_BASE_URL}/api/admin/scheduleOptions`);
+                const scheduleResponse = await fetch(`${API_BASE_URL}/api/task/shift`);
                 if (!scheduleResponse.ok) {
                     throw new Error(`Failed to fetch schedule options, status: ${scheduleResponse.status}`);
                 }
@@ -40,7 +41,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                     label: `${option.day} ${option.time}`
                 })));
                 
-                const taskResponse = await fetch(`${API_BASE_URL}/api/admin/taskOptions`);
+                const taskResponse = await fetch(`${API_BASE_URL}/api/task/taskTypes`);
                 if (!taskResponse.ok) {
                     throw new Error(`Failed to fetch task options, status: ${taskResponse.status}`);
                 }
@@ -61,10 +62,11 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
     useEffect(() => {
         if (volunteer) {
             setEditableVolunteer({
+                id: volunteer.id || '',
                 first_name: volunteer.first_name || '',
                 last_name: volunteer.last_name || '',
                 phone: volunteer.phone || '',
-                email: volunteer.email || '',
+                email: volunteer.User.email || '',
                 "Schedule Preferences": volunteer.shift_prefer ? volunteer.shift_prefer.map(shift => ({
                     value: shift.shift.id,
                     label: `${shift.shift.day} ${shift.shift.time}`
@@ -106,7 +108,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                 first_name: editableVolunteer.first_name,
                 last_name: editableVolunteer.last_name,
                 phone: editableVolunteer.phone,
-                email: editableVolunteer.email,
+                
             },
             schedulePreferences: editableVolunteer["Schedule Preferences"].map(pref => ({
                 shift_id: pref.value 
@@ -148,7 +150,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
 
     return (
         <>
-            <Modal show={show} onHide={handleClose} className="modal-dialog">
+            <Modal show={show} onHide={handleModalClose} className="modal-dialog">
                 <Modal.Header closeButton>
                     <Modal.Title>Volunteer Details</Modal.Title>
                 </Modal.Header>
@@ -195,7 +197,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
                                 name="email"
                                 value={editableVolunteer.email || ''}
                                 onChange={handleChange}
-                                disabled={!isEditMode}
+                                disabled='true'
                             />
                         </div>
                         <div className="form-group">

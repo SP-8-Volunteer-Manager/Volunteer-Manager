@@ -347,8 +347,8 @@ const sendDirectNotification = async (volunteer, message) => {
     try {
       
         if (volunteer.receive_phone && volunteer.consent_for_sms) {
-            const { phone, carrier } = volunteer;
-            console.log(`Sending SMS to ${volunteer.first_name} ${volunteer.last_name} at ${phone} via ${carrier}`);
+            const { phone } = volunteer;
+            console.log(`Sending SMS to ${volunteer.first_name} ${volunteer.last_name} at ${phone}`);
             await sendSMS(volunteer, phone, message);
         }
         //volunteer.receive_email has to be added
