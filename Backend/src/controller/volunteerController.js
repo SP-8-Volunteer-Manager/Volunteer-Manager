@@ -5,8 +5,8 @@ const getVolunteers = async (req, res) => {
         const { data, error } = await supabase
             .from('volunteer')
             .select(`*,
-                shift_prefer(shift(day,time)),
-                task_prefer(task_type(type_name)),
+                shift_prefer(shift(id,day,time)),
+                task_prefer(task_type(id,type_name)),
                 User(email)
                 `);
 
@@ -27,8 +27,8 @@ const getVolunteerDetails = async (req, res) => {
         const { data, error } = await supabase
             .from('volunteer')
             .select(`*,
-                shift_prefer(shift(day,time)),
-                task_prefer(task_type(type_name)),
+                shift_prefer(shift(id,day,time)),
+                task_prefer(task_type(id,type_name)),
                 User(email)
                 `)
             .single()
@@ -249,7 +249,7 @@ const updateMyProfile = async (req, res) => {
                 state: volunteerData.state,
                 zip_code: volunteerData.zip,
                 consent_for_sms: volunteerData.receivesms,
-                carrier: '',
+             //   carrier: '',
                 receive_email: volunteerData.receiveemail,
                 receive_phone: volunteerData.receivesms,
                 

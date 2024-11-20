@@ -123,7 +123,7 @@ function CreateAdminUser() {
         return signupData;
     }
        // username: "", password: "", confirmPassword: "", email: "", firstName: "", lastName: "", inputName: "", address: "", city: "", state: "", zip: "",
-       //  phoneNumber: "", carrier: "", receivesms: false, receiveemail: false, smalldog: false, bigdog: false, cat: false, onetimeevent: false,
+       //  phoneNumber: "", receivesms: false, receiveemail: false, smalldog: false, bigdog: false, cat: false, onetimeevent: false,
     const handleSignup = async () => {
             try{
                 setLoading(true);
