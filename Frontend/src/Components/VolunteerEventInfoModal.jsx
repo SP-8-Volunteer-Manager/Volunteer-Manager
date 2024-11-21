@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import API_BASE_URL from '../config';
 
 
-function VolunteerEventInfoModal({ show, onHide, event }) {
+function VolunteerEventInfoModal({ show, onHide, event, backdrop, keyboard }) {
   
   const [showCancel, setShowCancel] = useState(true);
   const [userMsg, setUserMsg] = useState('');
@@ -74,7 +74,8 @@ const cancelEventAvailability = async () => {
       show={show}
       onHide={onHide}
       className="modal-dialog modal-lg"
-      
+      backdrop={backdrop}
+      keyboard={keyboard}
       style={{ content: { padding: '0', border: 'none', inset: '0' } }}
     >
       <div className="modal-content">

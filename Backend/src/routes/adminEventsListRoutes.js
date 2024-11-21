@@ -5,4 +5,6 @@ const adminEventsListController = require('../controller/adminEventsListControll
 router.get('/events/:showAll', adminEventsListController.getEventLists);
 router.get('/upcomingEvents', adminEventsListController.getUpcomingEvents);
 
+router.get('/cancelevent/:taskid', adminEventsListController.cancelEvent);
+
 module.exports = router; // export the router
