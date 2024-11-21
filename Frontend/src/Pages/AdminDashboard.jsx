@@ -9,7 +9,9 @@ function AdminDashboard({userData}) {
     const [eventModalOpen, setEventModalOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [newVolunteersCount, setNewVolunteersCount] = useState(0);
-    
+    const [reloadKey, setReloadKey] = useState(0);
+   
+
     useEffect(() => {
         const fetchEvents = async () => {
             try{
@@ -19,12 +21,12 @@ function AdminDashboard({userData}) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                
                 setUpEvents(data);
             } catch (error) {
                 console.error(`Error: ${error}`);
             }
         };
+
         const fetchNewVolunteersCount = async () => {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/new/count`);
@@ -42,17 +44,22 @@ function AdminDashboard({userData}) {
         fetchNewVolunteersCount();
 
     }
-    , []);
+    , [reloadKey]);
             
     const openEventModal = (event) => {
         setSelectedEvent(event); 
         setEventModalOpen(true);
       };
     
-      const closeEventModal = () => {
+      const closeEventModal = (reloadFlag) => {
         setEventModalOpen(false);
-        setSelectedEvent(null); 
-      };
+        setSelectedEvent(null);
+    
+        // If reloadFlag is true, re-fetch events
+        if (reloadFlag) {
+            setReloadKey((prev) => prev + 1); // Increment reloadKey to trigger a refresh
+        }
+    };
     
 
     return (
@@ -74,7 +81,10 @@ function AdminDashboard({userData}) {
                     )}
             </div>
             <div className="col-lg-6 px-lg-5">
-                <MyCalendar />
+                <MyCalendar 
+                reloadKey={reloadKey}
+                setReloadKey={setReloadKey}
+                />
             </div>
            
         </div>

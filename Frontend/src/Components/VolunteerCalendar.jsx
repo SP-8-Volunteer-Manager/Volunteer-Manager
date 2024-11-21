@@ -146,7 +146,7 @@ function VolunteerCalendar({userData, reloadKey, setReloadKey}) {
           show={modalIsOpen}
           onHide={closeModal}
          
-          className="modal-dialog modal-xl"
+          className={`modal modal-xl ${eventModalOpen ||  eventsModalOpen ? 'pointer-events-none modal-backdrop fade' : ''}`}
           
           style={{ content: { padding: '0', border: 'none', inset: '0' } }}
         >
@@ -186,7 +186,7 @@ function VolunteerCalendar({userData, reloadKey, setReloadKey}) {
       <Modal
         show={eventsModalOpen}
         onHide={closeEventsModal}
-        className="modal-dialog modal-lg"
+        className={`modal modal-lg ${eventModalOpen ? 'pointer-events-none modal-backdrop fade' : ''}`}
       >
         <div className="modal-content">
           <div className="modal-header">
@@ -212,6 +212,8 @@ function VolunteerCalendar({userData, reloadKey, setReloadKey}) {
         show={eventModalOpen}
         onHide={closeEventModal}
         event={selectedEvent}
+        backdrop="static" // Prevents closing when clicking on the backdrop
+        keyboard={false}  // Prevents closing with the Escape key
       />
     </div>
   );
