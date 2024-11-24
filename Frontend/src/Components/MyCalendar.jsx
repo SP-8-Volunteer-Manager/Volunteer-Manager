@@ -13,7 +13,7 @@ import API_BASE_URL from '../config';
 const localizer = momentLocalizer(moment);
 
 
-function MyCalendar() {
+function MyCalendar({reloadKey, setReloadKey}) {
   const [date, setDate] = useState(new Date());
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -25,23 +25,19 @@ function MyCalendar() {
 
 
   
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/admin/events/true`);
-        const data = await response.json();
-        
-        // Map data to the required format for BigCalendar
-        const formattedEvents = data.map(event => {
-          const localDate = new Date(event.start_date + 'T00:00:00')
-
-          const [hour, minute] = event.start_time.split(':');
-          const date = new Date();
-          date.setHours(hour, minute);
-          const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-
-          return {
-          
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/admin/events/true`);
+      const data = await response.json();
+  
+      const formattedEvents = data.map(event => {
+        const localDate = new Date(event.start_date + 'T00:00:00');
+        const [hour, minute] = event.start_time.split(':');
+        const date = new Date();
+        date.setHours(hour, minute);
+        const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+  
+        return {
           title: event.name,
           start: localDate,
           end: localDate,
@@ -49,20 +45,22 @@ function MyCalendar() {
           task_type: event.task_type?.type_name || 'N/A',
           description: event.description, 
           location: event.location,
-          volunteer: event.assignment && event.assignment.length > 0 
+          taskid: event.id,
+          volunteer: event.assignment?.length > 0 
                     ? `${event.assignment[0].volunteer.first_name} ${event.assignment[0].volunteer.last_name}`
-                    : 'No volunteer assigned', // Handle no assignment
-        }
+                    : 'No volunteer assigned',
+        };
       });
-        setEvents(formattedEvents);
-      } catch (error) {
-        console.error('Error fetching events:', error);
-      }
-    };
-
+  
+      setEvents(formattedEvents);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    }
+  };
+  
+  useEffect(() => {
     fetchEvents();
-    console.log({events});
-  }, []);
+  }, [reloadKey]);
 
   const onChange = (newDate) => {
       setDate(newDate);
@@ -115,9 +113,15 @@ function MyCalendar() {
     setEventModalOpen(true); // Open event details modal
   };
 
-  const closeEventModal = () => {
+  const closeEventModal = (reloadFlag) => {
     setEventModalOpen(false);
-    setSelectedEvent(null); // Clear the selected event
+    setSelectedEvent(null);
+  
+    // If reloadFlag is true, refresh the event list
+    if (reloadFlag) {
+      setReloadKey((prev) => prev + 1); // Increment reloadKey to trigger a refresh
+      setEventsModalOpen(false)
+    }
   };
 
   const dayPropGetter = (date) => {
@@ -197,7 +201,7 @@ function MyCalendar() {
           <div className="modal-body">
             <ul>
               {eventsForSelectedDay.map((event, index) => (
-                <li key={index} onClick={() => openEventModal(event)}>
+                <li key={index} style={{ cursor: 'pointer' }} onClick={() => openEventModal(event)}>
                   {event.title}
                 </li>
               ))}
@@ -214,6 +218,8 @@ function MyCalendar() {
         show={eventModalOpen}
         onHide={closeEventModal}
         event={selectedEvent}
+        backdrop="static" // Prevents closing when clicking on the backdrop
+        keyboard={false}  // Prevents closing with the Escape key
       />
     </div>
   );
