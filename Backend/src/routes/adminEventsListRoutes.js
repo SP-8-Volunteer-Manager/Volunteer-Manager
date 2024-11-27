@@ -8,4 +8,6 @@ router.get('/upcomingEvents', adminEventsListController.getUpcomingEvents);
 router.patch('/events/:id', adminEventsListController.updateEvent);
 
 
+router.get('/cancelevent/:taskid', adminEventsListController.cancelEvent);
+
 module.exports = router; // export the router
