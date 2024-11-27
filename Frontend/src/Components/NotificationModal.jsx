@@ -49,7 +49,7 @@ const NotificationModal = ({ show, handleClose,  volunteers }) => {
     };
 
     return (
-        <Modal show={show} onHide={handleModalClose} className="modal-dialog">
+        <Modal show={show} onHide={handleModalClose} className="modal">
             <Modal.Header closeButton>
                 Send Notification to {Array.isArray(volunteers) ? 'Selected Volunteers' : namesList[0]}
             </Modal.Header>

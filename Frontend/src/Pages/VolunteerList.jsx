@@ -20,15 +20,7 @@ const VolunteerList=() => {
     const allVolunteersPerPage = 10;
     const [showNotificationModal, setShowNotificationModal] = useState(false);
 
-   // const handleSendNotification = (message) => {
-     //   console.log("Sending notification:", message);
-        
-       
-    //};
-    const handleModalClose = () => {
-        handleClose(); 
-        setShowNotificationModal(false); 
-    };
+   
     //Fetch the volunteer data from the backend
     useEffect(() => {
        

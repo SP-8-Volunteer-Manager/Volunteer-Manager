@@ -4,6 +4,9 @@ const adminEventsListController = require('../controller/adminEventsListControll
 
 router.get('/events/:showAll', adminEventsListController.getEventLists);
 router.get('/upcomingEvents', adminEventsListController.getUpcomingEvents);
+// PATCH /api/admin/volunteers/:id
+router.patch('/events/:id', adminEventsListController.updateEvent);
+
 
 router.get('/cancelevent/:taskid', adminEventsListController.cancelEvent);
 
