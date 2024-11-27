@@ -150,7 +150,7 @@ const VolunteerInfo = ({ volunteer, show, handleClose }) => {
 
     return (
         <>
-            <Modal show={show} onHide={handleModalClose} className="modal-dialog">
+            <Modal show={show} onHide={handleModalClose} className={`modal ${showNotificationModal ||  showNotificationModal ? 'pointer-events-none modal-backdrop fade' : ''}`}>
                 <Modal.Header closeButton>
                     <Modal.Title>Volunteer Details</Modal.Title>
                 </Modal.Header>

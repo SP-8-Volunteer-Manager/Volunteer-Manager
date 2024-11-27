@@ -158,7 +158,7 @@ const EventInfo = ({ event, show, handleClose }) => {
             // Save event details to the backend
             try {
                 const response = await fetch(`${API_BASE_URL}/api/admin/events/${event.id}`, {
-                    method: 'PUT',
+                    method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
                     },
