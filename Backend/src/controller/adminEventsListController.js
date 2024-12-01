@@ -61,16 +61,17 @@ const getUpcomingEvents = async (req, res) => {
 };
 const updateEvent = async (req, res) => {
     try {
-        const { id } = req.params; // Event ID
+        const { id } = req.params;
         const { name, description, taskType, day, time, location } = req.body;
 
-        // Update the task in the database
+        console.log("Received data:", { name, description, taskType, day, time, location });
+
         const { data, error } = await pool
             .from('task')
             .update({
                 name,
                 description,
-                task_type_id: taskType, // Assuming taskType is the ID
+                task_type_id: taskType,
                 start_date: day,
                 start_time: time,
                 location,

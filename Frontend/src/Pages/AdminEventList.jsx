@@ -87,10 +87,15 @@ function AdminEventList() {
         setShowNewEventModal(true);
     };
 
-    const handleCloseModal = () => {
+    const handleCloseModal = (reloadFlag) => {
         setSelectedEvent(null);
         setShowModal(false);
         window.scrollTo(0, previousScrollPosition);
+
+        // If reloadFlag is true, refresh the event list
+        if (reloadFlag) {
+            setReloadKey((prev) => prev + 1); // Increment reloadKey to trigger a refresh
+        }
     };
 
     const handleNewEventCloseModal = (taskId) => {
@@ -277,6 +282,8 @@ function AdminEventList() {
                 event={selectedEvent}
                 show={showModal}
                 handleClose={handleCloseModal}
+                backdrop="static" // Prevents closing when clicking on the backdrop
+                keyboard={false}  // Prevents closing with the Escape key
             />
 
         <NewEvent
