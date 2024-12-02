@@ -195,10 +195,7 @@ function MyProfile({userData}) {
       const validate = (values) => {
         let errors = {};
         setUserMsg('');
-        //console.log("In validate")
-    
-        // console.log("--formvalues");
-        // console.log(formValues);
+  
         
          if (values.firstName == "") {
             errors.firstName = "First Name is required";
@@ -209,9 +206,6 @@ function MyProfile({userData}) {
           }
 
 
-        //   console.log(values.phoneNumber.length);
-        //   console.log(values.phoneNumber);
-        //console.log("ReceiveSMS: " + values.receivesms)
           if(values.phoneNumber) // phone exists
           {
             if(values.phoneNumber.length != 10)
@@ -231,16 +225,6 @@ function MyProfile({userData}) {
         {
             errors.receiveemail = "Select at least one ";
         }
-
-        // if (values.receivesms === true && values.smsoptin === false)
-        // {
-        //     errors.smsoptin = "SMS Opt-in required";
-        // }
-
-        // if (values.receiveemail === true && values.emailoptin === false)
-        // {
-        //     errors.emailoptin = "Email Opt-in required";
-        // }
 
         if(values.receivesms === false && values.receiveemail === false)
         {
@@ -299,9 +283,6 @@ function MyProfile({userData}) {
         };
 
 
-
-        //console.log("Saving Profile")
-        //console.log(updateData)
         try {
             const response = await fetch(`${API_BASE_URL}/api/admin/volunteers/updateMyProfile`, {
                 method: 'POST',
@@ -311,7 +292,6 @@ function MyProfile({userData}) {
 
             if (response.ok) {
                 const result = await response.json();
-                //console.log('Update result:', result);
                 setUserMsg('Profile information updated successfully');
                 navigate('/');
 

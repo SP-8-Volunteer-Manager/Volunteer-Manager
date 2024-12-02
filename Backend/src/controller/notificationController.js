@@ -13,7 +13,7 @@ const { htmlToText } = require('html-to-text');
 
 
 
-//import loadTelnyx from './telnyxWrapper.js';
+
 
 const supabase = require('../config/supabaseClient');
 const { Resend } = require('resend');
@@ -42,8 +42,6 @@ const sendNotification = async (req, res) => {
                 User: { email: email_address },
                 phone: phoneNumber,
                 consent_for_sms: optInSms,
-           //     consent_for_email: optInEmail, 
-          //      carrier,
                 first_name: firstName,
                 last_name: lastName
             } = volunteer;
@@ -84,7 +82,7 @@ const sendNotification = async (req, res) => {
 const sendSMS = async (volunteer, phoneNumber, message) => {
     try {
         
-      //  const telnyx = await loadTelnyx(); 
+
         if (!telnyx.messages) {
             console.error('Telnyx client is not properly initialized.');
             throw new Error('Telnyx client is not properly initialized.');
@@ -106,12 +104,10 @@ const sendSMS = async (volunteer, phoneNumber, message) => {
             to: phone,
             text: finalMessage, 
         });
-        //.then(function(response){
-        //    const message = response.data; // asynchronously handled
-        //});
+        
         console.log("Response from Telnyx:", response);
 
-      //  console.log('SMS sent successfully:', message);
+      
         return message;
     } catch (error) {
         console.error('Error sending SMS:', error);

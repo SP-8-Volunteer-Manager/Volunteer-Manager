@@ -377,8 +377,7 @@ const NewEvent = ({ show, handleClose }) => {
                             showTimeSelect
                             showTimeSelectOnly
                             timeIntervals={30}
-                          //  minTime={new Date(0, 0, 0, 6, 0)} 
-                          //  maxTime={new Date(0, 0, 0, 21, 0)} 
+            
                             id="time"
                             dateFormat="h:mm aa"
                             required

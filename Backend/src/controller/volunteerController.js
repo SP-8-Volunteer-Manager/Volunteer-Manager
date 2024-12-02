@@ -81,7 +81,7 @@ const getNewVolunteersCount = async (req, res) => {
     }
 };
 
-// Assume this is in your Express.js backend route handler file
+
 const updateVolunteer = async (req, res) => {
     const volunteerId = req.params.id;
     const { volunteerData, schedulePreferences, taskPreferences } = req.body;
@@ -200,9 +200,9 @@ const getTaskOptions = async (req, res) => {
 };
 
 const getMyProfile = async (req, res) => {
-    //console.log(req.body)
+
     const {userid} = req.body;
-   // console.log("retrieving volunteer for userID " + userid)
+
 
     try {
         const { data, error } = await supabase
@@ -214,7 +214,7 @@ const getMyProfile = async (req, res) => {
                 `)
                 .single()
                 .eq('user_id', userid);
-        //console.log("After Select: " + error)
+     
         if (error) {
            console.log(error);
             throw error;
@@ -222,18 +222,17 @@ const getMyProfile = async (req, res) => {
         console.log(data)
         res.status(200).json(data);
     } catch (error) {
-        //console.log("catch getvolunteer")
+    
         console.log(error)
         res.status(400).json({ message: error.message });
     }
 };
 
 const updateMyProfile = async (req, res) => {
-    //const volunteerId = req.params.id;
-    //console.log("Update Profile: " + volunteerId)
+ 
     const {  schedulePreferences, taskPreferences } = req.body;
     const { volunteerData } = req.body;
-    //console.log(volunteerData)
+
 
     try {
         // Update volunteer's basic information
@@ -274,7 +273,7 @@ const updateMyProfile = async (req, res) => {
 
          if (scheduleError) throw new Error(`Schedule preferences update failed: ${scheduleError.message}`);
 
-        // // Update task preferences (task_prefer table)
+        // Update task preferences (task_prefer table)
         await supabase
             .from('task_prefer')
             .delete()

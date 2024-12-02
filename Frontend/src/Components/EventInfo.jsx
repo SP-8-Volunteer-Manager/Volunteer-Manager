@@ -237,12 +237,7 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
           date.setHours(hour, minute);
           const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
       
-        // const time = new Date(`1970-01-01T${event.start_time}Z`).toLocaleTimeString("en-US", {
-        //     hour: "numeric",
-        //     minute: "2-digit",
-        //     hour12: true,
-        //     timeZone: "UTC"
-        // });
+    
     
         console.log("selected volunteer", selectedVolunteer);
         const message = `
@@ -427,9 +422,9 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
                                 className="form-control"
                                 name="time"
                                 value={time || ''}
-                                //disabled={!isEditMode}
+                              
                                 disabled={true}
-                                //onChange={handleTimeChange}
+                          
                             />
                         </label>
                     </div>
@@ -444,7 +439,7 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
                                 value="oneTime"
                                 className="radio-new-task"
                                 checked={editableEvent.isRecurring === false}
-                                //disabled={!isEditMode}
+                           
                                 disabled={true}
                                 onChange={() =>
                                     setEditableEvent((prev) => ({
@@ -463,7 +458,7 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
                                 value="recurring"
                                 className="radio-new-task"
                                 checked={editableEvent.isRecurring === true}
-                                //disabled={!isEditMode}
+                          
                                 disabled={true}
                                 onChange={() =>
                                     setEditableEvent((prev) => ({
@@ -497,7 +492,7 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
                                 className="form-select"
                                 value={selectedVolunteer?selectedVolunteer.id :""}
                                 onChange={handleVolunteerSelection} 
-                                //disabled={!isEditMode}
+                           
                                 disabled={true}
                             >
                                 <option value="">-- Select a Volunteer --</option>

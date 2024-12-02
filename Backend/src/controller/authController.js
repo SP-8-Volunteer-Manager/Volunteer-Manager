@@ -440,16 +440,7 @@ const updatePassword = async (req, res) => {
       console.log(authError);
       return res.status(400).json({ error: 'Failed to update password in Supabase Auth. Please try again.' });
     }
-    // Update the hashed password in the "User" table. Using supabase so removed it
-    // const { data: userData, error: userError } = await supabase
-    //   .from('User')
-    //   .update({ password_hash: hashedPassword })  
-    //   .eq('email', email); 
-
-    // if (userError) {
-    //   console.log(userError);
-    //   return res.status(400).json({ error: 'Failed to update password in the User table. Please try again.' });
-    // }
+  
 
     return res.status(200).json({ message: 'Password has been successfully reset.' });
   } catch (err) {
@@ -462,7 +453,7 @@ const updatePassword = async (req, res) => {
 const createAdminUser = async (req, res) => {
   const { volunteerData } = req.body;
   var userid, volid;
-  //console.log("Volunteer Data", volunteerData)
+ 
 
   // NOTE: This function will rollback in case of error
 
@@ -483,24 +474,24 @@ const createAdminUser = async (req, res) => {
 
 // ------------- Local user add outine ------
      // Hash the password
-     //console.log(bcrypt);
+   
     console.log("Add User")
-    //const hashedPassword = await bcrypt.hash(volunteerData.password, 10);
+    
     // Add user to the database
-    //console.log("Just before user insert")
+
     const { data, error } = await supabase
       .from('User')
       .insert([{ username: volunteerData.username, 
-        //password_hash: hashedPassword, 
+       
         email: volunteerData.email, role: "admin" }])
       .select();
-     //console.log(error)
+  
 
     if (error != null) {
       return res.status(200).json({ message: 'Error adding user', error: error.message });
     }
     // get the id from the user table.
-    //console.log(data);
+
     userid = data[0].id;
     var useremail = data[0].email;
     var userrole = data[0].role;
