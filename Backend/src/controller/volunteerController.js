@@ -94,7 +94,6 @@ const updateVolunteer = async (req, res) => {
                 first_name: volunteerData.first_name,
                 last_name: volunteerData.last_name,
                 phone: volunteerData.phone,
-                email: volunteerData.email
             })
             .eq('id', volunteerId);
 
