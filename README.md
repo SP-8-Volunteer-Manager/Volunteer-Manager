@@ -1,3 +1,9 @@
-# This is the respo that have all the Node and React set up.
-The backend folder is for the backend code
-Frontend folder is created by using the building tool vite.
+# The website is hosted on Render
+https://volunteer-manager-hbpr.onrender.com/
+Login credentials: 
+-Admin:
+username: jen
+password: hashhash
+-Volunteer:
+username: brett
+password: hashhash
