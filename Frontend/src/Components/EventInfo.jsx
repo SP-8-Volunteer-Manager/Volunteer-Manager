@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-
 import { Modal, Button, Form  } from 'react-bootstrap';
 import API_BASE_URL from "../config";
 
-const EventInfo = ({ event, show, handleClose }) => {
+const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
     const [isEditMode, setIsEditMode] = useState(false); // Track if fields are editable
     const [editableEvent, setEditableEvent] = useState({
        
@@ -26,11 +25,14 @@ const EventInfo = ({ event, show, handleClose }) => {
     const [volunteers, setVolunteers] = useState([]);
     const [taskTypes, setTaskTypes] = useState([]);
     const [shifts, setShifts] = useState([]);
+
+    const [reloadFlag, setReloadFlag] = useState(false);
    
   
     const handleModalClose = () => {
         setIsEditMode(false);
-        handleClose(); 
+        handleClose(reloadFlag);
+        setReloadFlag(true); 
     };
 
     useEffect(() => {
@@ -153,9 +155,7 @@ const EventInfo = ({ event, show, handleClose }) => {
         }));
     };
     const toggleEditMode = async () => {
-        console.log("task type", editableEvent.taskType);
         if (isEditMode) {
-            // Save event details to the backend
             try {
                 const response = await fetch(`${API_BASE_URL}/api/admin/events/${event.id}`, {
                     method: 'PATCH',
@@ -165,7 +165,7 @@ const EventInfo = ({ event, show, handleClose }) => {
                     body: JSON.stringify({
                         name: editableEvent.name,
                         description: editableEvent.description,
-                        taskType: editableEvent.taskType.id,
+                        taskType: editableEvent.taskType?.id, // Ensure it's the ID
                         day: editableEvent.day,
                         time: editableEvent.time,
                         location: editableEvent.location,
@@ -174,8 +174,8 @@ const EventInfo = ({ event, show, handleClose }) => {
     
                 if (response.ok) {
                     const updatedEvent = await response.json();
+                    setReloadFlag(true);
                     alert('Event updated successfully!');
-                    // Update the UI if necessary
                 } else {
                     throw new Error('Failed to update event.');
                 }
@@ -278,10 +278,13 @@ const EventInfo = ({ event, show, handleClose }) => {
                 }
                 
     }
-    const handleSelectChange = (e, field) => {
+    const handleSelectChange = (e, fieldName) => {
+
+        const { value } = e.target;
+
         setEditableEvent(prev => ({
             ...prev,
-            [field]: e || ''
+            [fieldName]: taskTypes.find((taskType) => taskType.id === parseInt(value, 10)),
         }));
     };
     const handleVolunteerSelection = async (e) => {
@@ -342,11 +345,15 @@ const EventInfo = ({ event, show, handleClose }) => {
     const date = new Date();
     date.setHours(hour, minute);
     const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-  
     return (
   
         <>
-        <Modal show={show} onHide={handleModalClose} className="modal">
+        <Modal show={show} 
+        onHide={handleModalClose} 
+        className="modal"
+        backdrop={backdrop}
+        keyboard={keyboard}
+        >
             <Modal.Header closeButton>
                 <Modal.Title>Event Details</Modal.Title>
             </Modal.Header>
@@ -386,6 +393,7 @@ const EventInfo = ({ event, show, handleClose }) => {
                                 value={editableEvent.taskType ?editableEvent.taskType.id : ''}
                             
                                 disabled={!isEditMode}
+                                //disabled={true}
                                 
                                 onChange={(e) => handleSelectChange(e, "taskType")}
                             
@@ -407,7 +415,6 @@ const EventInfo = ({ event, show, handleClose }) => {
                                 name="day"
                                 value={editableEvent.day || ''}
                                 disabled={!isEditMode}
-                                
                                 onChange={handleChange}
                             />
                         </label>
@@ -420,9 +427,9 @@ const EventInfo = ({ event, show, handleClose }) => {
                                 className="form-control"
                                 name="time"
                                 value={time || ''}
-                                disabled={!isEditMode}
-                                
-                                onChange={handleChange}
+                                //disabled={!isEditMode}
+                                disabled={true}
+                                //onChange={handleTimeChange}
                             />
                         </label>
                     </div>
@@ -437,7 +444,8 @@ const EventInfo = ({ event, show, handleClose }) => {
                                 value="oneTime"
                                 className="radio-new-task"
                                 checked={editableEvent.isRecurring === false}
-                                disabled={!isEditMode}
+                                //disabled={!isEditMode}
+                                disabled={true}
                                 onChange={() =>
                                     setEditableEvent((prev) => ({
                                         ...prev,
@@ -455,7 +463,8 @@ const EventInfo = ({ event, show, handleClose }) => {
                                 value="recurring"
                                 className="radio-new-task"
                                 checked={editableEvent.isRecurring === true}
-                                disabled={!isEditMode}
+                                //disabled={!isEditMode}
+                                disabled={true}
                                 onChange={() =>
                                     setEditableEvent((prev) => ({
                                         ...prev,
@@ -488,7 +497,8 @@ const EventInfo = ({ event, show, handleClose }) => {
                                 className="form-select"
                                 value={selectedVolunteer?selectedVolunteer.id :""}
                                 onChange={handleVolunteerSelection} 
-                                disabled={!isEditMode}
+                                //disabled={!isEditMode}
+                                disabled={true}
                             >
                                 <option value="">-- Select a Volunteer --</option>
                                 {volunteers.map(volunteer => (
