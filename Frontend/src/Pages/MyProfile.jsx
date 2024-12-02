@@ -21,7 +21,7 @@ function MyProfile({userData}) {
         city: '',
         state: '',
         zip: '',
-        phoneNumber: '',  // Ensure this is initialized in formValues
+        phoneNumber: '',  
         email: '',
         receiveemail: false,
         receivesms: false,
@@ -53,9 +53,9 @@ function MyProfile({userData}) {
                     value: option.id,
                     label: `${option.day} ${option.time}`
                 }))
-                //console.log("Sched Temp", schedTemp)
+             
                 setScheduleOptions(schedTemp);
-                //console.log("After fetch shift", scheduleOptions)
+           
                 const taskResponse = await fetch(`${API_BASE_URL}/api/admin/taskOptions`);
                 if (!taskResponse.ok) {
                     throw new Error(`Failed to fetch task options, status: ${taskResponse.status}`);
@@ -67,8 +67,7 @@ function MyProfile({userData}) {
                     label: option.type_name
                 }))
                 setTaskOptions(taskTemp);
-                //console.log("Task Temp", taskTemp)
-                //console.log("After fetch task", taskOptions)
+              
             } catch (error) {
                 console.error('Error fetching options:', error);
             }
@@ -77,8 +76,7 @@ function MyProfile({userData}) {
     }, []);
 
     useEffect(() => {
-        //console.log("UserData " + userData)
-        //console.log("UserId " + userData.userId)
+   
          const fetchVolunteer = async () => {
              try{
                  const response = await fetch(`${API_BASE_URL}/api/admin/getMyProfile`, {
@@ -94,10 +92,10 @@ function MyProfile({userData}) {
                      throw new Error(`HTTP error! status: ${response.status}`);
                  }
                  const data = await response.json();
-                 //console.log('Fetched volunteer data:', data);
+               
                  populateProfileData(data);
                  setInitVal(data);
-              //   console.log(formValues)
+     
                  
              } catch (error) {
        
@@ -154,8 +152,7 @@ function MyProfile({userData}) {
             //console.log("Form Values b4 validate", formValues)
             const er = validate(formValues)
             setFormErrors(er);
-            //console.log("Form Errors", er)
-            //console.log("Errors length", Object.keys(er).length)
+           
             var errCnt = Object.keys(er).length;
             //console.log(!formErrors)
             if (errCnt == 0)
