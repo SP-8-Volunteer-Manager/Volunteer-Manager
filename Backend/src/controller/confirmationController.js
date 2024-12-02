@@ -70,7 +70,7 @@ const getAvailableVolunteers = async (req, res) => {
                     last_name
                 )`)
             .eq('task_id', taskId);
-          //  .eq('confirmed', true);
+
 
         if (confirmationError) {
             console.error("Error checking for confirmation:", confirmationError);

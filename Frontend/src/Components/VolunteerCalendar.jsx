@@ -23,7 +23,6 @@ function VolunteerCalendar({userData, reloadKey, setReloadKey}) {
   const [eventsModalOpen, setEventsModalOpen] = useState(false);
   const [eventsForSelectedDay, setEventsForSelectedDay] = useState([]);
 
-  //const [reloadKey, setReloadKey] = useState(0);
 
   
   useEffect(() => {
@@ -34,7 +33,7 @@ function VolunteerCalendar({userData, reloadKey, setReloadKey}) {
         
         console.log("Data in frontend", data)
 
-        // Map data to the required format for BigCalendar
+       
         const formattedEvents = data.map(event => {
           const localDate = new Date(event.task.start_date + 'T00:00:00')
           return {
@@ -50,7 +49,7 @@ function VolunteerCalendar({userData, reloadKey, setReloadKey}) {
         }
       });
         setEvents(formattedEvents);
-      //console.log("Events", events)
+      
 
       } catch (error) {
         console.error('Error fetching events:', error);
@@ -58,7 +57,7 @@ function VolunteerCalendar({userData, reloadKey, setReloadKey}) {
     };
 
     fetchEvents();
-    //console.log({events});
+    
   }, [userData.userId, reloadKey]);
 
   const onChange = (newDate) => {
@@ -105,9 +104,9 @@ function VolunteerCalendar({userData, reloadKey, setReloadKey}) {
   };
   
   const openEventModal = (event) => {
-    //console.log("Opening Event Modal with Event:", event);
+    
     setSelectedEvent(event);
-    //console.log("Open Event Modal event data", event)
+  
     setEventModalOpen(true); // Open event details modal
   };
 

@@ -66,8 +66,6 @@ const cancelEventAvailability = async () => {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${suffix}`;
   }
 
-  //console.log(event?.starttime)
-  //console.log(typeof event?.starttime)
 
   return (
     <Modal
