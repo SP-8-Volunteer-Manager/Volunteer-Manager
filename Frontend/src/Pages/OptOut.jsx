@@ -38,20 +38,7 @@ const OptOut = () => {
          
      }, [volunteerId]);
 
-    //  useEffect(() => {
-    //     console.log("v2",volunteer);
-         
-    //     if (volunteer.receive_email){
-    //         setReceiveEmail(true);
-    //      } else {
-    //         setReceiveEmail(false);
-    //      }
-    //      if (volunteer.receive_phone && consent_for_sms){
-    //         setReceivePhone(true);
-    //      } else {
-    //         setReceivePhone(false);
-    //      }
-    //  },[]);
+    
     
     const handleSubmit = async (e) => {
         e.preventDefault();

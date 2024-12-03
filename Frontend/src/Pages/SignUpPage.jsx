@@ -48,9 +48,9 @@ function SignUpPage() {
                     value: option.id,
                     label: `${option.day} ${option.time}`
                 }))
-                //console.log("Sched Temp", schedTemp)
+                
                 setScheduleOptions(schedTemp);
-                //console.log("After fetch shift", scheduleOptions)
+              
                 const taskResponse = await fetch(`${API_BASE_URL}/api/admin/taskOptions`);
                 if (!taskResponse.ok) {
                     throw new Error(`Failed to fetch task options, status: ${taskResponse.status}`);
@@ -62,8 +62,7 @@ function SignUpPage() {
                     label: option.type_name
                 }))
                 setTaskOptions(taskTemp);
-                //console.log("Task Temp", taskTemp)
-                //console.log("After fetch task", taskOptions)
+               
             } catch (error) {
                 console.error('Error fetching options:', error);
             }
@@ -171,8 +170,7 @@ function SignUpPage() {
             errors.inputName = "Please sign your name!";
           }
 
-        //   console.log(values.phoneNumber.length);
-        //   console.log(values.phoneNumber);
+        
         console.log("ReceiveSMS: " + values.receivesms)
           if(values.phoneNumber) // phone exists
           {
@@ -293,8 +291,6 @@ function SignUpPage() {
            // console.log(signupData)
         return signupData;
     }
-       // username: "", password: "", confirmPassword: "", email: "", firstName: "", lastName: "", inputName: "", address: "", city: "", state: "", zip: "",
-       //  phoneNumber: "",  receivesms: false, receiveemail: false, smalldog: false, bigdog: false, cat: false, onetimeevent: false,
     const handleSignup = async () => {
             try{
                 setLoading(true);

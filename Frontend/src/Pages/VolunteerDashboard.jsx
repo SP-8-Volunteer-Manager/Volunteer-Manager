@@ -59,7 +59,7 @@ function VolunteerDashboard({userData}) {
     }, [userData.userId, reloadKey]); // Depend on reloadKey
             
     const openEventModal = (event) => {
-        //console.log("before open event modal", event)
+        
         setSelectedEvent(event); 
         setEventModalOpen(true);
       };
@@ -143,7 +143,7 @@ function VolunteerDashboard({userData}) {
         event={selectedEvent}
         show={eventModalOpen}
         onHide={closeEventModal}
-        //handleClose={closeEventModal}
+       
       />
 
     </section>
