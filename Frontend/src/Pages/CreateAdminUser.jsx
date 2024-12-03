@@ -122,14 +122,13 @@ function CreateAdminUser() {
            // console.log(signupData)
         return signupData;
     }
-       // username: "", password: "", confirmPassword: "", email: "", firstName: "", lastName: "", inputName: "", address: "", city: "", state: "", zip: "",
-       //  phoneNumber: "", receivesms: false, receiveemail: false, smalldog: false, bigdog: false, cat: false, onetimeevent: false,
+    
     const handleSignup = async () => {
             try{
                 setLoading(true);
                 const signupData = makeFormData();
                 console.log(JSON.stringify(signupData));
-                //console.log(JSON.stringify(formValues));
+            
                 const response = await fetch(`${API_BASE_URL}/api/auth/createadminuser`, {
                     method: 'POST',
                     headers: {
@@ -199,34 +198,7 @@ function CreateAdminUser() {
                 <div className="p-5 rounded-5 " style={{backgroundColor: '#f0f6fd'}}>
                     <form onSubmit={handleSubmit} noValidate>
                         <div className="row gx-5 gy-3 mb-3">
-                        {/* <div className="col-md-6">
-                            <label htmlFor="inputFirstName" className="form-label">First Name *</label>
-                            <input type="text"
-                                    name="firstName"
-                                    value={formValues.firstName} 
-                                    className="form-control"
-                                    id="inputFirstName" 
-                                    onChange={handleChange} 
-                                    required/>
-                            {formErrors.firstName && (
-                            <span className="error">{formErrors.firstName}</span>
-                            )}
-                        </div>
-                        <div className="col-md-6">
-                            <label htmlFor="inputLastName" className="form-label">Last Name *</label>
-                            <input type="text"
-                                    name="lastName"
-                                    value={formValues.lastName} 
-                                    className="form-control"
-                                    id="inputLastName" 
-                                    onChange={handleChange} 
-                                    required/>
-                            {formErrors.lastName && (
-                            <span className="error">{formErrors.lastName}</span>
-                            )}
-                        </div>
-
-                        <hr className="mt-5"/> */}
+                        
 
                         <div className="col-md-6">
                             <label htmlFor="inputUsername" className="form-label">Username *</label>

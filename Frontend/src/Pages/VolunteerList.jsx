@@ -386,7 +386,7 @@ const VolunteerList=() => {
         <NotificationModal 
             show={showNotificationModal}
             handleClose={() => setShowNotificationModal(false)}
-          //  handleSend={handleSendNotification}
+   
             volunteers={filteredAllVolunteers}
         />
        
