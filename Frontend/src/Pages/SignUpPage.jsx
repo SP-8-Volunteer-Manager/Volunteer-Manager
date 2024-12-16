@@ -411,7 +411,7 @@ function SignUpPage() {
                         </div>
                         <div className="col-md-4">
                             <label htmlFor="inputState" className="form-label">State</label>
-                            <StateDropdown dropdownChange={dropdownChange}/>
+                            <StateDropdown dropdownChange={dropdownChange} isEditMode={true}/>
                         </div>
                         <div className="col-md-2">
                             <label htmlFor="inputZip" className="form-label">Zip</label>
