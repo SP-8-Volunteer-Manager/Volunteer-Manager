@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form  } from 'react-bootstrap';
 import API_BASE_URL from "../config";
+import DatePicker from 'react-datepicker';
 
 const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
     const [isEditMode, setIsEditMode] = useState(false); // Track if fields are editable
@@ -12,7 +13,8 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
         day: '',
         time: '',
         location: '',
-        volunteer: null
+        volunteer: null,
+        isRecurring: null
         
     });
 
@@ -25,6 +27,7 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
     const [volunteers, setVolunteers] = useState([]);
     const [taskTypes, setTaskTypes] = useState([]);
     const [shifts, setShifts] = useState([]);
+    const [localTime, setLocalTime] = useState('');
 
     const [reloadFlag, setReloadFlag] = useState(false);
    
@@ -33,6 +36,21 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
         setIsEditMode(false);
         handleClose(reloadFlag);
         setReloadFlag(true); 
+    };
+    const convertMilitaryTo12Hour = (militaryTime) => {
+        const [hour, minute] = militaryTime.split(":");
+        const date = new Date();
+       
+        date.setHours(hour, minute, 0, 0);
+
+        return date;
+    };
+
+    // Helper function to convert 12-hour time (h:mm AM/PM) back to military time (h:mm:ss)
+    const convert12HourToMilitary = (time) => {
+        const militaryHours = time ? time.toLocaleTimeString('en-US', { hour12: false }) : null;
+        
+        return militaryHours;
     };
 
     useEffect(() => {
@@ -103,7 +121,12 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
                 volunteer: (event.assignment && event.assignment.length > 0)?event.assignment[0].volunteer:null 
             });
         
-          
+           
+            if (event.start_time) {
+                const convertedTime = convertMilitaryTo12Hour(event.start_time);
+                
+                setLocalTime(convertedTime);
+            }
             if(event.assignment && event.assignment.length > 0){
                 console.log("event assignment ", event.assignment),
                 console.log("vol ", event.assignment[0].volunteer),
@@ -117,14 +140,11 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
                 setIsVolunteerAssigned(false);
                 fetchAvailableVolunteers(event.id);
             }
-            
-           
-        }
-                  
+        }       
         console.log("Init assigned volunteer", volunteerAssigned);
     }, [event]);
     if (!event) return null; // Avoid rendering if no event is selected
-
+  
    // Fetch available volunteers for the event
    const fetchAvailableVolunteers = async (taskId) => {
         if (!taskId) {
@@ -146,17 +166,12 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
         }
    };
 
-    // Handle changes to input fields
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setEditableEvent((prev) => ({
-            ...prev,
-            [name]: value
-        }));
-    };
+    
+    
     const toggleEditMode = async () => {
         if (isEditMode) {
             try {
+                console.log('editableEvent', editableEvent);
                 const response = await fetch(`${API_BASE_URL}/api/admin/events/${event.id}`, {
                     method: 'PATCH',
                     headers: {
@@ -169,6 +184,7 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
                         day: editableEvent.day,
                         time: editableEvent.time,
                         location: editableEvent.location,
+                        is_recurring: editableEvent.isRecurring,
                     }),
                 });
     
@@ -231,13 +247,7 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
             month: "2-digit",
             day: "2-digit"
         });
-      // Convert start_time to 12-hour format with AM/PM
-        const [hour, minute] = event.start_time.split(':');
-          const date = new Date();
-          date.setHours(hour, minute);
-          const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-      
-    
+     
     
         console.log("selected volunteer", selectedVolunteer);
         const message = `
@@ -273,6 +283,29 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
                 }
                 
     }
+    // Handle changes to input fields
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setEditableEvent((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+    const handleTimeChange = (time) => {
+       
+        
+        setLocalTime(time); // Update local state with the formatted time
+        const militaryTime = convert12HourToMilitary(time);
+        setEditableEvent((prev) => ({
+            ...prev,
+            time: militaryTime, // Save time in military format
+        }));
+    
+    };
+
+    
+    
+    
     const handleSelectChange = (e, fieldName) => {
 
         const { value } = e.target;
@@ -336,10 +369,6 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
         setShowAvailableVolunteers((prev) => !prev);
     };
 
-    const [hour, minute] = editableEvent.time.split(':');
-    const date = new Date();
-    date.setHours(hour, minute);
-    const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     return (
   
         <>
@@ -415,6 +444,25 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
                         </label>
                     </div>
                     <div className="form-group my-2">
+                        <label htmlFor="taskTime" className="form-label">Time</label>
+                        {console.log("time", localTime)}
+                        <DatePicker
+                        
+                            className={'datetimepicker'} 
+                            selected={localTime?localTime:''}                    
+                            showTimeSelect
+                            showTimeSelectOnly
+                            timeIntervals={30}
+                            name="time"
+                            id="time"
+                            dateFormat="h:mm aa"
+                            required                            
+                            disabled={!isEditMode}
+                            onChange={handleTimeChange}
+                            />
+                            
+                    </div>
+                    {/* <div className="form-group my-2">
                         <label htmlFor="taskTime" className="form-label">Time
                             <input
                                 id="taskTime"
@@ -423,11 +471,11 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
                                 name="time"
                                 value={time || ''}
                               
-                                disabled={true}
+                                //disabled={true}
                           
                             />
                         </label>
-                    </div>
+                    </div> */}
                     <div className="radio-group my-2">
                         <label>Task Frequency</label>
                         <div>
@@ -440,7 +488,7 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
                                 className="radio-new-task"
                                 checked={editableEvent.isRecurring === false}
                            
-                                disabled={true}
+                                disabled={!isEditMode}
                                 onChange={() =>
                                     setEditableEvent((prev) => ({
                                         ...prev,
@@ -459,7 +507,7 @@ const EventInfo = ({ event, show, handleClose, backdrop, keyboard }) => {
                                 className="radio-new-task"
                                 checked={editableEvent.isRecurring === true}
                           
-                                disabled={true}
+                                disabled={!isEditMode}
                                 onChange={() =>
                                     setEditableEvent((prev) => ({
                                         ...prev,

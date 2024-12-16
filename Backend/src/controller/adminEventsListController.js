@@ -62,9 +62,9 @@ const getUpcomingEvents = async (req, res) => {
 const updateEvent = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description, taskType, day, time, location } = req.body;
+        const { name, description, taskType, day, time, location, is_recurring} = req.body;
 
-        console.log("Received data:", { name, description, taskType, day, time, location });
+        console.log("Received data:", { name, description, taskType, day, time, location, is_recurring });
 
         const { data, error } = await pool
             .from('task')
@@ -75,6 +75,7 @@ const updateEvent = async (req, res) => {
                 start_date: day,
                 start_time: time,
                 location,
+                is_recurring
             })
             .eq('id', id);
 
